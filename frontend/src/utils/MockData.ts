@@ -644,7 +644,7 @@ export const mockApplications: Application[] = [
   {
     id: "app11",
     jobId: "9",
-    job: mockJobs[8],
+    job: mockJobs[7],
     seekerId: "user2",
     status: "pending",
     appliedDate: new Date("2024-12-27"),
@@ -653,7 +653,7 @@ export const mockApplications: Application[] = [
   {
     id: "app12",
     jobId: "10",
-    job: mockJobs[9],
+    job: mockJobs[8],
     seekerId: "user5",
     status: "reviewed",
     appliedDate: new Date("2024-12-26"),
@@ -662,7 +662,7 @@ export const mockApplications: Application[] = [
   {
     id: "app13",
     jobId: "11",
-    job: mockJobs[10],
+    job: mockJobs[9],
     seekerId: "user4",
     status: "shortlisted",
     appliedDate: new Date("2024-12-25"),
@@ -671,7 +671,7 @@ export const mockApplications: Application[] = [
   {
     id: "app14",
     jobId: "12",
-    job: mockJobs[11],
+    job: mockJobs[10],
     seekerId: "user5",
     status: "pending",
     appliedDate: new Date("2024-12-24"),
