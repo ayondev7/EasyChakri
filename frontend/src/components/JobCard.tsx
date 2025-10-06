@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Briefcase, Clock, Bookmark } from "lucide-react"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 import { useSavedJobs } from "@/contexts/SavedJobsContext"
 
 interface JobCardProps {

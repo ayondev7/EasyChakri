@@ -8,9 +8,9 @@ import { useAuth } from "@/contexts/AuthContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { mockJobs, mockApplications, mockInterviews } from "@/lib/MockData"
+import { mockJobs, mockApplications, mockInterviews } from "@/utils/MockData"
 import { Briefcase, Users, Eye, TrendingUp, Plus, MoreVertical, Edit, Trash2, Calendar } from "lucide-react"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function RecruiterDashboardPage() {

@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { Bell, Briefcase, FileText, CheckCircle } from "lucide-react"
-import { mockNotifications } from "@/lib/MockData"
-import { formatDate } from "@/lib/utils"
+import { mockNotifications } from "@/utils/MockData"
+import { formatDate } from "@/utils/utils"
 import { useAuth } from "@/contexts/AuthContext"
 
 export function NotificationsDropdown() {

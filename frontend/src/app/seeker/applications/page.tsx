@@ -8,11 +8,11 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { mockApplications } from "@/lib/MockData"
+import { mockApplications } from "@/utils/MockData"
 import { Clock, CheckCircle, XCircle, Eye, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 
 export default function ApplicationsPage() {
   const router = useRouter()

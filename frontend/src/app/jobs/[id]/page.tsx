@@ -6,7 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 // Navbar/Footer provided by root layout
 import { JobCard } from "@/components/JobCard"
-import { mockJobs } from "@/lib/MockData"
+import { mockJobs } from "@/utils/MockData"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -24,7 +24,7 @@ import {
   Globe,
   Calendar,
 } from "lucide-react"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 import { useAuth } from "@/contexts/AuthContext"
 
 export default function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { mockJobs } from "@/lib/MockData"
+import { mockJobs } from "@/utils/MockData"
 import { JobCard } from "@/components/JobCard"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"

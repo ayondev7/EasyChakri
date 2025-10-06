@@ -8,9 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { mockInterviews } from "@/lib/MockData"
+import { mockInterviews } from "@/utils/MockData"
 import { Calendar, Clock, MapPin, Video, CheckCircle, XCircle, AlertCircle, ExternalLink } from "lucide-react"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 
 export default function InterviewsPage() {
   const router = useRouter()

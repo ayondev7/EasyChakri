@@ -7,11 +7,11 @@ import { useAuth } from "@/contexts/AuthContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { mockApplications, mockJobs, mockInterviews } from "@/lib/MockData"
+import { mockApplications, mockJobs, mockInterviews } from "@/utils/MockData"
 import { Briefcase, FileText, Eye, TrendingUp, Clock, CheckCircle, XCircle, AlertCircle, Calendar } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 
 export default function SeekerDashboardPage() {
   const router = useRouter()

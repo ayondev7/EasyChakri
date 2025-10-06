@@ -44,7 +44,6 @@ export default function SignInPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar/>
       <main className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
@@ -159,7 +158,6 @@ export default function SignInPage() {
           </p>
         </div>
       </main>
-      {/* Footer provided by root layout */}
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import Image from "next/image"
 // Header and Footer provided by root layout
 import { JobCard } from "@/components/JobCard"
-import { mockCompanies, mockJobs } from "@/lib/MockData"
+import { mockCompanies, mockJobs } from "@/utils/MockData"
 import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Users, Globe, Calendar, Briefcase } from "lucide-react"
 

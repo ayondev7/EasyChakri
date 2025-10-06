@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/layout/Navbar"
-import { mockCompanies } from "@/lib/MockData"
+import { mockCompanies } from "@/utils/MockData"
 import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"

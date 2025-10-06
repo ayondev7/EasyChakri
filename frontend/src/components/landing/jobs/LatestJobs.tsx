@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { mockJobs } from "@/lib/MockData"
+import { mockJobs } from "@/utils/MockData"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Briefcase, Clock, ArrowRight } from "lucide-react"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 import Image from "next/image"
 
 export function LatestJobs() {

@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { getInitials } from "@/lib/utils"
+import { getInitials } from "@/utils/utils"
 import { NotificationsDropdown } from "@/components/NotificationsDropdown"
 import { useState } from "react"
 

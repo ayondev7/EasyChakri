@@ -7,9 +7,9 @@ import { useAuth } from "@/contexts/AuthContext"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { mockNotifications } from "@/lib/MockData"
+import { mockNotifications } from "@/utils/MockData"
 import { Briefcase, FileText, CheckCircle } from "lucide-react"
-import { formatDate } from "@/lib/utils"
+import { formatDate } from "@/utils/utils"
 
 export default function NotificationsPage() {
   const router = useRouter()

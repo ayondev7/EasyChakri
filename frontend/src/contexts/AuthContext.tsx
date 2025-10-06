@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import type { User } from "@/types"
-import { mockUsers } from "@/lib/MockData"
+import { mockUsers } from "@/utils/MockData"
 
 interface AuthContextType {
   user: User | null

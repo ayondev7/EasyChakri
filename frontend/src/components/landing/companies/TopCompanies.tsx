@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { mockCompanies } from "@/lib/MockData"
+import { mockCompanies } from "@/utils/MockData"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, MapPin, Briefcase } from "lucide-react"
