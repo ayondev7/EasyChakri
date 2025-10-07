@@ -1,9 +1,8 @@
 "use client"
-
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
+import { useSession, signOut } from "next-auth/react"
 import type { User } from "@/types"
-import { mockUsers } from "@/utils/MockData"
 
 interface AuthContextType {
   user: User | null
@@ -16,71 +15,45 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession()
   const [user, setUser] = useState<User | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    // Check for stored user session
-    const storedUser = localStorage.getItem("user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    if (session?.user) {
+      setUser({
+        id: session.user.id,
+        email: session.user.email!,
+        name: session.user.name!,
+        role: session.user.role,
+        avatar: session.user.image,
+        createdAt: new Date(), 
+      })
       setIsAuthenticated(true)
+    } else {
+      setUser(null)
+      setIsAuthenticated(false)
     }
-  }, [])
+  }, [session])
 
   const login = async (email: string, password: string, role: "seeker" | "recruiter") => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    // This is now handled by NextAuth signIn
+    throw new Error("Use NextAuth signIn directly")
+  }
 
-    // Find user in mock data or create demo user
-    let foundUser = mockUsers.find((u) => u.email === email && u.role === role)
-
-    if (!foundUser) {
-      if (role === "recruiter") {
-        // Return a default recruiter with jobs
-        foundUser = mockUsers.find((u) => u.role === "recruiter") || mockUsers[7] // rec1
-      } else {
-        // Create demo user for seeker
-        foundUser = {
-          id: `user_${Date.now()}`,
-          email,
-          name: email.split("@")[0],
-          role,
-          createdAt: new Date(),
-        }
-      }
-    }
-
-    setUser(foundUser)
-    setIsAuthenticated(true)
-    localStorage.setItem("user", JSON.stringify(foundUser))
+  const logout = async () => {
+    await signOut({ callbackUrl: "/" })
   }
 
   const signup = async (email: string, password: string, name: string, role: "seeker" | "recruiter") => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    const newUser: User = {
-      id: `user_${Date.now()}`,
-      email,
-      name,
-      role,
-      createdAt: new Date(),
-    }
-
-    setUser(newUser)
-    setIsAuthenticated(true)
-    localStorage.setItem("user", JSON.stringify(newUser))
-  }
-
-  const logout = () => {
-    setUser(null)
-    setIsAuthenticated(false)
-    localStorage.removeItem("user")
+    // This is now handled by NextAuth signIn with credentials-signup
+    throw new Error("Use NextAuth signIn directly")
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup, isAuthenticated }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, login, logout, signup, isAuthenticated }}>
+      {children}
+    </AuthContext.Provider>
   )
 }
 
