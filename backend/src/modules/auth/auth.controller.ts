@@ -17,6 +17,8 @@ import {
   Body,
   HttpCode,
   HttpStatus,
+  Headers,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
@@ -81,6 +83,21 @@ export class AuthController {
     const result = await this.authService.refreshToken(refreshToken);
     return {
       message: 'Token refreshed successfully',
+      data: result,
+    };
+  }
+
+  @Post('verify')
+  @HttpCode(HttpStatus.OK)
+  async verifyToken(@Headers('authorization') authorization: string) {
+    if (!authorization) {
+      throw new UnauthorizedException('No token provided');
+    }
+
+    const token = authorization.replace('Bearer ', '');
+    const result = await this.authService.verifyToken(token);
+    return {
+      message: 'Token is valid',
       data: result,
     };
   }

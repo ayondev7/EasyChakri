@@ -23,7 +23,7 @@ async function bootstrap() {
 
   // Enable CORS - Similar to Express cors() middleware
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   });
 

@@ -36,6 +36,34 @@ export class CredentialSignupDto {
   @IsOptional()
   @IsString()
   location?: string;
+
+  @IsOptional()
+  @IsString()
+  companyName?: string;
+
+  @IsOptional()
+  @IsString()
+  companyDescription?: string;
+
+  @IsOptional()
+  @IsString()
+  companyWebsite?: string;
+
+  @IsOptional()
+  @IsString()
+  companyLogo?: string;
+
+  @IsOptional()
+  @IsString()
+  companyIndustry?: string;
+
+  @IsOptional()
+  @IsString()
+  companySize?: string;
+
+  @IsOptional()
+  @IsString()
+  companyLocation?: string;
 }
 
 export class CredentialSigninDto {
@@ -57,9 +85,6 @@ export class GoogleSigninDto {
   @IsOptional()
   @IsString()
   image?: string;
-
-  @IsEnum(UserRole, { message: 'Role must be either SEEKER or RECRUITER' })
-  role: UserRole;
 }
 
 export class AuthResponseDto {

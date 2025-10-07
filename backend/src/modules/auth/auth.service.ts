@@ -35,7 +35,6 @@ export class AuthService {
    * Express equivalent: POST /auth/signup route handler
    */
   async credentialSignup(dto: CredentialSignupDto): Promise<AuthResponseDto> {
-    // Check if user already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -44,39 +43,85 @@ export class AuthService {
       throw new ConflictException('User with this email already exists');
     }
 
-    // Hash password with bcrypt
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    // Create new user
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        password: hashedPassword,
-        name: dto.name,
-        role: dto.role,
-        phone: dto.phone,
-        location: dto.location,
-      },
-    });
+    if (dto.role === 'RECRUITER') {
+      if (!dto.companyName || !dto.companyDescription || !dto.companyIndustry || !dto.companySize || !dto.companyLocation) {
+        throw new BadRequestException('Company details are required for recruiter registration');
+      }
 
-    // Generate tokens
-    const tokens = TokenUtil.generateTokens({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-    });
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          password: hashedPassword,
+          name: dto.name,
+          role: dto.role,
+          phone: dto.phone,
+          location: dto.location,
+          companyProfile: {
+            create: {
+              name: dto.companyName,
+              description: dto.companyDescription,
+              website: dto.companyWebsite,
+              logo: dto.companyLogo,
+              industry: dto.companyIndustry,
+              size: dto.companySize,
+              location: dto.companyLocation,
+            },
+          },
+        },
+        include: {
+          companyProfile: true,
+        },
+      });
 
-    return {
-      user: {
-        id: user.id,
+      const tokens = TokenUtil.generateTokens({
+        userId: user.id,
         email: user.email,
-        name: user.name,
         role: user.role,
-        image: user.image,
-      },
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-    };
+      });
+
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          image: user.image,
+        },
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      };
+    } else {
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          password: hashedPassword,
+          name: dto.name,
+          role: dto.role,
+          phone: dto.phone,
+          location: dto.location,
+        },
+      });
+
+      const tokens = TokenUtil.generateTokens({
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+      });
+
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          image: user.image,
+        },
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      };
+    }
   }
 
   /**
@@ -127,13 +172,11 @@ export class AuthService {
    * Creates user if doesn't exist, otherwise logs in
    */
   async googleSignin(dto: GoogleSigninDto): Promise<AuthResponseDto> {
-    // Check if user exists
     let user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
     if (user) {
-      // User exists - just login
       const tokens = TokenUtil.generateTokens({
         userId: user.id,
         email: user.email,
@@ -152,14 +195,13 @@ export class AuthService {
         refreshToken: tokens.refreshToken,
       };
     } else {
-      // User doesn't exist - create new user
       user = await this.prisma.user.create({
         data: {
           email: dto.email,
           name: dto.name,
           image: dto.image,
-          role: dto.role,
-          password: '', // No password for Google users
+          role: 'SEEKER',
+          password: '',
           providerId: 'google',
         },
       });
@@ -191,7 +233,6 @@ export class AuthService {
     try {
       const payload = TokenUtil.verifyToken(refreshToken);
 
-      // Verify user still exists
       const user = await this.prisma.user.findUnique({
         where: { id: payload.userId },
       });
@@ -200,7 +241,6 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
-      // Generate new access token
       const accessToken = TokenUtil.generateAccessToken({
         userId: user.id,
         email: user.email,
@@ -210,6 +250,32 @@ export class AuthService {
       return { accessToken };
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  async verifyToken(token: string): Promise<{ user: { id: string; email: string; name: string; role: string; image?: string } }> {
+    try {
+      const payload = TokenUtil.verifyToken(token);
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.userId },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          image: user.image,
+        },
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired token');
     }
   }
 }
