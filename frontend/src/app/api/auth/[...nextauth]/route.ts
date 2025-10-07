@@ -13,6 +13,7 @@ const authOptions: NextAuthOptions = {
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
 		}),
 		CredentialsProvider({
+			id: "credentials-signup",
 			name: "credentials-signup",
 			credentials: {
 				email: { label: "Email", type: "email" },
@@ -81,6 +82,7 @@ const authOptions: NextAuthOptions = {
 			},
 		}),
 		CredentialsProvider({
+			id: "credentials-signin",
 			name: "credentials-signin",
 			credentials: {
 				email: { label: "Email", type: "email" },

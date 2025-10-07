@@ -108,11 +108,19 @@ export default function SignUpPage() {
         redirect: false,
       })
 
-      if (result?.error) {
+      if (!result) {
         toast.error("Failed to create account. Please try again.")
-      } else {
+      } else if ((result as any).error) {
+        // NextAuth sometimes returns error string
+        const err = (result as any).error
+        toast.error(typeof err === 'string' ? err : 'Failed to create account. Please try again.')
+      } else if ((result as any).ok || (result as any).url) {
         toast.success("🎉 Welcome to EasyChakri!")
-        router.push("/seeker/dashboard")
+        // If NextAuth returned a url (sometimes), prefer it
+        const url = (result as any).url || "/seeker/dashboard"
+        router.push(url)
+      } else {
+        toast.error("Failed to create account. Please try again.")
       }
     } catch (err) {
       toast.error("An error occurred. Please try again.")
@@ -140,11 +148,17 @@ export default function SignUpPage() {
         redirect: false,
       })
 
-      if (result?.error) {
+      if (!result) {
         toast.error("Failed to create account. Please try again.")
-      } else {
+      } else if ((result as any).error) {
+        const err = (result as any).error
+        toast.error(typeof err === 'string' ? err : 'Failed to create account. Please try again.')
+      } else if ((result as any).ok || (result as any).url) {
         toast.success("🎉 Welcome to EasyChakri!")
-        router.push("/recruiter/dashboard")
+        const url = (result as any).url || "/recruiter/dashboard"
+        router.push(url)
+      } else {
+        toast.error("Failed to create account. Please try again.")
       }
     } catch (err) {
       toast.error("An error occurred. Please try again.")
