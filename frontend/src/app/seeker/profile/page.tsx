@@ -16,18 +16,33 @@ import { Camera, Plus, X } from "lucide-react"
 
 export default function ProfilePage() {
   const router = useRouter()
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, isLoading } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [skills, setSkills] = useState<string[]>(user?.skills || [])
   const [newSkill, setNewSkill] = useState("")
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== "seeker") {
+    // Don't redirect while session is still loading
+    if (isLoading) return
+
+    // Redirect if not authenticated or wrong role
+    if (!isAuthenticated || !user) {
+      router.push("/auth/signin")
+      return
+    }
+    
+    if (user.role !== "seeker") {
       router.push("/auth/signin")
     }
-  }, [isAuthenticated, user, router])
+  }, [isAuthenticated, user, router, isLoading])
 
-  if (!isAuthenticated || user?.role !== "seeker") {
+  // Show loading state while session is being checked
+  if (isLoading) {
+    return null
+  }
+
+  // Don't render page until authenticated
+  if (!isAuthenticated || !user || user.role !== "seeker") {
     return null
   }
 

@@ -19,23 +19,38 @@ import { InterviewSchedulingModal } from "@/components/InterviewSchedulingModal"
 export default function ApplicantsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, isLoading } = useAuth()
   const [applications, setApplications] = useState<Application[]>([])
   const [filterStatus, setFilterStatus] = useState("all")
   const [selectedApplicant, setSelectedApplicant] = useState<Application | null>(null)
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== "recruiter") {
+    // Don't redirect while session is still loading
+    if (isLoading) return
+
+    // Redirect if not authenticated or wrong role
+    if (!isAuthenticated || !user) {
+      router.push("/auth/signin")
+      return
+    }
+    
+    if (user.role !== "recruiter") {
       router.push("/auth/signin")
     }
-  }, [isAuthenticated, user, router])
+  }, [isAuthenticated, user, router, isLoading])
 
   useEffect(() => {
     const jobApplications = mockApplications.filter((app) => app.jobId === id)
     setApplications(jobApplications)
   }, [id])
 
-  if (!isAuthenticated || user?.role !== "recruiter") {
+  // Show loading state while session is being checked
+  if (isLoading) {
+    return null
+  }
+
+  // Don't render page until authenticated
+  if (!isAuthenticated || !user || user.role !== "recruiter") {
     return null
   }
 

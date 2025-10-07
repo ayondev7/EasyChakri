@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 // Header and Footer are provided by the root layout
 import { useAuth } from "@/contexts/AuthContext"
+import AuthGuard from "@/components/AuthGuard"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -14,23 +15,11 @@ import Image from "next/image"
 import { formatDate } from "@/utils/utils"
 
 export default function SeekerDashboardPage() {
-  const router = useRouter()
-  const { user, isAuthenticated } = useAuth()
-
-  useEffect(() => {
-    if (!isAuthenticated || user?.role !== "seeker") {
-      router.push("/auth/signin")
-    }
-  }, [isAuthenticated, user, router])
-
-  if (!isAuthenticated || user?.role !== "seeker") {
-    return null
-  }
-
+  const { user } = useAuth()
   const stats = [
     {
       title: "Applications",
-      value: mockApplications.filter(app => app.seekerId === user.id).length,
+    value: mockApplications.filter(app => app.seekerId === user?.id).length,
       icon: FileText,
       color: "text-cyan-500",
       bgColor: "bg-cyan-500/10",
@@ -52,7 +41,7 @@ export default function SeekerDashboardPage() {
     },
     {
       title: "Interviews",
-      value: mockInterviews.filter(interview => interview.seekerId === user.id).length,
+    value: mockInterviews.filter(interview => interview.seekerId === user?.id).length,
       icon: Calendar,
       color: "text-orange-500",
       bgColor: "bg-orange-500/10",
@@ -97,10 +86,11 @@ export default function SeekerDashboardPage() {
   }
 
   return (
+    <AuthGuard role="seeker">
       <main className="py-8">
-  <div className="container mx-auto px-[100px]">
+        <div className="container mx-auto px-[100px]">
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back, {user.name}!</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back, {user?.name || "User"}!</h1>
             <p className="text-muted-foreground">Track your applications and discover new opportunities</p>
           </div>
 
@@ -245,5 +235,6 @@ export default function SeekerDashboardPage() {
           </div>
         </div>
       </main>
+    </AuthGuard>
   )
 }

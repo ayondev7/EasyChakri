@@ -16,20 +16,37 @@ import { Loader2, Building2 } from "lucide-react"
 
 export default function CompanyProfilePage() {
   const router = useRouter()
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [hasProfile, setHasProfile] = useState(false)
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== "recruiter") {
+    // Don't redirect while session is still loading
+    if (authLoading) return
+
+    // Redirect if not authenticated or wrong role
+    if (!isAuthenticated || !user) {
       router.push("/auth/signin")
+      return
     }
+    
+    if (user.role !== "recruiter") {
+      router.push("/auth/signin")
+      return
+    }
+
     // Check if company profile exists in localStorage
     const profile = localStorage.getItem(`company_profile_${user?.id}`)
     setHasProfile(!!profile)
-  }, [isAuthenticated, user, router])
+  }, [isAuthenticated, user, router, authLoading])
 
-  if (!isAuthenticated || user?.role !== "recruiter") {
+  // Show loading state while session is being checked
+  if (authLoading) {
+    return null
+  }
+
+  // Don't render page until authenticated
+  if (!isAuthenticated || !user || user.role !== "recruiter") {
     return null
   }
 

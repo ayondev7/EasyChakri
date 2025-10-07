@@ -100,12 +100,14 @@ export default function SignUpPage() {
     setIsLoading(true)
 
     try {
+      // Let NextAuth handle redirect so session is established server-side first
+      const callbackUrl = "/seeker/dashboard"
       const result = await signIn("credentials-signup", {
         email: data.email,
         password: data.password,
         name: data.name,
         role: "SEEKER",
-        redirect: false,
+        callbackUrl,
       })
 
       if (!result) {
@@ -114,13 +116,8 @@ export default function SignUpPage() {
         // NextAuth sometimes returns error string
         const err = (result as any).error
         toast.error(typeof err === 'string' ? err : 'Failed to create account. Please try again.')
-      } else if ((result as any).ok || (result as any).url) {
-        toast.success("🎉 Welcome to EasyChakri!")
-        // If NextAuth returned a url (sometimes), prefer it
-        const url = (result as any).url || "/seeker/dashboard"
-        router.push(url)
       } else {
-        toast.error("Failed to create account. Please try again.")
+        toast.success("🎉 Welcome to EasyChakri!")
       }
     } catch (err) {
       toast.error("An error occurred. Please try again.")
@@ -133,6 +130,8 @@ export default function SignUpPage() {
     setIsLoading(true)
 
     try {
+      // Let NextAuth handle redirect so session is established server-side first
+      const callbackUrl = "/recruiter/dashboard"
       const result = await signIn("credentials-signup", {
         email: data.email,
         password: data.password,
@@ -145,7 +144,7 @@ export default function SignUpPage() {
         companySize: data.companySize,
         companyLocation: data.companyLocation,
         companyLogo: logoPreview || undefined,
-        redirect: false,
+        callbackUrl,
       })
 
       if (!result) {
@@ -153,12 +152,8 @@ export default function SignUpPage() {
       } else if ((result as any).error) {
         const err = (result as any).error
         toast.error(typeof err === 'string' ? err : 'Failed to create account. Please try again.')
-      } else if ((result as any).ok || (result as any).url) {
-        toast.success("🎉 Welcome to EasyChakri!")
-        const url = (result as any).url || "/recruiter/dashboard"
-        router.push(url)
       } else {
-        toast.error("Failed to create account. Please try again.")
+        toast.success("🎉 Welcome to EasyChakri!")
       }
     } catch (err) {
       toast.error("An error occurred. Please try again.")

@@ -10,6 +10,7 @@ interface AuthContextType {
   logout: () => void
   signup: (email: string, password: string, name: string, role: "seeker" | "recruiter") => Promise<void>
   isAuthenticated: boolean
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -18,8 +19,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const [user, setUser] = useState<User | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    // Wait for session to finish loading
+    if (status === "loading") {
+      setIsLoading(true)
+      return
+    }
+
+    setIsLoading(false)
+
     if (session?.user) {
       setUser({
         id: session.user.id,
@@ -34,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null)
       setIsAuthenticated(false)
     }
-  }, [session])
+  }, [session, status])
 
   const login = async (email: string, password: string, role: "seeker" | "recruiter") => {
     // This is now handled by NextAuth signIn
@@ -51,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, logout, signup, isAuthenticated, isLoading }}>
       {children}
     </AuthContext.Provider>
   )

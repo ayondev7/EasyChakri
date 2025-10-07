@@ -18,7 +18,7 @@ import { Plus, X, Loader2, AlertCircle } from "lucide-react"
 
 export default function PostJobPage() {
   const router = useRouter()
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [hasCompanyProfile, setHasCompanyProfile] = useState(false)
   const [skills, setSkills] = useState<string[]>([])
@@ -27,16 +27,31 @@ export default function PostJobPage() {
   const [responsibilities, setResponsibilities] = useState<string[]>([""])
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== "recruiter") {
+    // Don't redirect while session is still loading
+    if (authLoading) return
+
+    // Redirect if not authenticated or wrong role
+    if (!isAuthenticated || !user) {
+      router.push("/auth/signin")
+      return
+    }
+    
+    if (user.role !== "recruiter") {
       router.push("/auth/signin")
       return
     }
 
     const profile = localStorage.getItem(`company_profile_${user?.id}`)
     setHasCompanyProfile(!!profile)
-  }, [isAuthenticated, user, router])
+  }, [isAuthenticated, user, router, authLoading])
 
-  if (!isAuthenticated || user?.role !== "recruiter") {
+  // Show loading state while session is being checked
+  if (authLoading) {
+    return null
+  }
+
+  // Don't render page until authenticated
+  if (!isAuthenticated || !user || user.role !== "recruiter") {
     return null
   }
 

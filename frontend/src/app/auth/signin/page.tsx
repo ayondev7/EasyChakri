@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -42,21 +41,22 @@ export default function SignInPage() {
     setIsLoading(true)
 
     try {
+      // Use NextAuth redirect flow so the session is fully established before navigating
+      const callbackUrl = role === "seeker" ? "/seeker/dashboard" : "/recruiter/dashboard"
       const result = await signIn("credentials-signin", {
         email: data.email,
         password: data.password,
-        redirect: false,
+        callbackUrl,
       })
 
-      if (result?.error) {
+      // When redirect is enabled, NextAuth will handle navigation. We still show success toast.
+      if (!result) {
         toast.error("Invalid credentials. Please try again.")
+      } else if ((result as any).error) {
+        const err = (result as any).error
+        toast.error(typeof err === 'string' ? err : 'Invalid credentials. Please try again.')
       } else {
         toast.success("👋 Welcome back!")
-        if (role === "seeker") {
-          router.push("/seeker/dashboard")
-        } else {
-          router.push("/recruiter/dashboard")
-        }
       }
     } catch (err) {
       toast.error("An error occurred. Please try again.")

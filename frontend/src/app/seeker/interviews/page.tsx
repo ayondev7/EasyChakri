@@ -14,20 +14,35 @@ import { formatDate } from "@/utils/utils"
 
 export default function InterviewsPage() {
   const router = useRouter()
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, isLoading } = useAuth()
   const [filter, setFilter] = useState("all")
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== "seeker") {
+    // Don't redirect while session is still loading
+    if (isLoading) return
+
+    // Redirect if not authenticated or wrong role
+    if (!isAuthenticated || !user) {
+      router.push("/auth/signin")
+      return
+    }
+    
+    if (user.role !== "seeker") {
       router.push("/auth/signin")
     }
-  }, [isAuthenticated, user, router])
+  }, [isAuthenticated, user, router, isLoading])
 
-  if (!isAuthenticated || user?.role !== "seeker") {
+  // Show loading state while session is being checked
+  if (isLoading) {
     return null
   }
 
-  const userInterviews = mockInterviews.filter((interview) => interview.seekerId === user.id)
+  // Don't render page until authenticated
+  if (!isAuthenticated || !user || user.role !== "seeker") {
+    return null
+  }
+
+  const userInterviews = mockInterviews.filter((interview) => interview.seekerId === user?.id)
 
   const filteredInterviews =
     filter === "all" ? userInterviews : userInterviews.filter((interview) => interview.status === filter)
