@@ -34,7 +34,10 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    return user;
+    return {
+      ...user,
+      role: user.role.toLowerCase() as 'seeker' | 'recruiter',
+    };
   }
 
   /**
@@ -61,7 +64,10 @@ export class UserService {
       },
     });
 
-    return user;
+    return {
+      ...user,
+      role: user.role.toLowerCase() as 'seeker' | 'recruiter',
+    };
   }
 
   /**
