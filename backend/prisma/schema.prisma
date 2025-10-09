@@ -119,6 +119,7 @@ model Company {
 model Job {
   id String @id @default(uuid())
   title String
+  slug String @unique
   description String
   requirements String[]
   responsibilities String[]

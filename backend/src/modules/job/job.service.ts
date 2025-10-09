@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobDto, UpdateJobDto, JobQueryDto } from './dto/job.dto';
+import { generateUniqueJobSlug } from '../../utils/slug.util';
 
 @Injectable()
 export class JobService {
@@ -23,10 +24,14 @@ export class JobService {
       throw new ForbiddenException('You do not have access to this company');
     }
 
+    // Generate unique slug for job
+    const slug = await generateUniqueJobSlug(this.prisma as any, dto.title)
+
     const job = await this.prisma.job.create({
       data: {
         ...dto,
         recruiterId,
+        slug,
         deadline: dto.deadline ? new Date(dto.deadline) : null,
       },
       include: {
