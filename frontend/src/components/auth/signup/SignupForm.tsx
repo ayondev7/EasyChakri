@@ -9,7 +9,6 @@ import InputField from "@/components/form/InputField"
 import TextareaField from "@/components/form/TextareaField"
 import FileInput from "@/components/form/FileInput"
 import SignUpCard from "@/components/auth/signup/SignUpCard"
-import CompanySection from "@/components/auth/signup/CompanySection"
 
 const seekerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -288,8 +287,7 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
 
       {role === "recruiter" && (
         <>
-          <CompanySection register={registerRecruiter} errors={errorsRecruiter} onLogoChange={handleLogoChange} logoPreview={logoPreview} />
-
+          {/* Company details are collected during signup via other fields; removed CompanySection form block. */}
           <div className="space-y-2 mt-3">
             <FileInput id="recruiterImage" label="Profile Image (Optional)" accept=".jpg,.jpeg,.png,.webp" onFileChange={handleRecruiterImageChange} preview={recruiterImagePreview} />
             <p className="text-xs text-muted-foreground">JPG, JPEG, PNG, or WEBP (Max 3MB)</p>
