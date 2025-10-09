@@ -27,6 +27,7 @@ const jobSchema = z.object({
   deadline: z.string().optional(),
   requirements: z.array(z.string().min(1)).min(1),
   responsibilities: z.array(z.string().min(1)).min(1),
+  benefits: z.array(z.string()).optional(),
   skills: z.array(z.string()).optional(),
 })
 
@@ -51,6 +52,7 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
       deadline: '',
       requirements: [],
       responsibilities: [],
+      benefits: [],
       skills: [],
     },
   })
@@ -66,9 +68,11 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
 
   const responsibilities = watch('responsibilities') || []
   const requirements = watch('requirements') || []
+  const benefits = watch('benefits') || []
 
   const [responsibilitiesText, setResponsibilitiesText] = useState<string>('')
   const [requirementsText, setRequirementsText] = useState<string>('')
+  const [benefitsText, setBenefitsText] = useState<string>('')
 
   const handleAddSkill = () => {
     if (newSkill.trim() && !skills.includes(newSkill.trim())) {
@@ -82,16 +86,14 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
   }
 
   const onSubmit = (values: FormValues) => {
-    if (!companyId) {
-      toast.error('No company found for your account. Please create a company profile first.')
-      return
-    }
-
-    const payload = {
+    // Allow backend to resolve company for recruiter accounts.
+    // If companyId exists we include it, otherwise send payload without blocking submission.
+    const payload: any = {
       ...values,
-      companyId,
       skills,
     }
+
+    if (companyId) payload.companyId = companyId
 
     createJobMutation.mutate(payload, {
       onSuccess: () => {
@@ -163,6 +165,14 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
               />
               {errors.experience && <p className="text-xs text-destructive">Experience is required</p>}
             </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div className="space-y-2">
+              <Label htmlFor="deadline">Application Deadline</Label>
+              <Input id="deadline" type="date" {...register('deadline')} />
+              {errors.deadline && <p className="text-xs text-destructive">{errors.deadline.message}</p>}
+            </div>
+            <div />
           </div>
         </CardContent>
       </Card>
@@ -263,6 +273,54 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
                         const arr = original.slice()
                         arr.splice(index, 1)
                         setValue('requirements', arr.filter(r => r.trim() !== ''))
+                      }
+                    }}
+                    className="opacity-80 hover:opacity-100"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Benefits</Label>
+            <div className="flex gap-2">
+              <Textarea
+                value={benefitsText}
+                onChange={(e) => setBenefitsText(e.target.value)}
+                placeholder="Type benefits. Press Enter to add (Shift+Enter for newline)"
+                rows={3}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    const items = benefitsText
+                      .split('\n')
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                    if (!items.length) return
+                    const existing = benefits
+                    const next = [...existing, ...items]
+                    setValue('benefits', next)
+                    setBenefitsText('')
+                  }
+                }}
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {benefits.filter(b => b.trim() !== '').map((b: string, i: number) => (
+                <div key={i} className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 flex items-center gap-2">
+                  <span className="text-sm">{b}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const original = benefits
+                      const index = original.indexOf(b)
+                      if (index !== -1) {
+                        const arr = original.slice()
+                        arr.splice(index, 1)
+                        setValue('benefits', arr.filter(r => r.trim() !== ''))
                       }
                     }}
                     className="opacity-80 hover:opacity-100"
