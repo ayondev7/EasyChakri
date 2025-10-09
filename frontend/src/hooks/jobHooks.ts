@@ -1,0 +1,126 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { useGet, usePost, usePut, useDelete } from './index'
+import type { Job } from '@/types'
+import JOB_ROUTES from '@/routes/jobRoutes'
+
+export interface CreateJobInput {
+  title: string
+  description: string
+  requirements: string[]
+  responsibilities: string[]
+  benefits?: string[]
+  skills: string[]
+  type: string
+  experience: string
+  salary: string
+  location: string
+  isRemote?: boolean
+  category: string
+  companyId: string
+  deadline?: string
+}
+
+export interface UpdateJobInput extends Partial<CreateJobInput> {
+  id: string
+}
+
+export interface JobQueryParams {
+  search?: string
+  type?: string
+  location?: string
+  category?: string
+  isRemote?: boolean
+  page?: number
+  limit?: number
+}
+
+export interface JobsResponse {
+  data: Job[]
+  total: number
+  page: number
+  limit: number
+}
+
+export interface JobResponse {
+  data: Job
+  message?: string
+}
+
+export const jobKeys = {
+  all: ['jobs'] as const,
+  lists: () => [...jobKeys.all, 'list'] as const,
+  list: (params?: JobQueryParams) => [...jobKeys.lists(), params] as const,
+  details: () => [...jobKeys.all, 'detail'] as const,
+  detail: (id: string) => [...jobKeys.details(), id] as const,
+  myJobs: () => [...jobKeys.all, 'my-jobs'] as const,
+}
+
+export function useJobs(params?: JobQueryParams) {
+  const queryString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : ''
+  return useGet<JobsResponse>(
+    jobKeys.list(params),
+    `${JOB_ROUTES.getAll}${queryString}`
+  )
+}
+
+export function useJob(id: string) {
+  return useGet<JobResponse>(
+    jobKeys.detail(id),
+    JOB_ROUTES.getById(id),
+    {
+      enabled: !!id,
+    }
+  )
+}
+
+export function useMyJobs(page?: number, limit?: number) {
+  const queryString = new URLSearchParams()
+  if (page) queryString.append('page', page.toString())
+  if (limit) queryString.append('limit', limit.toString())
+  const query = queryString.toString()
+  
+  return useGet<JobsResponse>(
+    jobKeys.myJobs(),
+    `${JOB_ROUTES.recruiterMyJobs}${query ? `?${query}` : ''}`
+  )
+}
+
+export function useCreateJob() {
+  const queryClient = useQueryClient()
+  
+  return usePost<JobResponse, CreateJobInput>(JOB_ROUTES.create, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: jobKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: jobKeys.myJobs() })
+    },
+  })
+}
+
+export function useUpdateJob() {
+  const queryClient = useQueryClient()
+  
+  return usePut<JobResponse, UpdateJobInput>(
+    (variables) => JOB_ROUTES.updateById(variables.id),
+    {
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries({ queryKey: jobKeys.detail(variables.id) })
+        queryClient.invalidateQueries({ queryKey: jobKeys.lists() })
+        queryClient.invalidateQueries({ queryKey: jobKeys.myJobs() })
+      },
+    }
+  )
+}
+
+export function useDeleteJob() {
+  const queryClient = useQueryClient()
+  
+  return useDelete<{ message: string }, { id: string }>(
+    (variables) => JOB_ROUTES.deleteById(variables.id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: jobKeys.lists() })
+        queryClient.invalidateQueries({ queryKey: jobKeys.myJobs() })
+      },
+    }
+  )
+}
