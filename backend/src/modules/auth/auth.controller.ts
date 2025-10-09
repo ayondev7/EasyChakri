@@ -19,7 +19,10 @@ import {
   HttpStatus,
   Headers,
   UnauthorizedException,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AuthService } from './auth.service';
 import {
   CredentialSignupDto,
@@ -37,8 +40,21 @@ export class AuthController {
    */
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
-  async signup(@Body() dto: CredentialSignupDto) {
-    const result = await this.authService.credentialSignup(dto);
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'image', maxCount: 1 },
+      { name: 'companyLogo', maxCount: 1 },
+    ]),
+  )
+  async signup(
+    @Body() dto: CredentialSignupDto,
+    @UploadedFiles()
+    files: {
+      image?: Express.Multer.File[];
+      companyLogo?: Express.Multer.File[];
+    },
+  ) {
+    const result = await this.authService.credentialSignup(dto, files);
     return {
       message: 'User registered successfully',
       data: result,

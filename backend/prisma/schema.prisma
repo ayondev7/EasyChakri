@@ -63,6 +63,7 @@ model User {
   email String @unique
   password String
   name String
+  dateOfBirth DateTime?
   role UserRole
   image String?
   phone String?

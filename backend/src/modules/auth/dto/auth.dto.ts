@@ -11,7 +11,7 @@
  * - Type-safe and cleaner than manual validation
  */
 
-import { IsEmail, IsString, MinLength, IsOptional, IsEnum } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsOptional, IsEnum, IsDateString } from 'class-validator';
 import { UserRole } from '@prisma/client';
 
 export class CredentialSignupDto {
@@ -34,6 +34,10 @@ export class CredentialSignupDto {
   phone?: string;
 
   @IsOptional()
+  @IsDateString({}, { message: 'Please provide a valid date string for dateOfBirth' })
+  dateOfBirth?: string;
+
+  @IsOptional()
   @IsString()
   location?: string;
 
@@ -48,10 +52,6 @@ export class CredentialSignupDto {
   @IsOptional()
   @IsString()
   companyWebsite?: string;
-
-  @IsOptional()
-  @IsString()
-  companyLogo?: string;
 
   @IsOptional()
   @IsString()

@@ -18,6 +18,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { TokenUtil } from '../../utils/token.util';
+import { ImageUtil } from '../../utils/image.util';
 import {
   CredentialSignupDto,
   CredentialSigninDto,
@@ -34,7 +35,13 @@ export class AuthService {
    * 
    * Express equivalent: POST /auth/signup route handler
    */
-  async credentialSignup(dto: CredentialSignupDto): Promise<AuthResponseDto> {
+  async credentialSignup(
+    dto: CredentialSignupDto,
+    files?: {
+      image?: Express.Multer.File[];
+      companyLogo?: Express.Multer.File[];
+    },
+  ): Promise<AuthResponseDto> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -45,9 +52,31 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
+    // Upload profile image if provided
+    let imageUrl: string | undefined = undefined;
+    if (files?.image?.[0]) {
+      const uploadResult = await ImageUtil.uploadImage(
+        files.image[0].buffer,
+        files.image[0].originalname,
+        'users',
+      );
+      imageUrl = uploadResult.url;
+    }
+
     if (dto.role === 'RECRUITER') {
       if (!dto.companyName || !dto.companyDescription || !dto.companyIndustry || !dto.companySize || !dto.companyLocation) {
         throw new BadRequestException('Company details are required for recruiter registration');
+      }
+
+      // Upload company logo if provided
+      let logoUrl: string | undefined = undefined;
+      if (files?.companyLogo?.[0]) {
+        const uploadResult = await ImageUtil.uploadImage(
+          files.companyLogo[0].buffer,
+          files.companyLogo[0].originalname,
+          'companies',
+        );
+        logoUrl = uploadResult.url;
       }
 
       const user = await this.prisma.user.create({
@@ -57,13 +86,15 @@ export class AuthService {
           name: dto.name,
           role: dto.role,
           phone: dto.phone,
+          dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
+          image: imageUrl,
           location: dto.location,
           companyProfile: {
             create: {
               name: dto.companyName,
               description: dto.companyDescription,
               website: dto.companyWebsite,
-              logo: dto.companyLogo,
+              logo: logoUrl,
               industry: dto.companyIndustry,
               size: dto.companySize,
               location: dto.companyLocation,
@@ -100,6 +131,8 @@ export class AuthService {
           name: dto.name,
           role: dto.role,
           phone: dto.phone,
+          dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
+          image: imageUrl,
           location: dto.location,
         },
       });
