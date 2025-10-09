@@ -2,7 +2,8 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
-import { mockJobs, mockApplications, mockInterviews } from "@/utils/MockData"
+import { useMyJobs } from "@/hooks/jobHooks"
+import { mockApplications, mockInterviews } from "@/utils/MockData"
 import { Briefcase, Users, Eye, Calendar } from "lucide-react"
 import StatsGrid from "@/components/dashboard/StatsGrid"
 import RecruiterHeader from "@/components/dashboard/recruiter/RecruiterHeader"
@@ -11,6 +12,8 @@ import PostedJobs from "@/components/dashboard/recruiter/PostedJobs"
 export default function RecruiterDashboardPage() {
   const router = useRouter()
   const { user, isAuthenticated, isLoading } = useAuth()
+
+  const { data, isLoading: jobsLoading, error } = useMyJobs(1, 6)
 
   useEffect(() => {
     if (isLoading) return
@@ -26,12 +29,12 @@ export default function RecruiterDashboardPage() {
   if (isLoading) return null
   if (!isAuthenticated || !user || user.role !== "recruiter") return null
 
-  const myJobs = mockJobs.filter((job) => job.recruiterId === user.id).slice(0, 6)
+  const myJobs = data?.data ?? []
 
   const getJobApplicantCount = (jobId: string) => mockApplications.filter((app) => app.jobId === jobId).length
 
-  const totalApplicants = myJobs.reduce((sum, job) => sum + getJobApplicantCount(job.id), 0)
-  const totalViews = myJobs.reduce((sum, job) => sum + (job.views || 0), 0)
+  const totalApplicants = myJobs.reduce((sum, job: any) => sum + getJobApplicantCount(job.id), 0)
+  const totalViews = myJobs.reduce((sum: number, job: any) => sum + (job.views || 0), 0)
 
   const stats = [
     {

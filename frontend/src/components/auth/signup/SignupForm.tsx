@@ -52,6 +52,8 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
   const [seekerImagePreview, setSeekerImagePreview] = useState<string>("")
   const [recruiterImageFile, setRecruiterImageFile] = useState<File | null>(null)
   const [recruiterImagePreview, setRecruiterImagePreview] = useState<string>("")
+  const [companyLogoFile, setCompanyLogoFile] = useState<File | null>(null)
+  const [companyLogoPreview, setCompanyLogoPreview] = useState<string>("")
 
   const {
     register: registerSeeker,
@@ -110,6 +112,21 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
     const reader = new FileReader()
     reader.onloadend = () => {
       setRecruiterImagePreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleCompanyLogoChange = (file: File | null) => {
+    if (!file) {
+      setCompanyLogoFile(null)
+      setCompanyLogoPreview("")
+      return
+    }
+
+    setCompanyLogoFile(file)
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setCompanyLogoPreview(reader.result as string)
     }
     reader.readAsDataURL(file)
   }
@@ -184,6 +201,11 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
 
       if (logoFile) {
         formData.append("companyLogo", logoFile)
+      }
+
+      // Also support the new companyLogoFile state if used by the FileInput
+      if (companyLogoFile) {
+        formData.append("companyLogo", companyLogoFile)
       }
 
       if (recruiterImageFile) {
@@ -287,7 +309,41 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
 
       {role === "recruiter" && (
         <>
-          {/* Company details are collected during signup via other fields; removed CompanySection form block. */}
+          <div className="space-y-2">
+            <InputField id="companyName" label="Company Name" type="text" placeholder="Acme Corp" {...registerRecruiter('companyName' as any)} />
+            {errors.companyName && <p className="text-xs text-destructive">{errors.companyName.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <TextareaField id="companyDescription" label="Company Description" placeholder="Describe your company" {...registerRecruiter('companyDescription' as any)} />
+            {errors.companyDescription && <p className="text-xs text-destructive">{errors.companyDescription.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <InputField id="companyWebsite" label="Company Website (Optional)" type="url" placeholder="https://example.com" {...registerRecruiter('companyWebsite' as any)} />
+            {errors.companyWebsite && <p className="text-xs text-destructive">{errors.companyWebsite.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <InputField id="companyIndustry" label="Industry" type="text" placeholder="Software, Finance, Healthcare" {...registerRecruiter('companyIndustry' as any)} />
+            {errors.companyIndustry && <p className="text-xs text-destructive">{errors.companyIndustry.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <InputField id="companySize" label="Company Size" type="text" placeholder="1-10, 11-50, 51-200" {...registerRecruiter('companySize' as any)} />
+            {errors.companySize && <p className="text-xs text-destructive">{errors.companySize.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <InputField id="companyLocation" label="Company Location" type="text" placeholder="City, Country" {...registerRecruiter('companyLocation' as any)} />
+            {errors.companyLocation && <p className="text-xs text-destructive">{errors.companyLocation.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <FileInput id="companyLogo" label="Company Logo (Optional)" accept=".jpg,.jpeg,.png,.webp" onFileChange={handleCompanyLogoChange} preview={companyLogoPreview} />
+            <p className="text-xs text-muted-foreground">JPG, JPEG, PNG, or WEBP (Max 3MB)</p>
+          </div>
+
           <div className="space-y-2 mt-3">
             <FileInput id="recruiterImage" label="Profile Image (Optional)" accept=".jpg,.jpeg,.png,.webp" onFileChange={handleRecruiterImageChange} preview={recruiterImagePreview} />
             <p className="text-xs text-muted-foreground">JPG, JPEG, PNG, or WEBP (Max 3MB)</p>
