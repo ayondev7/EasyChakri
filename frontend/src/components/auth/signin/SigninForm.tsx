@@ -35,16 +35,16 @@ export default function SigninForm({ role }: { role: "seeker" | "recruiter" }) {
       const result = await signIn("credentials-signin", {
         email: data.email,
         password: data.password,
-        callbackUrl,
+        redirect: false,
       })
 
       if (!result) {
         toast.error("Invalid credentials. Please try again.")
-      } else if ((result as any).error) {
-        const err = (result as any).error
-        toast.error(typeof err === 'string' ? err : 'Invalid credentials. Please try again.')
-      } else {
+      } else if (result.error) {
+        toast.error(result.error || "Invalid credentials. Please try again.")
+      } else if (result.ok) {
         toast.success("👋 Welcome back!")
+        window.location.href = callbackUrl
       }
     } catch (err) {
       toast.error("An error occurred. Please try again.")

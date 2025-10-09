@@ -20,6 +20,9 @@ const authOptions: NextAuthOptions = {
 				password: { label: "Password", type: "password" },
 				name: { label: "Name", type: "text" },
 				role: { label: "Role", type: "text" },
+				phone: { label: "Phone", type: "text" },
+				dateOfBirth: { label: "Date of Birth", type: "text" },
+				image: { label: "Image", type: "text" },
 				companyName: { label: "Company Name", type: "text" },
 				companyDescription: { label: "Company Description", type: "text" },
 				companyWebsite: { label: "Company Website", type: "text" },
@@ -30,7 +33,7 @@ const authOptions: NextAuthOptions = {
 			},
 			async authorize(credentials) {
 				if (!credentials?.email || !credentials?.password || !credentials?.name || !credentials?.role) {
-					return null;
+					throw new Error("Missing required fields");
 				}
 
 				try {
@@ -41,6 +44,14 @@ const authOptions: NextAuthOptions = {
 						role: credentials.role,
 					};
 
+					// Add seeker-specific fields
+					if (credentials.role === "SEEKER") {
+						if (credentials.phone) body.phone = credentials.phone;
+						if (credentials.dateOfBirth) body.dateOfBirth = credentials.dateOfBirth;
+						if (credentials.image) body.image = credentials.image;
+					}
+
+					// Add recruiter-specific fields
 					if (credentials.role === "RECRUITER") {
 						body.companyName = credentials.companyName;
 						body.companyDescription = credentials.companyDescription;
@@ -48,7 +59,8 @@ const authOptions: NextAuthOptions = {
 						body.companyIndustry = credentials.companyIndustry;
 						body.companySize = credentials.companySize;
 						body.companyLocation = credentials.companyLocation;
-						body.companyLogo = credentials.companyLogo;
+						if (credentials.companyLogo) body.companyLogo = credentials.companyLogo;
+						if (credentials.image) body.image = credentials.image;
 					}
 
 					const response = await fetch(AUTH_ROUTES.credential.signup, {
@@ -60,9 +72,9 @@ const authOptions: NextAuthOptions = {
 					});
 
 					if (!response.ok) {
-						const errorData = await response.json().catch(() => ({}));
-						console.error("Signup error:", errorData);
-						return null;
+						const errorData = await response.json().catch(() => ({ message: "Failed to create account" }));
+						const errorMessage = errorData.message || "Failed to create account";
+						throw new Error(errorMessage);
 					}
 
 					const data: { data: AuthResponse } = await response.json();
@@ -77,7 +89,7 @@ const authOptions: NextAuthOptions = {
 					};
 				} catch (error) {
 					console.error("Signup error:", error);
-					return null;
+					throw error;
 				}
 			},
 		}),
@@ -90,7 +102,7 @@ const authOptions: NextAuthOptions = {
 			},
 			async authorize(credentials) {
 				if (!credentials?.email || !credentials?.password) {
-					return null;
+					throw new Error("Email and password are required");
 				}
 
 				try {
@@ -106,9 +118,9 @@ const authOptions: NextAuthOptions = {
 					});
 
 					if (!response.ok) {
-						const errorData = await response.json().catch(() => ({}));
-						console.error("Signin error:", errorData);
-						return null;
+						const errorData = await response.json().catch(() => ({ message: "Invalid email or password" }));
+						const errorMessage = errorData.message || "Invalid email or password";
+						throw new Error(errorMessage);
 					}
 
 					const data: { data: AuthResponse } = await response.json();
@@ -123,7 +135,7 @@ const authOptions: NextAuthOptions = {
 					};
 				} catch (error) {
 					console.error("Signin error:", error);
-					return null;
+					throw error;
 				}
 			},
 		}),

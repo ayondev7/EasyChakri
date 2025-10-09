@@ -7,6 +7,7 @@ import { z } from "zod"
 import toast from "react-hot-toast"
 import InputField from "@/components/form/InputField"
 import TextareaField from "@/components/form/TextareaField"
+import FileInput from "@/components/form/FileInput"
 import SignUpCard from "@/components/auth/signup/SignUpCard"
 import CompanySection from "@/components/auth/signup/CompanySection"
 
@@ -15,6 +16,8 @@ const seekerSchema = z.object({
   email: z.string().email("Please provide a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
+  dateOfBirth: z.string().refine((d) => !isNaN(Date.parse(d)), "Please provide a valid date of birth"),
+  phone: z.string().min(6, "Phone number is required"),
   terms: z.boolean().refine((val) => val === true, "You must accept the terms and conditions"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
@@ -46,6 +49,10 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
   const [isLoading, setIsLoading] = useState(false)
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string>("")
+  const [seekerImageFile, setSeekerImageFile] = useState<File | null>(null)
+  const [seekerImagePreview, setSeekerImagePreview] = useState<string>("")
+  const [recruiterImageFile, setRecruiterImageFile] = useState<File | null>(null)
+  const [recruiterImagePreview, setRecruiterImagePreview] = useState<string>("")
 
   const {
     register: registerSeeker,
@@ -63,18 +70,10 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
     resolver: zodResolver(recruiterSchema),
   })
 
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
-    if (!validTypes.includes(file.type)) {
-      toast.error("Logo must be JPG, JPEG, PNG, or WEBP")
-      return
-    }
-
-    if (file.size > 3 * 1024 * 1024) {
-      toast.error("Logo must be less than 3MB")
+  const handleLogoChange = (file: File | null) => {
+    if (!file) {
+      setLogoFile(null)
+      setLogoPreview("")
       return
     }
 
@@ -86,26 +85,77 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
     reader.readAsDataURL(file)
   }
 
+  const handleSeekerImageChange = (file: File | null) => {
+    if (!file) {
+      setSeekerImageFile(null)
+      setSeekerImagePreview("")
+      return
+    }
+    
+    setSeekerImageFile(file)
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setSeekerImagePreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleRecruiterImageChange = (file: File | null) => {
+    if (!file) {
+      setRecruiterImageFile(null)
+      setRecruiterImagePreview("")
+      return
+    }
+    
+    setRecruiterImageFile(file)
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setRecruiterImagePreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
   const onSubmitSeeker = async (data: SeekerFormData) => {
     setIsLoading(true)
 
     try {
-      const callbackUrl = "/seeker/dashboard"
-      const result = await signIn("credentials-signup", {
-        email: data.email,
-        password: data.password,
-        name: data.name,
-        role: "SEEKER",
-        callbackUrl,
+      const formData = new FormData()
+      formData.append("email", data.email)
+      formData.append("password", data.password)
+      formData.append("name", data.name)
+      formData.append("role", "SEEKER")
+      formData.append("dateOfBirth", data.dateOfBirth)
+      formData.append("phone", data.phone)
+      
+      if (seekerImageFile) {
+        formData.append("image", seekerImageFile)
+      }
+
+      // Call custom signup API
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        body: formData,
       })
 
-      if (!result) {
-        toast.error("Failed to create account. Please try again.")
-      } else if ((result as any).error) {
-        const err = (result as any).error
-        toast.error(typeof err === 'string' ? err : 'Failed to create account. Please try again.')
-      } else {
+      const result = await response.json()
+
+      if (!response.ok) {
+        toast.error(result.message || "Failed to create account. Please try again.")
+        return
+      }
+
+      // After successful signup, sign in with credentials
+      const signInResult = await signIn("credentials-signin", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      })
+
+      if (signInResult?.error) {
+        toast.error("Account created but failed to sign in. Please sign in manually.")
+      } else if (signInResult?.ok) {
         toast.success("🎉 Welcome to EasyChakri!")
+        window.location.href = "/seeker/dashboard"
       }
     } catch (err) {
       toast.error("An error occurred. Please try again.")
@@ -118,29 +168,54 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
     setIsLoading(true)
 
     try {
-      const callbackUrl = "/recruiter/dashboard"
-      const result = await signIn("credentials-signup", {
-        email: data.email,
-        password: data.password,
-        name: data.name,
-        role: "RECRUITER",
-        companyName: data.companyName,
-        companyDescription: data.companyDescription,
-        companyWebsite: data.companyWebsite || undefined,
-        companyIndustry: data.companyIndustry,
-        companySize: data.companySize,
-        companyLocation: data.companyLocation,
-        companyLogo: logoPreview || undefined,
-        callbackUrl,
+      const formData = new FormData()
+      formData.append("email", data.email)
+      formData.append("password", data.password)
+      formData.append("name", data.name)
+      formData.append("role", "RECRUITER")
+      formData.append("companyName", data.companyName)
+      formData.append("companyDescription", data.companyDescription)
+      formData.append("companyIndustry", data.companyIndustry)
+      formData.append("companySize", data.companySize)
+      formData.append("companyLocation", data.companyLocation)
+      
+      if (data.companyWebsite) {
+        formData.append("companyWebsite", data.companyWebsite)
+      }
+
+      if (logoFile) {
+        formData.append("companyLogo", logoFile)
+      }
+
+      if (recruiterImageFile) {
+        formData.append("image", recruiterImageFile)
+      }
+
+      // Call custom signup API
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        body: formData,
       })
 
-      if (!result) {
-        toast.error("Failed to create account. Please try again.")
-      } else if ((result as any).error) {
-        const err = (result as any).error
-        toast.error(typeof err === 'string' ? err : 'Failed to create account. Please try again.')
-      } else {
+      const result = await response.json()
+
+      if (!response.ok) {
+        toast.error(result.message || "Failed to create account. Please try again.")
+        return
+      }
+
+      // After successful signup, sign in with credentials
+      const signInResult = await signIn("credentials-signin", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      })
+
+      if (signInResult?.error) {
+        toast.error("Account created but failed to sign in. Please sign in manually.")
+      } else if (signInResult?.ok) {
         toast.success("🎉 Welcome to EasyChakri!")
+        window.location.href = "/recruiter/dashboard"
       }
     } catch (err) {
       toast.error("An error occurred. Please try again.")
@@ -188,8 +263,38 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
         )}
       </div>
 
+      {role === "seeker" && (
+        <>
+          <div className="space-y-2">
+            <InputField id="dateOfBirth" label="Date of Birth" type="date" {...registerSeeker("dateOfBirth" as any)} />
+            {errorsSeeker.dateOfBirth && (
+              <p className="text-xs text-destructive">{errorsSeeker.dateOfBirth.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <InputField id="phone" label="Phone" type="tel" placeholder="(123) 456-7890" {...registerSeeker("phone" as any)} />
+            {errorsSeeker.phone && (
+              <p className="text-xs text-destructive">{errorsSeeker.phone.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <FileInput id="seekerImage" label="Profile Image (Optional)" accept=".jpg,.jpeg,.png,.webp" onFileChange={handleSeekerImageChange} preview={seekerImagePreview} />
+            <p className="text-xs text-muted-foreground">JPG, JPEG, PNG, or WEBP (Max 3MB)</p>
+          </div>
+        </>
+      )}
+
       {role === "recruiter" && (
-        <CompanySection register={registerRecruiter} errors={errorsRecruiter} onLogoChange={handleLogoChange} logoPreview={logoPreview} />
+        <>
+          <CompanySection register={registerRecruiter} errors={errorsRecruiter} onLogoChange={handleLogoChange} logoPreview={logoPreview} />
+
+          <div className="space-y-2 mt-3">
+            <FileInput id="recruiterImage" label="Profile Image (Optional)" accept=".jpg,.jpeg,.png,.webp" onFileChange={handleRecruiterImageChange} preview={recruiterImagePreview} />
+            <p className="text-xs text-muted-foreground">JPG, JPEG, PNG, or WEBP (Max 3MB)</p>
+          </div>
+        </>
       )}
     </SignUpCard>
   )

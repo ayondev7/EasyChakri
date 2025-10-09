@@ -20,7 +20,7 @@ export default function PostJobPage() {
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
-  const [hasCompanyProfile, setHasCompanyProfile] = useState(false)
+  // company profile is no longer required to post jobs
   const [skills, setSkills] = useState<string[]>([])
   const [newSkill, setNewSkill] = useState("")
   const [requirements, setRequirements] = useState<string[]>([""])
@@ -41,8 +41,7 @@ export default function PostJobPage() {
       return
     }
 
-    const profile = localStorage.getItem(`company_profile_${user?.id}`)
-    setHasCompanyProfile(!!profile)
+    // no-op: company details are provided during signup; allow posting directly
   }, [isAuthenticated, user, router, authLoading])
 
   // Show loading state while session is being checked
@@ -53,39 +52,6 @@ export default function PostJobPage() {
   // Don't render page until authenticated
   if (!isAuthenticated || !user || user.role !== "recruiter") {
     return null
-  }
-
-  if (!hasCompanyProfile) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <main className="flex-1 flex items-center justify-center py-12 px-4">
-          <Card className="max-w-md w-full">
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="h-12 w-12 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6" />
-                </div>
-                <CardTitle>Company Profile Required</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground">
-                Before you can post jobs, you need to complete your company profile. This helps job seekers learn more
-                about your organization.
-              </p>
-              <div className="flex flex-col gap-3">
-                <Button asChild className="bg-emerald-500 hover:bg-emerald-600 text-white">
-                  <Link href="/recruiter/company-profile">Complete Company Profile</Link>
-                </Button>
-                <Button variant="outline" onClick={() => router.back()}>
-                  Go Back
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </main>
-      </div>
-    )
   }
 
   const handleAddSkill = () => {

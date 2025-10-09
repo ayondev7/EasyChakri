@@ -6,7 +6,7 @@ import FileInput from "@/components/form/FileInput"
 type Props = {
   register: any
   errors: any
-  onLogoChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onLogoChange: (file: File | null) => void
   logoPreview?: string
 }
 
@@ -62,13 +62,8 @@ export default function CompanySection({ register, errors, onLogoChange, logoPre
       </div>
 
       <div className="space-y-2">
-        <FileInput id="companyLogo" label="Company Logo (Optional)" accept=".jpg,.jpeg,.png,.webp" onChange={onLogoChange} />
+        <FileInput id="companyLogo" label="Company Logo (Optional)" accept=".jpg,.jpeg,.png,.webp" onFileChange={onLogoChange} preview={logoPreview} />
         <p className="text-xs text-muted-foreground">JPG, JPEG, PNG, or WEBP (Max 3MB)</p>
-        {logoPreview && (
-          <div className="mt-2">
-            <img src={logoPreview} alt="Logo preview" className="w-20 h-20 object-cover rounded-lg border" />
-          </div>
-        )}
       </div>
     </>
   )
