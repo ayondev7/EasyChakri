@@ -15,13 +15,26 @@ export class JobService {
    * Create new job (Recruiter only)
    */
   async createJob(recruiterId: string, dto: CreateJobDto) {
-    // Verify company belongs to recruiter
-    const company = await this.prisma.company.findUnique({
-      where: { id: dto.companyId },
-    });
+    // Resolve company: if companyId provided, verify ownership;
+    // otherwise try to find the recruiter's company in the DB.
+    let company = null as any
 
-    if (!company || company.recruiterId !== recruiterId) {
-      throw new ForbiddenException('You do not have access to this company');
+    if (dto.companyId) {
+      company = await this.prisma.company.findUnique({ where: { id: dto.companyId } });
+      if (!company) {
+        throw new NotFoundException('Company not found');
+      }
+      if (company.recruiterId !== recruiterId) {
+        throw new ForbiddenException('You do not have access to this company');
+      }
+    } else {
+      // Try to find a company belonging to the recruiter
+      company = await this.prisma.company.findFirst({ where: { recruiterId } });
+      if (!company) {
+        throw new NotFoundException('No company associated with your account. Please create a company profile before posting jobs.');
+      }
+      // attach the found company id to dto for job creation
+      dto.companyId = company.id
     }
 
     // Generate unique slug for job

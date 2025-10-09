@@ -53,9 +53,6 @@ export class CreateJobDto {
   @IsString()
   category: string;
 
-  @IsString()
-  companyId: string;
-
   @IsOptional()
   @IsDateString()
   deadline?: string;
