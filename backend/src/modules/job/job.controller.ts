@@ -1,21 +1,13 @@
-/**
- * JOB CONTROLLER
- * 
- * EXPRESS EQUIVALENT:
- * Public routes (GET): No auth required
- * Protected routes (POST, PUT, DELETE): Auth required with @UseGuards(JwtAuthGuard)
- */
-
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  Query,
-  UseGuards,
+import { 
+  Controller, 
+  Get, 
+  Post, 
+  Put, 
+  Delete, 
+  Body, 
+  Param, 
+  Query, 
+  UseGuards 
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto, UpdateJobDto, JobQueryDto } from './dto/job.dto';
@@ -26,29 +18,17 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 export class JobController {
   constructor(private jobService: JobService) {}
 
-  /**
-   * GET /api/jobs
-   * Get all jobs with filters (Public)
-   */
-  @Get()
+  @Get('get-jobs')
   async getAllJobs(@Query() query: JobQueryDto) {
     return await this.jobService.getJobs(query);
   }
 
-  /**
-   * GET /api/jobs/:id
-   * Get job by ID (Public)
-   */
-  @Get(':id')
+  @Get('get-job-details/:id')
   async getJob(@Param('id') id: string) {
     return await this.jobService.getJobById(id);
   }
 
-  /**
-   * POST /api/jobs
-   * Create new job (Protected - Recruiter only)
-   */
-  @Post()
+  @Post('create-job')
   @UseGuards(JwtAuthGuard)
   async createJob(
     @CurrentUser() user: any,
@@ -61,11 +41,7 @@ export class JobController {
     };
   }
 
-  /**
-   * PUT /api/jobs/:id
-   * Update job (Protected - Recruiter only, must own the job)
-   */
-  @Put(':id')
+  @Put('update-job/:id')
   @UseGuards(JwtAuthGuard)
   async updateJob(
     @Param('id') id: string,
@@ -79,11 +55,7 @@ export class JobController {
     };
   }
 
-  /**
-   * DELETE /api/jobs/:id
-   * Delete job (Protected - Recruiter only, must own the job)
-   */
-  @Delete(':id')
+  @Delete('delete-job/:id')
   @UseGuards(JwtAuthGuard)
   async deleteJob(
     @Param('id') id: string,
@@ -92,10 +64,6 @@ export class JobController {
     return await this.jobService.deleteJob(id, user.id);
   }
 
-  /**
-   * GET /api/jobs/recruiter/my-jobs
-   * Get jobs posted by current recruiter (Protected)
-   */
   @Get('recruiter/my-jobs')
   @UseGuards(JwtAuthGuard)
   async getMyJobs(
