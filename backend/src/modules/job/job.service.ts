@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobDto, UpdateJobDto, JobQueryDto } from './dto/job.dto';
 import { generateUniqueJobSlug } from '../../utils/slug.util';
@@ -11,39 +7,21 @@ import { generateUniqueJobSlug } from '../../utils/slug.util';
 export class JobService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Create new job (Recruiter only)
-   */
   async createJob(recruiterId: string, dto: CreateJobDto) {
-    // Resolve company: if companyId provided, verify ownership;
-    // otherwise try to find the recruiter's company in the DB.
     let company = null as any
 
-    if (dto.companyId) {
-      company = await this.prisma.company.findUnique({ where: { id: dto.companyId } });
-      if (!company) {
-        throw new NotFoundException('Company not found');
-      }
-      if (company.recruiterId !== recruiterId) {
-        throw new ForbiddenException('You do not have access to this company');
-      }
-    } else {
-      // Try to find a company belonging to the recruiter
-      company = await this.prisma.company.findFirst({ where: { recruiterId } });
-      if (!company) {
-        throw new NotFoundException('No company associated with your account. Please create a company profile before posting jobs.');
-      }
-      // attach the found company id to dto for job creation
-      dto.companyId = company.id
+    company = await this.prisma.company.findFirst({ where: { recruiterId } });
+    if (!company) {
+      throw new NotFoundException('No company associated with your account. Please create a company profile before posting jobs.');
     }
 
-    // Generate unique slug for job
     const slug = await generateUniqueJobSlug(this.prisma as any, dto.title)
 
     const job = await this.prisma.job.create({
       data: {
         ...dto,
         recruiterId,
+        companyId: company.id,
         slug,
         deadline: dto.deadline ? new Date(dto.deadline) : null,
       },
@@ -63,9 +41,6 @@ export class JobService {
     return job;
   }
 
-  /**
-   * Get all jobs with filters and pagination
-   */
   async getJobs(query: JobQueryDto) {
     const {
       search,
@@ -79,7 +54,6 @@ export class JobService {
 
     const skip = (page - 1) * limit;
 
-    // Build where clause
     const where: any = {};
 
     if (search) {
@@ -95,10 +69,8 @@ export class JobService {
     if (category) where.category = { contains: category, mode: 'insensitive' };
     if (isRemote !== undefined) where.isRemote = isRemote;
 
-    // Get total count for pagination
     const total = await this.prisma.job.count({ where });
 
-    // Get jobs
     const jobs = await this.prisma.job.findMany({
       where,
       skip,
@@ -133,9 +105,6 @@ export class JobService {
     };
   }
 
-  /**
-   * Get job by ID
-   */
   async getJobById(id: string) {
     const job = await this.prisma.job.findUnique({
       where: { id },
@@ -170,7 +139,6 @@ export class JobService {
       throw new NotFoundException('Job not found');
     }
 
-    // Increment views
     await this.prisma.job.update({
       where: { id },
       data: { views: { increment: 1 } },
@@ -179,11 +147,7 @@ export class JobService {
     return job;
   }
 
-  /**
-   * Update job (Recruiter only - must own the job)
-   */
   async updateJob(jobId: string, recruiterId: string, dto: UpdateJobDto) {
-    // Verify job belongs to recruiter
     const job = await this.prisma.job.findUnique({
       where: { id: jobId },
     });
@@ -218,11 +182,7 @@ export class JobService {
     return updatedJob;
   }
 
-  /**
-   * Delete job (Recruiter only - must own the job)
-   */
   async deleteJob(jobId: string, recruiterId: string) {
-    // Verify job belongs to recruiter
     const job = await this.prisma.job.findUnique({
       where: { id: jobId },
     });
@@ -242,9 +202,6 @@ export class JobService {
     return { message: 'Job deleted successfully' };
   }
 
-  /**
-   * Get jobs posted by a specific recruiter
-   */
   async getRecruiterJobs(recruiterId: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
