@@ -13,6 +13,10 @@ export interface ApiError {
   statusCode?: number
 }
 
+const defaultQueryOptions: Partial<UseQueryOptions<any, any, any, any>> = {
+  refetchOnWindowFocus: false,
+}
+
 export function useGet<TData = unknown>(
   key: QueryKey,
   url: string,
@@ -24,6 +28,7 @@ export function useGet<TData = unknown>(
       const { data } = await apiClient.get<TData>(url)
       return data
     },
+    ...defaultQueryOptions,
     ...options,
   })
 }

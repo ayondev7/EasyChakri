@@ -43,8 +43,8 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
                 >
                   <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                     <Image
-                      src={job.company.logo || "/placeholder.svg?height=48&width=48"}
-                      alt={job.company.name}
+                      src={job?.company?.logo || "/placeholder.svg?height=48&width=48"}
+                      alt={job?.company?.name}
                       fill
                       className="object-cover"
                     />
