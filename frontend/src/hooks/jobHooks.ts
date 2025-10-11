@@ -36,9 +36,12 @@ export interface JobQueryParams {
 
 export interface JobsResponse {
   data: Job[]
-  total: number
-  page: number
-  limit: number
+  meta: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
 }
 
 export interface JobResponse {
@@ -56,7 +59,19 @@ export const jobKeys = {
 }
 
 export function useJobs(params?: JobQueryParams) {
-  const queryString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : ''
+  // Build query string properly handling boolean and number types
+  let queryString = ''
+  if (params) {
+    const searchParams = new URLSearchParams()
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        searchParams.append(key, String(value))
+      }
+    })
+    const qs = searchParams.toString()
+    if (qs) queryString = `?${qs}`
+  }
+  
   return useGet<JobsResponse>(
     jobKeys.list(params),
     `${JOB_ROUTES.getAll}${queryString}`

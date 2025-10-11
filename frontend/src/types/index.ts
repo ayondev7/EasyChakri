@@ -46,11 +46,20 @@ export interface Job {
   benefits?: string[]
   skills: string[]
   postedDate: Date
+  createdAt?: Date
+  updatedAt?: Date
   deadline?: Date
   applicants: number
   views: number
   featured?: boolean
   recruiterId: string
+  companyId: string
+  slug?: string
+  category?: string
+  isRemote?: boolean
+  _count?: {
+    applications: number
+  }
 }
 
 export interface Application {
