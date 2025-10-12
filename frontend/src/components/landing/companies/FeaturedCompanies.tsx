@@ -1,62 +1,10 @@
 "use client"
-
 import { useRef } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CompanyCard } from "./CompanyCard"
-
-const featuredCompanies = [
-  {
-    id: 1,
-    name: "Intellect Design Arena",
-    logo: "/tech-company-logo.jpg",
-    employees: "5,000+",
-    industry: "Financial Technology",
-    description: "World's largest, future-ready Enterprise FinTech Company",
-  },
-  {
-    id: 2,
-    name: "Infosys",
-    logo: "/data-analytics-logo.jpg",
-    employees: "300,000+",
-    industry: "IT Services",
-    description: "Global leader in next-gen digital services & consulting.",
-  },
-  {
-    id: 3,
-    name: "Empower",
-    logo: "/cloud-systems-logo.jpg",
-    employees: "1,200+",
-    industry: "Financial Services",
-    description: "We're a financial services company.",
-  },
-  {
-    id: 4,
-    name: "Genpact",
-    logo: "/innovate-labs-logo.jpg",
-    employees: "100,000+",
-    industry: "Professional Services",
-    description: "Global professional services firm.",
-  },
-  {
-    id: 5,
-    name: "TechCorp Solutions",
-    logo: "/tech-company-logo.jpg",
-    employees: "2,500+",
-    industry: "Technology",
-    description: "Leading digital transformation company.",
-  },
-  {
-    id: 6,
-    name: "DataFlow Analytics",
-    logo: "/data-analytics-logo.jpg",
-    employees: "850+",
-    industry: "Data Analytics",
-    description: "Data-driven insights for modern businesses.",
-  },
-]
+import { useCompanies } from "@/hooks/companyHooks"
 
 export function FeaturedCompanies() {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -69,6 +17,35 @@ export function FeaturedCompanies() {
         behavior: "smooth",
       })
     }
+  }
+
+  const { data, isLoading, error } = useCompanies(10)
+  const companies = data?.data || []
+
+  if (isLoading) {
+    return (
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">Featured companies actively hiring</h2>
+          </div>
+          <div className="text-center">Loading companies...</div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">Featured companies actively hiring</h2>
+          </div>
+          <div className="text-center text-red-500">Failed to load companies</div>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -89,13 +66,13 @@ export function FeaturedCompanies() {
           </Button>
 
           <div ref={scrollRef} className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory">
-            {featuredCompanies.map((company) => (
+            {companies.map((company: any) => (
               <div key={company.id} className="flex-shrink-0 w-[320px] snap-start">
                 <CompanyCard
                   id={company.id}
                   name={company.name}
                   logo={company.logo}
-                  employees={company.employees}
+                  employees={company.size || company.employees || `${company.jobCount || 0} employees`}
                   industry={company.industry}
                   description={company.description}
                 />

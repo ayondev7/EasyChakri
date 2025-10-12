@@ -28,9 +28,9 @@ export function CompanyCard({ id, name, logo, employees, industry, description }
 
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-lg mb-1 line-clamp-2">{name}</h3>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex flex-col items-start gap-3 text-xs text-muted-foreground">
             {industry && <span className="inline-block px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">{industry}</span>}
-            {employees && <span className="text-sm">{employees} employees</span>}
+            {employees && <span className="text-xs">{employees} employees</span>}
           </div>
         </div>
       </div>
