@@ -14,12 +14,13 @@ interface JobsListProps {
 export const JobsList: React.FC<JobsListProps> = ({ initialPage = 1, pageSize = 12, queryParams = {} }) => {
   const [page, setPage] = useState(initialPage)
 
-  // build params
   const params = { ...queryParams, page, limit: pageSize }
 
   const { data, isLoading, isError } = useJobs(params)
 
-  // Reset to page 1 when query params change (filters, search, etc)
+  useEffect(() => {
+    setPage(1)
+  }, [JSON.stringify(queryParams)])
   useEffect(() => {
     setPage(1)
   }, [JSON.stringify(queryParams)])

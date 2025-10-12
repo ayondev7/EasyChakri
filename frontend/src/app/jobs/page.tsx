@@ -22,23 +22,18 @@ export default function JobsPage() {
   const searchQuery = searchParams.get("q") || ""
   const locationQuery = searchParams.get("location") || ""
 
-  // Build query params for backend
   const queryParams: Record<string, any> = {}
   if (searchQuery) queryParams.search = searchQuery
   if (locationQuery) queryParams.location = locationQuery
-  
-  // Add filter params - backend expects single values for type, location, category
-  // For jobType filter, send the first selected type (or extend backend to support multiple)
+
   if (filters.jobType.length > 0) {
-    queryParams.type = filters.jobType[0] // Backend JobType enum expects single value
+    queryParams.type = filters.jobType[0]
   }
-  
-  // For location filter from sidebar, join or send first (backend uses 'contains')
+
   if (filters.location.length > 0) {
     queryParams.location = filters.location[0]
   }
-  
-  // isRemote filter - check if "Remote" is in jobType
+
   if (filters.jobType.includes("Remote")) {
     queryParams.isRemote = true
   }
@@ -61,7 +56,7 @@ export default function JobsPage() {
               </div>
             </aside>
 
-            {/* Job Listings */}
+            
             <div className="flex-1">
               <div className="flex items-center justify-between mb-6">
                 <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="lg:hidden">

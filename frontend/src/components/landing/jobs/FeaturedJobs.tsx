@@ -1,13 +1,33 @@
 "use client"
-
 import Link from "next/link"
-import { mockJobs } from "@/utils/MockData"
 import { JobCard } from "@/components/JobCard"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import { useJobs } from "@/hooks/jobHooks"
 
 export function FeaturedJobs() {
-  const featuredJobs = mockJobs.filter((job) => job.featured).slice(0, 6)
+  const { data: jobsResponse, isLoading, error } = useJobs({ limit: 9 })
+  const jobs = jobsResponse?.data || []
+
+  if (isLoading) {
+    return (
+      <section className="py-[100px] md:py-[100px]">
+        <div className="container mx-auto px-[100px]">
+          <div className="text-center">Loading jobs...</div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="py-[100px] md:py-[100px]">
+        <div className="container mx-auto px-[100px]">
+          <div className="text-center text-red-500">Failed to load jobs</div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="py-[100px] md:py-[100px]">
@@ -26,7 +46,7 @@ export function FeaturedJobs() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredJobs.map((job) => (
+          {jobs.map((job) => (
             <JobCard key={job.id} job={job} />
           ))}
         </div>

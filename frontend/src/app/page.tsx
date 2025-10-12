@@ -1,4 +1,4 @@
-// Navbar and Footer are provided by the root layout
+
 import { HeroSection } from "@/components/landing/hero/HeroSection"
 import { FeaturedJobs } from "@/components/landing/jobs/FeaturedJobs"
 import { TopCompanies } from "@/components/landing/companies/TopCompanies"
