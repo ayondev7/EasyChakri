@@ -1,0 +1,19 @@
+export type UserRole = "seeker" | "recruiter"
+
+export interface User {
+  id: string
+  email: string
+  name: string
+  role: UserRole
+  avatar?: string
+  phone?: string
+  location?: string
+  bio?: string
+  skills?: string[]
+  experience?: string
+  education?: string
+  resume?: string
+  companyName?: string
+  companyLogo?: string
+  createdAt: Date
+}
