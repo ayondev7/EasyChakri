@@ -98,4 +98,12 @@ export class JobController {
   async getTrendingSearches(@Query('limit') limit?: number) {
     return await this.jobService.getTrendingSearches(limit);
   }
+
+  @Get('similar/:id')
+  async getSimilarJobs(
+    @Param('id') id: string,
+    @Query('limit') limit?: number,
+  ) {
+    return await this.jobService.getSimilarJobs(id, limit);
+  }
 }

@@ -136,6 +136,14 @@ export class JobQueryDto {
   category?: string;
 
   @IsOptional()
+  @IsString()
+  experience?: string;
+
+  @IsOptional()
+  @IsString()
+  salaryRange?: string;
+
+  @IsOptional()
   @IsBoolean()
   isRemote?: boolean;
 

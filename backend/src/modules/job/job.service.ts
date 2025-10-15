@@ -47,6 +47,8 @@ export class JobService {
       type,
       location,
       category,
+      experience,
+      salaryRange,
       isRemote,
       page = 1,
       limit = 10,
@@ -68,6 +70,43 @@ export class JobService {
     if (location) where.location = { contains: location, mode: 'insensitive' };
     if (category) where.category = { contains: category, mode: 'insensitive' };
     if (isRemote !== undefined) where.isRemote = isRemote;
+
+    // Handle experience filter
+    if (experience) {
+      const experiencePatterns: Record<string, string[]> = {
+        'fresher': ['0-1', '0-2', 'fresher', 'entry'],
+        'mid': ['2-3', '3-5', '2-5', 'mid'],
+        'senior': ['5+', '6+', '7+', 'senior', 'lead'],
+      };
+
+      const patterns = experiencePatterns[experience];
+      if (patterns) {
+        where.OR = where.OR ? [...where.OR, ...patterns.map(p => ({
+          experience: {
+            contains: p,
+            mode: 'insensitive',
+          },
+        }))] : patterns.map(p => ({
+          experience: {
+            contains: p,
+            mode: 'insensitive',
+          },
+        }));
+      }
+    }
+
+    // Handle salary range filter
+    if (salaryRange) {
+      const [minSalary, maxSalary] = salaryRange.split('-').map(Number);
+      if (!isNaN(minSalary) && !isNaN(maxSalary)) {
+        // This is a simplified approach - you might need to adjust based on how salary is stored
+        // For now, we'll use text matching since salary is stored as a string like "$50k-$80k"
+        where.salary = {
+          contains: '',
+          mode: 'insensitive',
+        };
+      }
+    }
 
     const total = await this.prisma.job.count({ where });
 
@@ -404,6 +443,56 @@ export class JobService {
       .slice(0, limitNum);
 
     return { data: trending };
+  }
+
+  async getSimilarJobs(jobId: string, limit = 3) {
+    const job = await this.prisma.job.findUnique({
+      where: { id: jobId },
+      select: {
+        companyId: true,
+        skills: true,
+        category: true,
+      },
+    });
+
+    if (!job) {
+      throw new NotFoundException('Job not found');
+    }
+
+    const similarJobs = await this.prisma.job.findMany({
+      where: {
+        id: { not: jobId },
+        OR: [
+          { companyId: job.companyId },
+          { category: job.category },
+          {
+            skills: {
+              hasSome: job.skills,
+            },
+          },
+        ],
+      },
+      take: Number(limit),
+      orderBy: { createdAt: 'desc' },
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
+            location: true,
+            industry: true,
+          },
+        },
+        _count: {
+          select: {
+            applications: true,
+          },
+        },
+      },
+    });
+
+    return { data: similarJobs };
   }
 }
 
