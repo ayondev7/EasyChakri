@@ -291,5 +291,119 @@ export class JobService {
 
     return { data: categories };
   }
+
+  async getJobsByLocation(limit?: number) {
+    const jobsWithLocation = await this.prisma.job.groupBy({
+      by: ['location'],
+      _count: {
+        location: true,
+      },
+      orderBy: {
+        _count: {
+          location: 'desc',
+        },
+      },
+      take: limit ? Number(limit) : undefined,
+    });
+
+    const locations = jobsWithLocation.map((item) => ({
+      location: item.location,
+      count: item._count.location,
+    }));
+
+    return { data: locations };
+  }
+
+  async getJobsBySkill(limit?: number) {
+    const allJobs = await this.prisma.job.findMany({
+      select: {
+        skills: true,
+      },
+    });
+
+    const skillCounts = new Map<string, number>();
+
+    allJobs.forEach((job) => {
+      job.skills.forEach((skill) => {
+        const normalizedSkill = skill.trim();
+        if (normalizedSkill) {
+          skillCounts.set(
+            normalizedSkill,
+            (skillCounts.get(normalizedSkill) || 0) + 1
+          );
+        }
+      });
+    });
+
+    const topLimit = limit ? Number(limit) : undefined;
+    const skills = Array.from(skillCounts.entries())
+      .map(([skill, count]) => ({
+        skill,
+        count,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, topLimit);
+
+    return { data: skills };
+  }
+
+  async getTrendingSearches(limit = 12) {
+    const limitNum = Number(limit);
+    const halfLimit = Math.floor(limitNum / 2);
+
+    const titleCounts = await this.prisma.job.groupBy({
+      by: ['title'],
+      _count: {
+        title: true,
+      },
+      orderBy: {
+        _count: {
+          title: 'desc',
+        },
+      },
+      take: halfLimit,
+    });
+
+    const allJobs = await this.prisma.job.findMany({
+      select: {
+        skills: true,
+      },
+    });
+
+    const skillCounts = new Map<string, number>();
+
+    allJobs.forEach((job) => {
+      job.skills.forEach((skill) => {
+        const normalizedSkill = skill.trim();
+        if (normalizedSkill) {
+          skillCounts.set(
+            normalizedSkill,
+            (skillCounts.get(normalizedSkill) || 0) + 1
+          );
+        }
+      });
+    });
+
+    const topSkills = Array.from(skillCounts.entries())
+      .map(([skill, count]) => ({
+        keyword: skill,
+        count,
+        type: 'skill',
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, halfLimit);
+
+    const topTitles = titleCounts.map((item) => ({
+      keyword: item.title,
+      count: item._count.title,
+      type: 'title',
+    }));
+
+    const trending = [...topTitles, ...topSkills]
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limitNum);
+
+    return { data: trending };
+  }
 }
 

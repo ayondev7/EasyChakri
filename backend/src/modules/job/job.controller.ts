@@ -83,4 +83,19 @@ export class JobController {
   async getJobsByCategory() {
     return await this.jobService.getJobsByCategory();
   }
+
+  @Get('stats/by-location')
+  async getJobsByLocation(@Query('limit') limit?: number) {
+    return await this.jobService.getJobsByLocation(limit);
+  }
+
+  @Get('stats/by-skill')
+  async getJobsBySkill(@Query('limit') limit?: number) {
+    return await this.jobService.getJobsBySkill(limit);
+  }
+
+  @Get('stats/trending')
+  async getTrendingSearches(@Query('limit') limit?: number) {
+    return await this.jobService.getTrendingSearches(limit);
+  }
 }
