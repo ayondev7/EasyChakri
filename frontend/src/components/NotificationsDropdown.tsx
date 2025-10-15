@@ -24,7 +24,7 @@ export function NotificationsDropdown() {
   const getIcon = (type: string) => {
     switch (type) {
       case "application":
-        return <FileText className="h-4 w-4 text-cyan-500" />
+        return <FileText className="h-4 w-4 text-emerald-500" />
       case "job":
         return <Briefcase className="h-4 w-4 text-blue-500" />
       default:
@@ -38,7 +38,7 @@ export function NotificationsDropdown() {
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-cyan-500 text-white text-xs">
+            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-emerald-500 text-white text-xs">
               {unreadCount}
             </Badge>
           )}
@@ -48,7 +48,7 @@ export function NotificationsDropdown() {
         <div className="flex items-center justify-between px-4 py-2">
           <h3 className="font-semibold">Notifications</h3>
           {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" className="h-auto p-0 text-xs text-cyan-500">
+            <Button variant="ghost" size="sm" className="h-auto p-0 text-xs text-emerald-500">
               Mark all as read
             </Button>
           )}
@@ -60,7 +60,7 @@ export function NotificationsDropdown() {
               <DropdownMenuItem key={notification.id} asChild className="cursor-pointer">
                 <Link
                   href={notification.link || "#"}
-                  className={`flex items-start gap-3 p-3 ${!notification.read ? "bg-cyan-500/5" : ""}`}
+                  className={`flex items-start gap-3 p-3 ${!notification.read ? "bg-emerald-500/5" : ""}`}
                 >
                   <div className="mt-1">{getIcon(notification.type)}</div>
                   <div className="flex-1 min-w-0">
@@ -68,7 +68,7 @@ export function NotificationsDropdown() {
                     <p className="text-xs text-muted-foreground line-clamp-2">{notification.message}</p>
                     <p className="text-xs text-muted-foreground mt-1">{formatDate(notification.createdAt)}</p>
                   </div>
-                  {!notification.read && <div className="h-2 w-2 rounded-full bg-cyan-500 mt-2" />}
+                  {!notification.read && <div className="h-2 w-2 rounded-full bg-emerald-500 mt-2" />}
                 </Link>
               </DropdownMenuItem>
             ))
@@ -78,7 +78,7 @@ export function NotificationsDropdown() {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/notifications" className="w-full text-center text-sm text-cyan-500 py-2">
+          <Link href="/notifications" className="w-full text-center text-sm text-emerald-500 py-2">
             View all notifications
           </Link>
         </DropdownMenuItem>

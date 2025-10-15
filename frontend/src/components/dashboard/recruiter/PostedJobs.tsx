@@ -39,7 +39,7 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
               return (
                 <div
                   key={job.id}
-                  className="flex flex-col md:flex-row md:items-center gap-4 p-4 rounded-lg border border-border/40 hover:border-cyan-500/50 transition-all"
+                  className="flex flex-col md:flex-row md:items-center gap-4 p-4 rounded-lg border border-border/40 hover:border-emerald-500/50 transition-all"
                 >
                   <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                     <Image
@@ -54,12 +54,12 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
                     <div className="flex items-start gap-2 mb-1">
                       <Link
                         href={`/jobs/${job.id}`}
-                        className="font-semibold hover:text-cyan-500 transition-colors line-clamp-1"
+                        className="font-semibold hover:text-emerald-500 transition-colors line-clamp-1"
                       >
                         {job.title}
                       </Link>
                       {job.featured && (
-                        <Badge className="bg-cyan-500 text-white hover:bg-cyan-600 flex-shrink-0">Featured</Badge>
+                        <Badge className="bg-emerald-500 text-white hover:bg-emerald-600 flex-shrink-0">Featured</Badge>
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground mb-2">
@@ -68,7 +68,7 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       <button
                         onClick={() => { window.location.href = `/recruiter/jobs/${job.id}/applicants` }}
-                        className="flex items-center gap-1 hover:text-cyan-500 transition-colors"
+                        className="flex items-center gap-1 hover:text-emerald-500 transition-colors"
                       >
                         <Users className="h-4 w-4" />
                         {applicantCount} applicants
@@ -101,7 +101,7 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
           <div className="text-center py-12">
             <Briefcase className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground mb-4">You haven't posted any jobs yet</p>
-            <Button asChild className="bg-cyan-500 hover:bg-cyan-600 text-white">
+            <Button asChild className="bg-emerald-500 hover:bg-emerald-600 text-white">
               <Link href="/recruiter/post-job">
                 <Plus className="h-4 w-4 mr-2" />
                 Post Your First Job

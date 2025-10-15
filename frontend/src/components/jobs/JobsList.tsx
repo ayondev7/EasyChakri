@@ -16,11 +16,8 @@ export const JobsList: React.FC<JobsListProps> = ({ initialPage = 1, pageSize = 
 
   const params = { ...queryParams, page, limit: pageSize }
 
-  const { data, isLoading, isError } = useJobs(params)
+  const { data, isLoading, error } = useJobs(params)
 
-  useEffect(() => {
-    setPage(1)
-  }, [JSON.stringify(queryParams)])
   useEffect(() => {
     setPage(1)
   }, [JSON.stringify(queryParams)])
@@ -41,10 +38,10 @@ export const JobsList: React.FC<JobsListProps> = ({ initialPage = 1, pageSize = 
     )
   }
 
-  if (isError) {
+  if (error) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-lg text-red-600">Failed to load jobs. Please try again.</div>
+        <div className="text-lg text-red-600">Failed to load jobs. Please try again later.</div>
       </div>
     )
   }

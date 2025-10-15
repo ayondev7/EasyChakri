@@ -52,7 +52,7 @@ export function JobCard({ job }: JobCardProps) {
             className="flex-shrink-0"
             onClick={handleBookmark}
           >
-            <Bookmark className={`h-4 w-4 ${isJobSaved(job.id) ? 'fill-current text-cyan-500' : ''}`} />
+            <Bookmark className={`h-4 w-4 ${isJobSaved(job.id) ? 'fill-current text-emerald-500' : ''}`} />
           </Button>
         </div>
       </div>

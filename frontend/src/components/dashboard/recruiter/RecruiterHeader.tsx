@@ -15,7 +15,7 @@ export default function RecruiterHeader() {
         <Button variant="outline" asChild>
           <Link href="/recruiter/jobs">Manage Jobs</Link>
         </Button>
-        <Button asChild className="bg-cyan-500 hover:bg-cyan-600 text-white">
+        <Button asChild className="bg-emerald-500 hover:bg-emerald-600 text-white">
           <Link href="/recruiter/post-job">
             <Plus className="h-4 w-4 mr-2" />
             Post New Job

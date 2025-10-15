@@ -60,7 +60,7 @@ export function InterviewSchedulingModal({ application, trigger, onSchedule }: I
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Eye className="h-5 w-5 text-cyan-500" />
+            <Eye className="h-5 w-5 text-emerald-500" />
             Schedule Interview
           </DialogTitle>
         </DialogHeader>
@@ -203,7 +203,7 @@ export function InterviewSchedulingModal({ application, trigger, onSchedule }: I
             </Button>
             <Button
               onClick={handleSchedule}
-              className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white"
+              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white"
               disabled={!date || !time || (interviewType === "online" && (!meetingPlatform || !meetingLink)) || (interviewType === "physical" && !location)}
             >
               Schedule Interview
