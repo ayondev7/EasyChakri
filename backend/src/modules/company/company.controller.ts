@@ -27,10 +27,17 @@ import { ImageUtil } from '../../utils/image.util';
 export class CompanyController {
   constructor(private companyService: CompanyService) {}
 
-  /**
-   * GET /api/companies
-   * Get all companies (Public)
-   */
+  @Get('stats/by-industry')
+  async getCompaniesByIndustry() {
+    return await this.companyService.getCompaniesByIndustry();
+  }
+
+  @Get('recruiter/my-company')
+  @UseGuards(JwtAuthGuard)
+  async getMyCompany(@CurrentUser() user: any) {
+    return await this.companyService.getRecruiterCompany(user.id);
+  }
+
   @Get()
   async getAllCompanies(
     @Query('page') page?: number,
@@ -39,23 +46,9 @@ export class CompanyController {
     return await this.companyService.getAllCompanies(page, limit);
   }
 
-  /**
-   * GET /api/companies/:id
-   * Get company by ID (Public)
-   */
   @Get(':id')
   async getCompany(@Param('id') id: string) {
     return await this.companyService.getCompanyById(id);
-  }
-
-  /**
-   * GET /api/companies/recruiter/my-company
-   * Get current recruiter's company (Protected)
-   */
-  @Get('recruiter/my-company')
-  @UseGuards(JwtAuthGuard)
-  async getMyCompany(@CurrentUser() user: any) {
-    return await this.companyService.getRecruiterCompany(user.id);
   }
 
   /**

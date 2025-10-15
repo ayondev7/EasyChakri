@@ -240,4 +240,56 @@ export class JobService {
       },
     };
   }
+
+  async getJobsByExperience() {
+    const experienceLevels = [
+      { level: 'Fresher', pattern: ['0-1', '0-2', 'fresher', 'entry'] },
+      { level: 'Mid-Level', pattern: ['2-3', '3-5', '2-5', 'mid'] },
+      { level: 'Senior', pattern: ['5+', '6+', '7+', 'senior', 'lead'] },
+    ];
+
+    const results = await Promise.all(
+      experienceLevels.map(async ({ level, pattern }) => {
+        const count = await this.prisma.job.count({
+          where: {
+            OR: pattern.map(p => ({
+              experience: {
+                contains: p,
+                mode: 'insensitive',
+              },
+            })),
+          },
+        });
+
+        return {
+          level,
+          count,
+        };
+      })
+    );
+
+    return { data: results };
+  }
+
+  async getJobsByCategory() {
+    const jobsWithCategory = await this.prisma.job.groupBy({
+      by: ['category'],
+      _count: {
+        category: true,
+      },
+      orderBy: {
+        _count: {
+          category: 'desc',
+        },
+      },
+    });
+
+    const categories = jobsWithCategory.map((item) => ({
+      category: item.category,
+      count: item._count.category,
+    }));
+
+    return { data: categories };
+  }
 }
+

@@ -73,4 +73,14 @@ export class JobController {
   ) {
     return await this.jobService.getRecruiterJobs(user.id, page, limit);
   }
+
+  @Get('stats/by-experience')
+  async getJobsByExperience() {
+    return await this.jobService.getJobsByExperience();
+  }
+
+  @Get('stats/by-category')
+  async getJobsByCategory() {
+    return await this.jobService.getJobsByCategory();
+  }
 }

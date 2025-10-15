@@ -155,11 +155,7 @@ export class CompanyService {
     return updatedCompany;
   }
 
-  /**
-   * Delete company (Recruiter only - must own the company)
-   */
   async deleteCompany(companyId: string, recruiterId: string) {
-    // Verify company belongs to recruiter
     const company = await this.prisma.company.findUnique({
       where: { id: companyId },
     });
@@ -177,5 +173,53 @@ export class CompanyService {
     });
 
     return { message: 'Company deleted successfully' };
+  }
+
+  async getCompaniesByIndustry() {
+    const companiesWithJobs = await this.prisma.company.findMany({
+      select: {
+        id: true,
+        name: true,
+        logo: true,
+        industry: true,
+        _count: {
+          select: {
+            jobs: true,
+          },
+        },
+      },
+      where: {
+        jobs: {
+          some: {},
+        },
+      },
+    });
+
+    const groupedByIndustry = companiesWithJobs.reduce((acc, company) => {
+      if (!acc[company.industry]) {
+        acc[company.industry] = {
+          industry: company.industry,
+          count: 0,
+          companies: [],
+        };
+      }
+      acc[company.industry].count += company._count.jobs;
+      acc[company.industry].companies.push({
+        id: company.id,
+        name: company.name,
+        logo: company.logo,
+      });
+      return acc;
+    }, {} as Record<string, { industry: string; count: number; companies: Array<{ id: string; name: string; logo: string | null }> }>);
+
+    const industries = Object.values(groupedByIndustry)
+      .sort((a, b) => b.count - a.count)
+      .map(item => ({
+        industry: item.industry,
+        count: item.count,
+        companies: item.companies.slice(0, 4),
+      }));
+
+    return { data: industries };
   }
 }
