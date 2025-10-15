@@ -61,7 +61,7 @@ export function JobCard({ job }: JobCardProps) {
       <div className="px-6 pb-6 space-y-3">
         <div className="flex flex-wrap gap-2">
           <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20">
-            {job.type}
+            {job.type.replace('_', ' ')}
           </Badge>
           <Badge variant="outline">{job.experience}</Badge>
         </div>

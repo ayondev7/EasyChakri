@@ -13,10 +13,10 @@ export default function JobsPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [sortBy, setSortBy] = useState("recent")
   const [filters, setFilters] = useState({
-    jobType: [] as string[],
-    experience: [] as string[],
-    location: [] as string[],
-    salaryRange: [] as string[],
+    jobType: "",
+    experience: "",
+    category: "",
+    salaryRange: "",
   })
 
   const searchQuery = searchParams.get("q") || ""
@@ -26,21 +26,25 @@ export default function JobsPage() {
   if (searchQuery) queryParams.search = searchQuery
   if (locationQuery) queryParams.location = locationQuery
 
-  if (filters.jobType.length > 0) {
-    queryParams.type = filters.jobType[0]
+  // Add filters to query params
+  if (filters.jobType) {
+    queryParams.type = filters.jobType
   }
 
-  if (filters.location.length > 0) {
-    queryParams.location = filters.location[0]
+  if (filters.experience) {
+    queryParams.experience = filters.experience
   }
 
-  if (filters.jobType.includes("Remote")) {
-    queryParams.isRemote = true
+  if (filters.category) {
+    queryParams.category = filters.category
+  }
+
+  if (filters.salaryRange) {
+    queryParams.salaryRange = filters.salaryRange
   }
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
       <main className="flex-1 py-[100px]">
         <div className="container mx-auto px-[100px]">
           <div className="mb-8">

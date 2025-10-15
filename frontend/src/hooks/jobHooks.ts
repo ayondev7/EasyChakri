@@ -203,3 +203,14 @@ export function useTrendingSearches(limit?: number) {
     `${JOB_ROUTES.statsTrending}${queryString}`
   )
 }
+
+export function useSimilarJobs(jobId: string, limit?: number) {
+  const queryString = limit ? `?limit=${limit}` : ''
+  return useGet<{ data: Job[] }>(
+    ['jobs', 'similar', jobId, limit],
+    `${JOB_ROUTES.similarJobs(jobId)}${queryString}`,
+    {
+      enabled: !!jobId,
+    }
+  )
+}

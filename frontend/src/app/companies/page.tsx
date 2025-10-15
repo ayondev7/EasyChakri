@@ -1,12 +1,8 @@
-"use client"
-
-import { Navbar } from "@/components/layout/Navbar"
 import { CompaniesList } from "@/components/companies/CompaniesList"
 
 export default function CompaniesPage() {
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4">
           <div className="mb-8">

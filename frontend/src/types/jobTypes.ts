@@ -5,7 +5,7 @@ export interface Job {
   title: string
   company: Company
   location: string
-  type: "Full-time" | "Part-time" | "Contract" | "Internship" | "Remote"
+  type: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" | "REMOTE"
   experience: string
   salary: string
   description: string
@@ -13,17 +13,16 @@ export interface Job {
   responsibilities: string[]
   benefits?: string[]
   skills: string[]
-  postedDate: Date
-  createdAt?: Date
+  postedDate?: Date
+  createdAt: Date
   updatedAt?: Date
-  deadline?: Date
-  applicants: number
+  deadline?: Date | null
   views: number
   featured?: boolean
   recruiterId: string
   companyId: string
   slug?: string
-  category?: string
+  category: string
   isRemote?: boolean
   _count?: {
     applications: number

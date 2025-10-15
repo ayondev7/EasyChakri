@@ -14,6 +14,7 @@ export const JOB_ROUTES = {
     statsByLocation: `${BASE}/stats/by-location`,
     statsBySkill: `${BASE}/stats/by-skill`,
     statsTrending: `${BASE}/stats/trending`,
+    similarJobs: (id: string) => `${BASE}/similar/${id}`,
 } as const;
 
 export default JOB_ROUTES;
