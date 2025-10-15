@@ -10,6 +10,7 @@ export const COMPANY_ROUTES = {
   deleteById: (id: string) => `${BASE}/${id}`,
   uploadLogo: (id: string) => `${BASE}/${id}/upload-logo`,
   recruiterMyCompany: `${BASE}/recruiter/my-company`,
+  statsByIndustry: `${BASE}/stats/by-industry`,
 } as const
 
 export default COMPANY_ROUTES

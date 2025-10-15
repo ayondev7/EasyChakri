@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { mockJobs } from "@/utils/MockData"
+import { useJobs } from "@/hooks/jobHooks"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Briefcase, Clock, ArrowRight } from "lucide-react"
@@ -9,7 +9,33 @@ import { formatDate } from "@/utils/utils"
 import Image from "next/image"
 
 export function LatestJobs() {
-  const latestJobs = mockJobs.slice(0, 8)
+  const { data, isLoading } = useJobs({ limit: 8 })
+  
+  const latestJobs = data?.data || []
+
+  if (isLoading) {
+    return (
+      <section className="py-[100px] md:py-[100px]">
+        <div className="container mx-auto px-[100px]">
+          <div className="flex items-center justify-center">
+            <div className="text-muted-foreground">Loading latest jobs...</div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (latestJobs.length === 0) {
+    return (
+      <section className="py-[100px] md:py-[100px]">
+        <div className="container mx-auto px-[100px]">
+          <div className="flex items-center justify-center">
+            <div className="text-muted-foreground">No jobs available at the moment.</div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="py-[100px] md:py-[100px]">
@@ -61,7 +87,7 @@ export function LatestJobs() {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Clock className="h-4 w-4" />
-                      <span>{formatDate(job.postedDate)}</span>
+                      <span>{formatDate(job.createdAt || new Date())}</span>
                     </div>
                   </div>
                 </div>

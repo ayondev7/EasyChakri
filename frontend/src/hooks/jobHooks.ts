@@ -139,3 +139,27 @@ export function useDeleteJob() {
     }
   )
 }
+
+export interface ExperienceLevel {
+  level: string
+  count: number
+}
+
+export interface JobCategory {
+  category: string
+  count: number
+}
+
+export function useJobsByExperience() {
+  return useGet<{ data: ExperienceLevel[] }>(
+    ['jobs', 'stats', 'by-experience'],
+    JOB_ROUTES.statsByExperience
+  )
+}
+
+export function useJobsByCategory() {
+  return useGet<{ data: JobCategory[] }>(
+    ['jobs', 'stats', 'by-category'],
+    JOB_ROUTES.statsByCategory
+  )
+}

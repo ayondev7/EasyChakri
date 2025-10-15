@@ -2,12 +2,40 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { mockCompanies } from "@/utils/MockData"
+import { useCompanies } from "@/hooks/companyHooks"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, MapPin, Briefcase } from "lucide-react"
 
 export function TopCompanies() {
+  const { data, isLoading } = useCompanies(6, 1)
+  
+  const companies = data?.data || []
+
+  if (isLoading) {
+    return (
+      <section className="py-16 md:py-24 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center">
+            <div className="text-muted-foreground">Loading companies...</div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (companies.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center">
+            <div className="text-muted-foreground">No companies available at the moment.</div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="py-16 md:py-24 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -25,7 +53,7 @@ export function TopCompanies() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockCompanies.map((company) => (
+          {companies.map((company) => (
             <Link key={company.id} href={`/companies/${company.id}`}>
               <Card className="group hover:border-emerald-500/50 transition-all duration-300 hover:shadow-lg h-full">
                 <CardContent className="p-6">
@@ -55,7 +83,7 @@ export function TopCompanies() {
                     </div>
                     <div className="flex items-center gap-2 text-emerald-500 font-medium">
                       <Briefcase className="h-4 w-4" />
-                      <span>{company.jobCount} Jobs</span>
+                      <span>{company._count?.jobs || 0} Jobs</span>
                     </div>
                   </div>
                 </CardContent>

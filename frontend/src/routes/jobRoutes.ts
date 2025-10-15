@@ -9,6 +9,8 @@ export const JOB_ROUTES = {
     updateById: (id: string) => `${BASE}/update-job/${id}`,
     deleteById: (id: string) => `${BASE}/delete-job/${id}`,
     recruiterMyJobs: `${BASE}/recruiter/my-jobs`,
+    statsByExperience: `${BASE}/stats/by-experience`,
+    statsByCategory: `${BASE}/stats/by-category`,
 } as const;
 
 export default JOB_ROUTES;

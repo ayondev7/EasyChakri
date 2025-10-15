@@ -13,4 +13,7 @@ export interface Company {
   jobCount: number
   rating?: number
   contact?: User
+  _count?: {
+    jobs: number
+  }
 }

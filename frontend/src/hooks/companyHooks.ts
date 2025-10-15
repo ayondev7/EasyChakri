@@ -86,3 +86,20 @@ export function useDeleteCompany() {
     },
   })
 }
+
+export interface IndustryData {
+  industry: string
+  count: number
+  companies: Array<{
+    id: string
+    name: string
+    logo: string | null
+  }>
+}
+
+export function useCompaniesByIndustry() {
+  return useGet<{ data: IndustryData[] }>(
+    ['companies', 'stats', 'by-industry'],
+    COMPANY_ROUTES.statsByIndustry
+  )
+}
