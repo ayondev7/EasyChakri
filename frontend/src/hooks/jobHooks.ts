@@ -150,6 +150,22 @@ export interface JobCategory {
   count: number
 }
 
+export interface JobLocation {
+  location: string
+  count: number
+}
+
+export interface JobSkill {
+  skill: string
+  count: number
+}
+
+export interface TrendingKeyword {
+  keyword: string
+  count: number
+  type: string
+}
+
 export function useJobsByExperience() {
   return useGet<{ data: ExperienceLevel[] }>(
     ['jobs', 'stats', 'by-experience'],
@@ -161,5 +177,29 @@ export function useJobsByCategory() {
   return useGet<{ data: JobCategory[] }>(
     ['jobs', 'stats', 'by-category'],
     JOB_ROUTES.statsByCategory
+  )
+}
+
+export function useJobsByLocation(limit?: number) {
+  const queryString = limit ? `?limit=${limit}` : ''
+  return useGet<{ data: JobLocation[] }>(
+    ['jobs', 'stats', 'by-location', limit],
+    `${JOB_ROUTES.statsByLocation}${queryString}`
+  )
+}
+
+export function useJobsBySkill(limit?: number) {
+  const queryString = limit ? `?limit=${limit}` : ''
+  return useGet<{ data: JobSkill[] }>(
+    ['jobs', 'stats', 'by-skill', limit],
+    `${JOB_ROUTES.statsBySkill}${queryString}`
+  )
+}
+
+export function useTrendingSearches(limit?: number) {
+  const queryString = limit ? `?limit=${limit}` : ''
+  return useGet<{ data: TrendingKeyword[] }>(
+    ['jobs', 'stats', 'trending', limit],
+    `${JOB_ROUTES.statsTrending}${queryString}`
   )
 }

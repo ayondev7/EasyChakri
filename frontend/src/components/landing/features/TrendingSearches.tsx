@@ -1,25 +1,52 @@
 "use client"
-
 import Link from "next/link"
 import { TrendingUp, Search } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-
-const trendingKeywords = [
-  { keyword: "React Developer", count: 450 },
-  { keyword: "Data Scientist", count: 380 },
-  { keyword: "Product Manager", count: 320 },
-  { keyword: "DevOps Engineer", count: 290 },
-  { keyword: "UX Designer", count: 260 },
-  { keyword: "Full Stack", count: 410 },
-  { keyword: "Machine Learning", count: 340 },
-  { keyword: "Cloud Architect", count: 220 },
-  { keyword: "Mobile Developer", count: 310 },
-  { keyword: "Cybersecurity", count: 190 },
-  { keyword: "Blockchain", count: 150 },
-  { keyword: "AI Engineer", count: 280 },
-]
+import { useTrendingSearches } from "@/hooks/jobHooks"
 
 export function TrendingSearches() {
+  const { data, isLoading } = useTrendingSearches(12)
+  
+  const trendingKeywords = data?.data || []
+
+  if (isLoading) {
+    return (
+      <section className="py-[100px]">
+        <div className="container mx-auto px-[100px]">
+          <div className="mb-8 flex items-center gap-3">
+            <TrendingUp className="h-8 w-8 text-emerald-600" />
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold">Trending Searches</h2>
+              <p className="text-muted-foreground">Most searched job titles this week</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="text-muted-foreground">Loading trending searches...</div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (trendingKeywords.length === 0) {
+    return (
+      <section className="py-[100px]">
+        <div className="container mx-auto px-[100px]">
+          <div className="mb-8 flex items-center gap-3">
+            <TrendingUp className="h-8 w-8 text-emerald-600" />
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold">Trending Searches</h2>
+              <p className="text-muted-foreground">Most searched job titles this week</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="text-muted-foreground">No trending data available at the moment.</div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="py-[100px]">
       <div className="container mx-auto px-[100px]">

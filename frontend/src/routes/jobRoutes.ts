@@ -11,6 +11,9 @@ export const JOB_ROUTES = {
     recruiterMyJobs: `${BASE}/recruiter/my-jobs`,
     statsByExperience: `${BASE}/stats/by-experience`,
     statsByCategory: `${BASE}/stats/by-category`,
+    statsByLocation: `${BASE}/stats/by-location`,
+    statsBySkill: `${BASE}/stats/by-skill`,
+    statsTrending: `${BASE}/stats/trending`,
 } as const;
 
 export default JOB_ROUTES;
