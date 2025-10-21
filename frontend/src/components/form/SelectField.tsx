@@ -25,10 +25,20 @@ const SelectField: React.FC<SelectFieldProps> = ({
   className = "",
   disabled = false,
 }) => {
+  const handleValueChange = (newValue: string) => {
+    if (newValue === "__clear__") {
+      onChange("")
+    } else {
+      onChange(newValue)
+    }
+  }
+
+  const displayValue = value === "" ? undefined : value
+
   return (
     <Select
-      value={value}
-      onValueChange={onChange}
+      value={displayValue}
+      onValueChange={handleValueChange}
       disabled={disabled}
     >
       <SelectTrigger className={className}>
@@ -36,7 +46,10 @@ const SelectField: React.FC<SelectFieldProps> = ({
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
+          <SelectItem 
+            key={option.value || "__clear__"} 
+            value={option.value || "__clear__"}
+          >
             {option.label}
           </SelectItem>
         ))}

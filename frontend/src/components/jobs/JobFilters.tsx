@@ -3,10 +3,11 @@
 import type React from "react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import SelectField from "@/components/form/SelectField"
+import SliderField from "@/components/form/SliderField"
 
 interface JobFiltersProps {
   filters: {
@@ -63,6 +64,23 @@ const salaryRanges = [
   { value: "150000-999999", label: "$150k+" },
 ]
 
+const salaryMarks = [
+  { value: 0, label: "$0" },
+  { value: 1, label: "$50k" },
+  { value: 2, label: "$100k" },
+  { value: 3, label: "$150k+" },
+]
+
+const getSalaryRangeFromIndex = (index: number): string => {
+  const ranges = ["", "0-50000", "50000-100000", "100000-150000", "150000-999999"]
+  return ranges[index] || ""
+}
+
+const getIndexFromSalaryRange = (range: string): number => {
+  const ranges = ["", "0-50000", "50000-100000", "100000-150000", "150000-999999"]
+  return ranges.indexOf(range)
+}
+
 export function JobFilters({ filters, setFilters }: JobFiltersProps) {
   const handleFilterChange = (category: keyof typeof filters, value: string) => {
     setFilters((prev) => ({
@@ -100,65 +118,51 @@ export function JobFilters({ filters, setFilters }: JobFiltersProps) {
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h3 className="font-semibold mb-3">Job Type</h3>
-          <RadioGroup value={filters.jobType} onValueChange={(value) => handleFilterChange("jobType", value)}>
-            {jobTypes.map((type) => (
-              <div key={type.value} className="flex items-center space-x-2">
-                <RadioGroupItem value={type.value} id={`type-${type.value}`} />
-                <Label htmlFor={`type-${type.value}`} className="text-sm font-normal cursor-pointer">
-                  {type.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+          <Label className="font-semibold mb-3 block">Job Type</Label>
+          <SelectField
+            options={jobTypes}
+            value={filters.jobType}
+            onChange={(value) => handleFilterChange("jobType", value)}
+            placeholder="Select job type"
+          />
         </div>
 
         <Separator />
 
         <div>
-          <h3 className="font-semibold mb-3">Experience Level</h3>
-          <RadioGroup value={filters.experience} onValueChange={(value) => handleFilterChange("experience", value)}>
-            {experienceLevels.map((level) => (
-              <div key={level.value} className="flex items-center space-x-2">
-                <RadioGroupItem value={level.value} id={`exp-${level.value}`} />
-                <Label htmlFor={`exp-${level.value}`} className="text-sm font-normal cursor-pointer">
-                  {level.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+          <Label className="font-semibold mb-3 block">Experience Level</Label>
+          <SelectField
+            options={experienceLevels}
+            value={filters.experience}
+            onChange={(value) => handleFilterChange("experience", value)}
+            placeholder="Select experience level"
+          />
         </div>
 
         <Separator />
 
         <div>
-          <h3 className="font-semibold mb-3">Category</h3>
-          <RadioGroup value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
-            {categories.map((cat) => (
-              <div key={cat.value} className="flex items-center space-x-2">
-                <RadioGroupItem value={cat.value} id={`cat-${cat.value}`} />
-                <Label htmlFor={`cat-${cat.value}`} className="text-sm font-normal cursor-pointer">
-                  {cat.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+          <Label className="font-semibold mb-3 block">Category</Label>
+          <SelectField
+            options={categories}
+            value={filters.category}
+            onChange={(value) => handleFilterChange("category", value)}
+            placeholder="Select category"
+          />
         </div>
 
         <Separator />
 
         <div>
-          <h3 className="font-semibold mb-3">Salary Range</h3>
-          <RadioGroup value={filters.salaryRange} onValueChange={(value) => handleFilterChange("salaryRange", value)}>
-            {salaryRanges.map((range) => (
-              <div key={range.value} className="flex items-center space-x-2">
-                <RadioGroupItem value={range.value} id={`salary-${range.value}`} />
-                <Label htmlFor={`salary-${range.value}`} className="text-sm font-normal cursor-pointer">
-                  {range.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+          <Label className="font-semibold mb-3 block">Salary Range</Label>
+          <SliderField
+            value={getIndexFromSalaryRange(filters.salaryRange)}
+            onChange={(index) => handleFilterChange("salaryRange", getSalaryRangeFromIndex(index))}
+            min={0}
+            max={4}
+            step={1}
+            marks={salaryMarks}
+          />
         </div>
       </CardContent>
     </Card>
