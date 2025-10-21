@@ -311,32 +311,32 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
         <>
           <div className="space-y-2">
             <InputField id="companyName" label="Company Name" type="text" placeholder="Acme Corp" {...registerRecruiter('companyName' as any)} />
-            {errors.companyName && <p className="text-xs text-destructive">{errors.companyName.message}</p>}
+            {errorsRecruiter.companyName && <p className="text-xs text-destructive">{errorsRecruiter.companyName.message}</p>}
           </div>
 
           <div className="space-y-2">
             <TextareaField id="companyDescription" label="Company Description" placeholder="Describe your company" {...registerRecruiter('companyDescription' as any)} />
-            {errors.companyDescription && <p className="text-xs text-destructive">{errors.companyDescription.message}</p>}
+            {errorsRecruiter.companyDescription && <p className="text-xs text-destructive">{errorsRecruiter.companyDescription.message}</p>}
           </div>
 
           <div className="space-y-2">
             <InputField id="companyWebsite" label="Company Website (Optional)" type="url" placeholder="https://example.com" {...registerRecruiter('companyWebsite' as any)} />
-            {errors.companyWebsite && <p className="text-xs text-destructive">{errors.companyWebsite.message}</p>}
+            {errorsRecruiter.companyWebsite && <p className="text-xs text-destructive">{errorsRecruiter.companyWebsite.message}</p>}
           </div>
 
           <div className="space-y-2">
             <InputField id="companyIndustry" label="Industry" type="text" placeholder="Software, Finance, Healthcare" {...registerRecruiter('companyIndustry' as any)} />
-            {errors.companyIndustry && <p className="text-xs text-destructive">{errors.companyIndustry.message}</p>}
+            {errorsRecruiter.companyIndustry && <p className="text-xs text-destructive">{errorsRecruiter.companyIndustry.message}</p>}
           </div>
 
           <div className="space-y-2">
             <InputField id="companySize" label="Company Size" type="text" placeholder="1-10, 11-50, 51-200" {...registerRecruiter('companySize' as any)} />
-            {errors.companySize && <p className="text-xs text-destructive">{errors.companySize.message}</p>}
+            {errorsRecruiter.companySize && <p className="text-xs text-destructive">{errorsRecruiter.companySize.message}</p>}
           </div>
 
           <div className="space-y-2">
             <InputField id="companyLocation" label="Company Location" type="text" placeholder="City, Country" {...registerRecruiter('companyLocation' as any)} />
-            {errors.companyLocation && <p className="text-xs text-destructive">{errors.companyLocation.message}</p>}
+            {errorsRecruiter.companyLocation && <p className="text-xs text-destructive">{errorsRecruiter.companyLocation.message}</p>}
           </div>
 
           <div className="space-y-2">

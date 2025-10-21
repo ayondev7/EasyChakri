@@ -69,7 +69,7 @@ export function InterviewSchedulingModal({ application, trigger, onSchedule }: I
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold text-sm text-gray-900 mb-2">Candidate Details</h3>
             <p className="text-sm text-gray-600">{application.job.title}</p>
-            <p className="text-sm text-gray-600">Applied: {application.appliedDate.toLocaleDateString()}</p>
+            <p className="text-sm text-gray-600">Applied: {application.appliedAt.toLocaleDateString()}</p>
           </div>
 
           <div className="space-y-4">

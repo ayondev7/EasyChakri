@@ -127,7 +127,7 @@ export default function ApplicationsPage() {
                           <span>•</span>
                           <span>{application.job.type}</span>
                           <span>•</span>
-                          <span>Applied {formatDate(application.appliedDate)}</span>
+                          <span>Applied {formatDate(application.appliedAt)}</span>
                         </div>
                       </div>
 
