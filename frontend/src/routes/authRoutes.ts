@@ -1,4 +1,4 @@
-import API_URL from ".";
+import API_URL from "./api";
 
 const BASE = `${API_URL}/auth`;
 

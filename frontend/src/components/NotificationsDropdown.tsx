@@ -12,13 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { Bell, Briefcase, FileText, CheckCircle } from "lucide-react"
-import { mockNotifications } from "@/utils/MockData"
+// TODO: wire to backend notifications endpoint when available
+import type { Notification } from "@/types"
 import { formatDate } from "@/utils/utils"
 import { useAuth } from "@/contexts/AuthContext"
 
 export function NotificationsDropdown() {
   const { user } = useAuth()
-  const [notifications] = useState(mockNotifications.filter((n) => n.userId === user?.id))
+  const [notifications] = useState<Notification[]>([])
   const unreadCount = notifications.filter((n) => !n.read).length
 
   const getIcon = (type: string) => {
@@ -56,7 +57,7 @@ export function NotificationsDropdown() {
         <DropdownMenuSeparator />
         <div className="max-h-[400px] overflow-y-auto">
           {notifications.length > 0 ? (
-            notifications.map((notification) => (
+            notifications.map((notification: Notification) => (
               <DropdownMenuItem key={notification.id} asChild className="cursor-pointer">
                 <Link
                   href={notification.link || "#"}

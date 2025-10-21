@@ -3,7 +3,6 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { useMyJobs } from "@/hooks/jobHooks"
-import { mockApplications, mockInterviews } from "@/utils/MockData"
 import { Briefcase, Users, Eye, Calendar } from "lucide-react"
 import StatsGrid from "@/components/dashboard/StatsGrid"
 import RecruiterHeader from "@/components/dashboard/recruiter/RecruiterHeader"
@@ -31,9 +30,9 @@ export default function RecruiterDashboardPage() {
 
   const myJobs = data?.data ?? []
 
-  const getJobApplicantCount = (jobId: string) => mockApplications.filter((app) => app.jobId === jobId).length
+  const getJobApplicantCount = (job: any) => job._count?.applications ?? 0
 
-  const totalApplicants = myJobs.reduce((sum, job: any) => sum + getJobApplicantCount(job.id), 0)
+  const totalApplicants = myJobs.reduce((sum: number, job: any) => sum + getJobApplicantCount(job), 0)
   const totalViews = myJobs.reduce((sum: number, job: any) => sum + (job.views || 0), 0)
 
   const stats = [
@@ -53,7 +52,8 @@ export default function RecruiterDashboardPage() {
     },
     {
       title: "Interviews",
-      value: mockInterviews.filter((interview) => interview.interviewerId === user.id).length,
+      // TODO: backend interviews endpoints are not implemented; show 0 for now
+      value: 0,
       icon: Calendar,
       color: "text-purple-500",
       bgColor: "bg-purple-500/10",

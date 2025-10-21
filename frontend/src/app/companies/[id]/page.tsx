@@ -3,19 +3,30 @@ import { notFound } from "next/navigation"
 import Image from "next/image"
 // Header and Footer provided by root layout
 import { JobCard } from "@/components/JobCard"
-import { mockCompanies, mockJobs } from "@/utils/MockData"
+import type { Job } from "@/types"
+import COMPANY_ROUTES from "@/routes/companyRoutes"
+import JOB_ROUTES from "@/routes/jobRoutes"
 import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Users, Globe, Calendar, Briefcase } from "lucide-react"
 
-export default function CompanyDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function CompanyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const company = mockCompanies.find((c) => c.id === id)
 
+  // Fetch company from backend
+  const res = await fetch(COMPANY_ROUTES.getById(id), { cache: 'no-store' })
+  if (!res.ok) {
+    notFound()
+  }
+  const companyData = await res.json()
+  const company = companyData?.data || companyData
   if (!company) {
     notFound()
   }
 
-  const companyJobs = mockJobs.filter((job) => job.company.id === company.id)
+  // Fetch jobs for the company
+  const jobsRes = await fetch(`${JOB_ROUTES.getAll}?companyId=${id}`, { cache: 'no-store' })
+  const jobsJson = await jobsRes.json()
+  const companyJobs = jobsJson?.data ?? []
 
   return (
       <main className="py-8">
@@ -83,7 +94,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
 
             {companyJobs.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {companyJobs.map((job) => (
+                {companyJobs.map((job: Job) => (
                   <JobCard key={job.id} job={job} />
                 ))}
               </div>

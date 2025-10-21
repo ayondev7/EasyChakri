@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { mockInterviews, mockUsers } from "@/utils/MockData"
+import type { Interview } from "@/types"
 import { Calendar, Clock, MapPin, Video, CheckCircle, XCircle, AlertCircle, ExternalLink, User } from "lucide-react"
 import { formatDate } from "@/utils/utils"
 
@@ -42,9 +42,10 @@ export default function RecruiterInterviewsPage() {
     return null
   }
 
-  const userInterviews = mockInterviews.filter((interview) => interview.interviewerId === user.id)
+  // TODO: replace with real API call when backend interview endpoints are implemented
+  const userInterviews: Interview[] = []
 
-  const filteredInterviews =
+  const filteredInterviews: Interview[] =
     filter === "all" ? userInterviews : userInterviews.filter((interview) => interview.status === filter)
 
   const getStatusIcon = (status: string) => {

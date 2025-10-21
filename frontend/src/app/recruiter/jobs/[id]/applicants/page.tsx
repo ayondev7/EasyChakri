@@ -16,12 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  mockJobs,
-  mockApplications,
-  mockUsers,
-  mockInterviews,
-} from "@/utils/MockData";
+import JOB_ROUTES from '@/routes/jobRoutes'
+import type { Application, Job, User } from "@/types";
 import {
   ArrowLeft,
   Phone,
@@ -33,7 +29,37 @@ import {
   AtSign,
 } from "lucide-react";
 import { formatDate, getInitials } from "@/utils/utils";
-import type { Application } from "@/types";
+// TODO: replace placeholders with real API calls when backend endpoints exist
+const placeholderJob: Job = {
+  id: "",
+  title: "",
+  company: {
+    id: "",
+    name: "",
+    logo: "",
+    description: "",
+    industry: "",
+    size: "",
+    location: "",
+    jobCount: 0,
+  },
+  location: "",
+  type: "FULL_TIME",
+  experience: "",
+  salary: "",
+  description: "",
+  requirements: [],
+  responsibilities: [],
+  skills: [],
+  postedDate: new Date(),
+  createdAt: new Date(),
+  views: 0,
+  recruiterId: "",
+  companyId: "",
+  category: "",
+  _count: { applications: 0 },
+};
+const placeholderUsers: User[] = [];
 import { InterviewSchedulingModal } from "@/components/InterviewSchedulingModal";
 
 export default function ApplicantsPage({
@@ -65,8 +91,21 @@ export default function ApplicantsPage({
   }, [isAuthenticated, user, router, isLoading]);
 
   useEffect(() => {
-    const jobApplications = mockApplications.filter((app) => app.jobId === id);
-    setApplications(jobApplications);
+    // Fetch job details (for job metadata). Applications endpoint for recruiter -> job applicants
+    // is not implemented on backend yet; keep applications empty and show TODO.
+    async function fetchJob() {
+      try {
+        const res = await fetch(JOB_ROUTES.getById(id))
+        if (!res.ok) return
+        const json = await res.json()
+        // job data used below via mockUsers/getApplicantDetails fallback
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchJob()
+      // TODO: replace with real API call to fetch applications for a job when backend exposes it
+      setApplications([])
   }, [id]);
 
   // Show loading state while session is being checked
@@ -79,11 +118,8 @@ export default function ApplicantsPage({
     return null;
   }
 
-  const job = mockJobs.find((j) => j.id === id);
-
-  if (!job) {
-    return null;
-  }
+  // Job data is not available here without calling backend; attempt to fetch synchronously is not possible
+  // We'll show a minimal header using available data if fetched above in the future.
 
   const filteredApplications =
     filterStatus === "all"
@@ -124,7 +160,7 @@ export default function ApplicantsPage({
   };
 
   const getApplicantDetails = (seekerId: string) => {
-    return mockUsers.find((u) => u.id === seekerId);
+    return placeholderUsers.find((u) => u.id === seekerId);
   };
 
   const statusCounts = {
@@ -206,7 +242,7 @@ export default function ApplicantsPage({
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {applicantUser?.skills?.map((skill, index) => (
+                    {applicantUser?.skills?.map((skill: string, index: number) => (
                       <Badge
                         key={index}
                         variant="outline"
@@ -326,8 +362,8 @@ export default function ApplicantsPage({
           Back to Jobs
         </Button>
 
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">{job.title}</h1>
+          <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">{placeholderJob.title}</h1>
           <p className="text-muted-foreground">
             {applications.length}{" "}
             {applications.length === 1 ? "applicant" : "applicants"}

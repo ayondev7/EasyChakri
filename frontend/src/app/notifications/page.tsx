@@ -7,7 +7,9 @@ import { useAuth } from "@/contexts/AuthContext"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { mockNotifications } from "@/utils/MockData"
+// TODO: replace with real API call when notifications endpoint is available
+// For now use empty list until backend exposes notifications routes
+import type { Notification } from "@/types"
 import { Briefcase, FileText, CheckCircle } from "lucide-react"
 import { formatDate } from "@/utils/utils"
 
@@ -26,9 +28,8 @@ export default function NotificationsPage() {
     return null
   }
 
-  const userNotifications = mockNotifications.filter((n) => n.userId === user?.id)
-  const filteredNotifications =
-    filter === "all" ? userNotifications : userNotifications.filter((n) => n.type === filter)
+  const userNotifications: Notification[] = []
+  const filteredNotifications: Notification[] = []
 
   const getIcon = (type: string) => {
     switch (type) {

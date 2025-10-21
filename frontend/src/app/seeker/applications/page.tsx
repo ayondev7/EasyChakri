@@ -8,7 +8,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { mockApplications } from "@/utils/MockData"
+import { useMyApplications } from '@/hooks'
+import type { Application } from '@/types'
 import { Clock, CheckCircle, XCircle, Eye, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -44,8 +45,10 @@ export default function ApplicationsPage() {
     return null
   }
 
+  const { data: applicationsData } = useMyApplications(1, 50)
+  const allApplications: Application[] = applicationsData?.data ?? []
   const filteredApplications =
-    filter === "all" ? mockApplications : mockApplications.filter((app) => app.status === filter)
+    filter === "all" ? allApplications : allApplications.filter((app) => app.status === filter)
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -91,7 +94,7 @@ export default function ApplicationsPage() {
 
           <Tabs value={filter} onValueChange={setFilter} className="mb-6">
             <TabsList>
-              <TabsTrigger value="all">All ({mockApplications.length})</TabsTrigger>
+              <TabsTrigger value="all">All ({allApplications.length})</TabsTrigger>
               <TabsTrigger value="pending">Pending</TabsTrigger>
               <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
               <TabsTrigger value="shortlisted">Shortlisted</TabsTrigger>
@@ -101,7 +104,7 @@ export default function ApplicationsPage() {
 
           {filteredApplications.length > 0 ? (
             <div className="space-y-4">
-              {filteredApplications.map((application) => (
+              {filteredApplications.map((application: Application) => (
                 <Card key={application.id} className="hover:border-cyan-500/50 transition-all">
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row md:items-center gap-4">

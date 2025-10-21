@@ -9,7 +9,8 @@ import { useAuth } from "@/contexts/AuthContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { mockJobs, mockApplications } from "@/utils/MockData"
+import { useMyJobs } from '@/hooks/jobHooks'
+import type { Job } from '@/types'
 import { Users, Eye, Plus, MoreVertical, Edit, Trash2 } from "lucide-react"
 import { formatDate } from "@/utils/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -43,10 +44,11 @@ export default function RecruiterJobsPage() {
     return null
   }
 
-  const myJobs = mockJobs.filter((job) => job.recruiterId === user.id)
-  
-  const getJobApplicantCount = (jobId: string) => {
-    return mockApplications.filter(app => app.jobId === jobId).length
+  const { data: myJobsResp } = useMyJobs()
+  const myJobs = myJobsResp?.data ?? []
+
+  const getJobApplicantCount = (job: Job) => {
+    return job._count?.applications ?? 0
   }
 
   return (
@@ -72,8 +74,8 @@ export default function RecruiterJobsPage() {
             <CardContent>
               {myJobs.length > 0 ? (
                 <div className="space-y-4">
-                  {myJobs.map((job) => {
-                    const applicantCount = getJobApplicantCount(job.id)
+                  {myJobs.map((job: Job) => {
+                    const applicantCount = getJobApplicantCount(job)
                     return (
                       <div
                         key={job.id}
