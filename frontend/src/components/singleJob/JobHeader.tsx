@@ -63,13 +63,15 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button
-            size="lg"
-            className="bg-emerald-500 hover:bg-emerald-600 text-white"
-            disabled={!isAuthenticated || userRole !== "SEEKER"}
-          >
-            {!isAuthenticated ? "Sign in to Apply" : userRole !== "SEEKER" ? "Seeker Only" : "Apply Now"}
-          </Button>
+          {userRole === "seeker" && (
+            <Button
+              size="lg"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white"
+              disabled={!isAuthenticated}
+            >
+              {!isAuthenticated ? "Sign in to Apply" : "Apply Now"}
+            </Button>
+          )}
           <Button size="lg" variant="outline">
             <Bookmark className="h-4 w-4 mr-2" />
             Save Job

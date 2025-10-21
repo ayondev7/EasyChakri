@@ -34,22 +34,26 @@ export function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/jobs"
-              className={`text-sm font-medium transition-colors hover:text-foreground ${
-                isActive("/jobs") ? "text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              Find Jobs
-            </Link>
-            <Link
-              href="/companies"
-              className={`text-sm font-medium transition-colors hover:text-foreground ${
-                isActive("/companies") ? "text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              Companies
-            </Link>
+            {(!isAuthenticated || user?.role === "seeker") && (
+              <>
+                <Link
+                  href="/jobs"
+                  className={`text-sm font-medium transition-colors hover:text-foreground ${
+                    isActive("/jobs") ? "text-foreground" : "text-muted-foreground"
+                  }`}
+                >
+                  Find Jobs
+                </Link>
+                <Link
+                  href="/companies"
+                  className={`text-sm font-medium transition-colors hover:text-foreground ${
+                    isActive("/companies") ? "text-foreground" : "text-muted-foreground"
+                  }`}
+                >
+                  Companies
+                </Link>
+              </>
+            )}
             {isAuthenticated && user?.role === "recruiter" && (
               <Link
                 href="/recruiter/dashboard"
@@ -146,24 +150,28 @@ export function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border/40 bg-background">
           <nav className="container mx-auto py-[100px] flex flex-col gap-4">
-            <Link
-              href="/jobs"
-              className={`text-sm font-medium transition-colors hover:text-foreground ${
-                isActive("/jobs") ? "text-foreground" : "text-muted-foreground"
-              }`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Find Jobs
-            </Link>
-            <Link
-              href="/companies"
-              className={`text-sm font-medium transition-colors hover:text-foreground ${
-                isActive("/companies") ? "text-foreground" : "text-muted-foreground"
-              }`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Companies
-            </Link>
+            {(!isAuthenticated || user?.role === "seeker") && (
+              <>
+                <Link
+                  href="/jobs"
+                  className={`text-sm font-medium transition-colors hover:text-foreground ${
+                    isActive("/jobs") ? "text-foreground" : "text-muted-foreground"
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Find Jobs
+                </Link>
+                <Link
+                  href="/companies"
+                  className={`text-sm font-medium transition-colors hover:text-foreground ${
+                    isActive("/companies") ? "text-foreground" : "text-muted-foreground"
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Companies
+                </Link>
+              </>
+            )}
             {isAuthenticated && user?.role === "recruiter" && (
               <Link
                 href="/recruiter/dashboard"
@@ -176,15 +184,13 @@ export function Header() {
               </Link>
             )}
             {!isAuthenticated && (
-              <>
-                <Link
-                  href="/auth/signin"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Sign In
-                </Link>
-              </>
+              <Link
+                href="/auth/signin"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Sign In
+              </Link>
             )}
           </nav>
         </div>
