@@ -16,7 +16,7 @@ export function LatestJobs() {
   if (isLoading) {
     return (
       <section className="py-[100px] md:py-[100px]">
-        <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
           <div className="flex items-center justify-center">
             <div className="text-muted-foreground">Loading latest jobs...</div>
           </div>
@@ -28,7 +28,7 @@ export function LatestJobs() {
   if (latestJobs.length === 0) {
     return (
       <section className="py-[100px] md:py-[100px]">
-        <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
           <div className="flex items-center justify-center">
             <div className="text-muted-foreground">No jobs available at the moment.</div>
           </div>
@@ -39,7 +39,7 @@ export function LatestJobs() {
 
   return (
     <section className="py-[100px] md:py-[100px]">
-      <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
         <div className="flex items-center justify-between mb-12">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Latest Job Openings</h2>

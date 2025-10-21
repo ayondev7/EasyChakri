@@ -27,7 +27,7 @@ export function Navbar() {
 
     return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-  <div className="container mx-auto flex h-[100px] items-center justify-between px-[100px]">
+  <div className="container mx-auto flex h-[100px] items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
             <Image src="/logo.png" alt="EasyChakri" width={800} height={800} className="object-contain w-[200px] h-[80px]" />
@@ -145,7 +145,7 @@ export function Navbar() {
 
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border/40 bg-background">
-          <nav className="container mx-auto px-[100px] py-[100px] flex flex-col gap-4">
+          <nav className="container mx-auto py-[100px] flex flex-col gap-4">
             <Link
               href="/jobs"
               className={`text-sm font-medium transition-colors hover:text-foreground ${

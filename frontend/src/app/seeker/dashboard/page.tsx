@@ -88,7 +88,7 @@ export default function SeekerDashboardPage() {
   return (
     <AuthGuard role="seeker">
       <main className="py-8">
-        <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back, {user?.name || "User"}!</h1>
             <p className="text-muted-foreground">Track your applications and discover new opportunities</p>

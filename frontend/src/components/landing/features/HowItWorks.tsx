@@ -27,7 +27,7 @@ const steps = [
 export function HowItWorks() {
   return (
     <section className="py-[100px] md:py-[100px]">
-      <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-2">How It Works</h2>
           <p className="text-muted-foreground">Get hired in 4 easy steps</p>

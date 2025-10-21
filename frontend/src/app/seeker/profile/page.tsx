@@ -64,7 +64,7 @@ export default function ProfilePage() {
 
   return (
       <main className="py-8">
-  <div className="container mx-auto px-[100px] max-w-4xl">
+  <div className="container mx-auto max-w-4xl">
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold mb-2">My Profile</h1>

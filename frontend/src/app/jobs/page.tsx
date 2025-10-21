@@ -46,7 +46,7 @@ export default function JobsPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 py-[100px]">
-        <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">
               {searchQuery ? `Search Results for "${searchQuery}"` : "Browse All Jobs"}

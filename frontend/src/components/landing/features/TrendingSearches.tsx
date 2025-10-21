@@ -12,7 +12,7 @@ export function TrendingSearches() {
   if (isLoading) {
     return (
       <section className="py-[100px]">
-        <div className="container mx-auto px-[100px]">
+    <div className="container mx-auto">
           <div className="mb-8 flex items-center gap-3">
             <TrendingUp className="h-8 w-8 text-emerald-600" />
             <div>
@@ -31,7 +31,7 @@ export function TrendingSearches() {
   if (trendingKeywords.length === 0) {
     return (
       <section className="py-[100px]">
-        <div className="container mx-auto px-[100px]">
+        <div className="container mx-auto">
           <div className="mb-8 flex items-center gap-3">
             <TrendingUp className="h-8 w-8 text-emerald-600" />
             <div>
@@ -49,7 +49,7 @@ export function TrendingSearches() {
 
   return (
     <section className="py-[100px]">
-      <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
         <div className="mb-8 flex items-center gap-3">
           <TrendingUp className="h-8 w-8 text-emerald-600" />
           <div>
@@ -63,7 +63,7 @@ export function TrendingSearches() {
             <Link key={item.keyword} href={`/jobs?search=${item.keyword}`}>
                 <Badge
                 variant="outline"
-                className="px-[100px] py-[12px] text-base hover:bg-emerald-50 hover:border-emerald-500 cursor-pointer transition-colors"
+             className="px-4 py-[12px] text-base hover:bg-emerald-50 hover:border-emerald-500 cursor-pointer transition-colors"
               >
                 <Search className="h-3 w-3 mr-2" />
                 {item.keyword}

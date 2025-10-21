@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={`${satoshi.variable} font-sans antialiased`}>
         <Providers>
           <Navbar />
-          <main>{children}</main>
+          <main className="container mx-auto px-[100px]">{children}</main>
           <Footer />
         </Providers>
       </body>

@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card"
 export function RemoteJobs() {
   return (
     <section className="py-[100px] bg-gradient-to-br from-emerald-50 to-emerald-100">
-      <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full mb-6">
             <Home className="h-4 w-4" />

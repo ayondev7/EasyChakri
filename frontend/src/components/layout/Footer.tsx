@@ -4,7 +4,7 @@ import { Briefcase, Facebook, Twitter, Linkedin, Instagram } from "lucide-react"
 export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/30">
-  <div className="container mx-auto px-[100px] py-[100px]">
+  <div className="container mx-auto py-[100px]">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center gap-2">

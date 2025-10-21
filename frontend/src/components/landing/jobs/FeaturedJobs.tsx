@@ -12,7 +12,7 @@ export function FeaturedJobs() {
   if (isLoading) {
     return (
       <section className="py-[100px] md:py-[100px]">
-        <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
           <div className="text-center">Loading jobs...</div>
         </div>
       </section>
@@ -22,7 +22,7 @@ export function FeaturedJobs() {
   if (error) {
     return (
       <section className="py-[100px] md:py-[100px]">
-        <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
           <div className="text-center text-red-500">Failed to load jobs</div>
         </div>
       </section>
@@ -31,7 +31,7 @@ export function FeaturedJobs() {
 
   return (
     <section className="py-[100px] md:py-[100px]">
-      <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
         <div className="flex items-center justify-between mb-12">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Featured Jobs</h2>

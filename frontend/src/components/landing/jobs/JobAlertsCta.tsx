@@ -19,7 +19,7 @@ export function JobAlertsCta() {
 
   return (
     <section className="py-[100px]">
-      <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
         <Card className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white p-8 md:p-12">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center justify-center p-3 bg-white/20 rounded-full mb-6">

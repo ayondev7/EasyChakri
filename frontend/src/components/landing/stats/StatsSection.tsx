@@ -12,7 +12,7 @@ const stats = [
 export function StatsSection() {
   return (
     <section className="py-[100px] bg-emerald-600 text-white">
-      <div className="container mx-auto px-[100px]">
+  <div className="container mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat) => {
             const Icon = stat.icon

@@ -69,8 +69,8 @@ export default function RecruiterDashboardPage() {
   ]
 
   return (
-    <main className="py-8 px-[100px]">
-      <div className="containe">
+    <main className="py-8">
+      <div className="container mx-auto">
         <RecruiterHeader />
         <StatsGrid stats={stats} />
         <PostedJobs jobs={myJobs} getApplicantCount={getJobApplicantCount} />

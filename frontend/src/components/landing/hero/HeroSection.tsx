@@ -1,35 +1,36 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Search, MapPin, Briefcase } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, MapPin, Briefcase } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function HeroSection() {
-  const router = useRouter()
-  const [searchQuery, setSearchQuery] = useState("")
-  const [location, setLocation] = useState("")
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [location, setLocation] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    const params = new URLSearchParams()
-    if (searchQuery) params.set("q", searchQuery)
-    if (location) params.set("location", location)
-    router.push(`/jobs?${params.toString()}`)
-  }
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("q", searchQuery);
+    if (location) params.set("location", location);
+    router.push(`/jobs?${params.toString()}`);
+  };
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-background to-muted/30 py-20 md:py-32">
-  <div className="container mx-auto px-[100px]">
+      <div className="container mx-auto">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-balance">
             Find Your <span className="text-emerald-500">Dream Job</span> Today
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-12 text-pretty">
-            Connect with top companies and discover opportunities that match your skills and aspirations
+            Connect with top companies and discover opportunities that match
+            your skills and aspirations
           </p>
 
           <form onSubmit={handleSearch} className="mx-auto max-w-3xl">
@@ -54,7 +55,11 @@ export function HeroSection() {
                   className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
               </div>
-              <Button type="submit" size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white">
+              <Button
+                type="submit"
+                size="lg"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white"
+              >
                 <Search className="h-5 w-5 mr-2" />
                 Search Jobs
               </Button>
@@ -82,5 +87,5 @@ export function HeroSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
