@@ -33,7 +33,7 @@ export function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
-            {(!isAuthenticated || user?.role === "seeker") && (
+            {user?.role !== "recruiter" && (
               <>
                 <Link
                   href="/jobs"
@@ -53,7 +53,7 @@ export function Header() {
                 </Link>
               </>
             )}
-            {isAuthenticated && user?.role === "recruiter" && (
+            {user?.role === "recruiter" && (
               <Link
                 href="/recruiter/dashboard"
                 className={`text-sm font-medium transition-colors hover:text-foreground ${
@@ -149,7 +149,7 @@ export function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border/40 bg-background">
           <nav className="container mx-auto py-[100px] flex flex-col gap-4">
-            {(!isAuthenticated || user?.role === "seeker") && (
+            {user?.role !== "recruiter" && (
               <>
                 <Link
                   href="/jobs"
@@ -171,7 +171,7 @@ export function Header() {
                 </Link>
               </>
             )}
-            {isAuthenticated && user?.role === "recruiter" && (
+            {user?.role === "recruiter" && (
               <Link
                 href="/recruiter/dashboard"
                 className={`text-sm font-medium transition-colors hover:text-foreground ${
