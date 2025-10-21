@@ -1,36 +1,49 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/contexts/AuthContext"
-import { LogOut, User, LayoutDashboard, Briefcase, Menu, X } from "lucide-react"
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  LogOut,
+  User,
+  LayoutDashboard,
+  Briefcase,
+  Menu,
+  X,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { getInitials } from "@/utils/utils"
-import { NotificationsDropdown } from "@/components/NotificationsDropdown"
-import { useState } from "react"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/utils/utils";
+import { NotificationsDropdown } from "@/components/NotificationsDropdown";
+import { useState } from "react";
 
 export function Navbar() {
-  const pathname = usePathname()
-  const { user, isAuthenticated, logout } = useAuth()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname();
+  const { user, isAuthenticated, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isActive = (path: string) => pathname === path
+  const isActive = (path: string) => pathname === path;
 
-    return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-  <div className="container mx-auto flex h-[100px] items-center justify-between">
+  return (
+    <header className="sticky px-[100px] top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto flex h-[100px] items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.png" alt="EasyChakri" width={800} height={800} className="object-contain w-[200px] h-[80px]" />
+            <Image
+              src="/logo.png"
+              alt="EasyChakri"
+              width={800}
+              height={800}
+              className="object-contain w-[200px] h-[80px]"
+            />
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
@@ -45,7 +58,9 @@ export function Navbar() {
             <Link
               href="/companies"
               className={`text-sm font-medium transition-colors hover:text-foreground ${
-                isActive("/companies") ? "text-foreground" : "text-muted-foreground"
+                isActive("/companies")
+                  ? "text-foreground"
+                  : "text-muted-foreground"
               }`}
             >
               Companies
@@ -54,7 +69,9 @@ export function Navbar() {
               <Link
                 href="/recruiter/dashboard"
                 className={`text-sm font-medium transition-colors hover:text-foreground ${
-                  pathname.startsWith("/recruiter") ? "text-foreground" : "text-muted-foreground"
+                  pathname.startsWith("/recruiter")
+                    ? "text-foreground"
+                    : "text-muted-foreground"
                 }`}
               >
                 Dashboard
@@ -70,9 +87,15 @@ export function Navbar() {
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Button
+                    variant="ghost"
+                    className="relative h-9 w-9 rounded-full"
+                  >
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
+                      <AvatarImage
+                        src={user.avatar || "/placeholder.svg"}
+                        alt={user.name}
+                      />
                       <AvatarFallback className="bg-emerald-500/10 text-emerald-500">
                         {getInitials(user.name)}
                       </AvatarFallback>
@@ -82,15 +105,22 @@ export function Navbar() {
                 <DropdownMenuContent className="w-56" align="end">
                   <div className="flex items-center justify-start gap-2 p-2">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {user.name}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
                     </div>
                   </div>
                   <DropdownMenuSeparator />
                   {user.role === "seeker" ? (
                     <>
                       <DropdownMenuItem asChild>
-                        <Link href="/seeker/dashboard" className="cursor-pointer">
+                        <Link
+                          href="/seeker/dashboard"
+                          className="cursor-pointer"
+                        >
                           <LayoutDashboard className="mr-2 h-4 w-4" />
                           Dashboard
                         </Link>
@@ -105,13 +135,19 @@ export function Navbar() {
                   ) : (
                     <>
                       <DropdownMenuItem asChild>
-                        <Link href="/recruiter/dashboard" className="cursor-pointer">
+                        <Link
+                          href="/recruiter/dashboard"
+                          className="cursor-pointer"
+                        >
                           <LayoutDashboard className="mr-2 h-4 w-4" />
                           Dashboard
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href="/recruiter/post-job" className="cursor-pointer">
+                        <Link
+                          href="/recruiter/post-job"
+                          className="cursor-pointer"
+                        >
                           <Briefcase className="mr-2 h-4 w-4" />
                           Post Job
                         </Link>
@@ -119,7 +155,10 @@ export function Navbar() {
                     </>
                   )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive">
+                  <DropdownMenuItem
+                    onClick={logout}
+                    className="cursor-pointer text-destructive"
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
@@ -131,14 +170,26 @@ export function Navbar() {
               <Button variant="ghost" asChild className="hidden md:flex">
                 <Link href="/auth/signin">Sign In</Link>
               </Button>
-              <Button asChild className="bg-emerald-500 hover:bg-emerald-600 text-white">
+              <Button
+                asChild
+                className="bg-emerald-500 hover:bg-emerald-600 text-white"
+              >
                 <Link href="/auth/signup">Sign Up</Link>
               </Button>
             </>
           )}
 
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </Button>
         </div>
       </div>
@@ -158,7 +209,9 @@ export function Navbar() {
             <Link
               href="/companies"
               className={`text-sm font-medium transition-colors hover:text-foreground ${
-                isActive("/companies") ? "text-foreground" : "text-muted-foreground"
+                isActive("/companies")
+                  ? "text-foreground"
+                  : "text-muted-foreground"
               }`}
               onClick={() => setMobileMenuOpen(false)}
             >
@@ -168,7 +221,9 @@ export function Navbar() {
               <Link
                 href="/recruiter/dashboard"
                 className={`text-sm font-medium transition-colors hover:text-foreground ${
-                  pathname.startsWith("/recruiter") ? "text-foreground" : "text-muted-foreground"
+                  pathname.startsWith("/recruiter")
+                    ? "text-foreground"
+                    : "text-muted-foreground"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -190,5 +245,5 @@ export function Navbar() {
         </div>
       )}
     </header>
-  )
+  );
 }

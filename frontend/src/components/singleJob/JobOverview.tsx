@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { DollarSign, Briefcase, Users, MapPin, Calendar } from "lucide-react"
-import { formatDate } from "@/utils/utils"
+import { formatDate, formatDeadline, formatSalary } from "@/utils/utils"
 import type { Job } from "@/types"
 
 interface JobOverviewProps {
@@ -21,7 +21,7 @@ export function JobOverview({ job }: JobOverviewProps) {
           <DollarSign className="h-5 w-5 text-emerald-500 mt-0.5" />
           <div>
             <p className="text-sm text-muted-foreground">Salary</p>
-            <p className="font-semibold">{job.salary}</p>
+            <p className="font-semibold">{formatSalary(job.salary)}</p>
           </div>
         </div>
         <Separator />
@@ -37,7 +37,7 @@ export function JobOverview({ job }: JobOverviewProps) {
           <Users className="h-5 w-5 text-emerald-500 mt-0.5" />
           <div>
             <p className="text-sm text-muted-foreground">Experience</p>
-            <p className="font-semibold">{job.experience}</p>
+            <p className="font-semibold">{job.experience} Years</p>
           </div>
         </div>
         <Separator />
@@ -55,7 +55,7 @@ export function JobOverview({ job }: JobOverviewProps) {
               <Calendar className="h-5 w-5 text-emerald-500 mt-0.5" />
               <div>
                 <p className="text-sm text-muted-foreground">Application Deadline</p>
-                <p className="font-semibold">{formatDate(job.deadline)}</p>
+                <p className="font-semibold">{formatDeadline(job.deadline)}</p>
               </div>
             </div>
           </>
