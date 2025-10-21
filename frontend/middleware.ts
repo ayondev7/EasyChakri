@@ -2,45 +2,40 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
 
-const PUBLIC_PATHS = [
-  "/",
-  "/auth",
-  "/api/auth",
-  "/_next",
-  "/favicon.ico",
-  "/public",
-]
-
-const ROLE_PATHS: { prefix: string; role: "seeker" | "recruiter" }[] = [
-  { prefix: "/seeker", role: "seeker" },
-  { prefix: "/recruiter", role: "recruiter" },
-  { prefix: "/jobs", role: "seeker" },
-  { prefix: "/companies", role: "seeker" },
-]
-
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
-  if (PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith(p + "/"))) {
-    return NextResponse.next()
-  }
-
-  const matched = ROLE_PATHS.find(rp => pathname.startsWith(rp.prefix))
-  if (!matched) {
-    return NextResponse.next()
-  }
-
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  const userRole = (token?.user as any)?.role
 
-  if (!token) {
-    const signInUrl = new URL(`/auth/signin`, req.nextUrl.origin)
-    signInUrl.searchParams.set("callbackUrl", req.nextUrl.pathname)
-    return NextResponse.redirect(signInUrl)
+  if (pathname.startsWith("/seeker")) {
+    if (!token || userRole !== "seeker") {
+      return NextResponse.redirect(new URL("/auth/signin", req.nextUrl.origin))
+    }
+    return NextResponse.next()
   }
 
-  if (!token.user || (token.user as any).role !== matched.role) {
-    const dashboardUrl = (token.user as any)?.role === "recruiter" ? "/recruiter/dashboard" : "/seeker/dashboard"
-    return NextResponse.redirect(new URL(dashboardUrl, req.nextUrl.origin))
+  if (pathname.startsWith("/recruiter")) {
+    if (!token || userRole !== "recruiter") {
+      return NextResponse.redirect(new URL("/auth/signin", req.nextUrl.origin))
+    }
+    return NextResponse.next()
+  }
+
+  if (pathname.startsWith("/jobs")) {
+    if (!token || userRole !== "seeker") {
+      const redirectUrl = userRole === "recruiter" ? "/recruiter/dashboard" : "/auth/signin"
+      return NextResponse.redirect(new URL(redirectUrl, req.nextUrl.origin))
+    }
+    return NextResponse.next()
+  }
+
+  if (pathname.startsWith("/companies")) {
+    if (!token || userRole !== "seeker") {
+      const redirectUrl = userRole === "recruiter" ? "/recruiter/dashboard" : "/auth/signin"
+      return NextResponse.redirect(new URL(redirectUrl, req.nextUrl.origin))
+    }
+    return NextResponse.next()
   }
 
   return NextResponse.next()
