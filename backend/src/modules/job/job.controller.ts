@@ -106,4 +106,33 @@ export class JobController {
   ) {
     return await this.jobService.getSimilarJobs(id, limit);
   }
+
+  @Post('apply/:id')
+  @UseGuards(JwtAuthGuard)
+  async applyForJob(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+  ) {
+    const application = await this.jobService.applyForJob(id, user.id);
+    return {
+      message: 'Application submitted successfully',
+      data: application,
+    };
+  }
+
+  @Get('seeker/my-applications')
+  @UseGuards(JwtAuthGuard)
+  async getMyApplications(
+    @CurrentUser() user: any,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return await this.jobService.getSeekerApplications(user.id, page, limit);
+  }
+
+  @Get('seeker/application-stats')
+  @UseGuards(JwtAuthGuard)
+  async getApplicationStats(@CurrentUser() user: any) {
+    return await this.jobService.getApplicationStats(user.id);
+  }
 }

@@ -105,4 +105,9 @@ export class UserController {
   async deleteAccount(@CurrentUser() user: any) {
     return await this.userService.deleteUser(user.id);
   }
+
+  @Get('check-profile-complete')
+  async checkProfileComplete(@CurrentUser() user: any) {
+    return await this.userService.checkProfileComplete(user.id);
+  }
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobDto, UpdateJobDto, JobQueryDto } from './dto/job.dto';
 import { generateUniqueJobSlug } from '../../utils/slug.util';
@@ -493,6 +493,117 @@ export class JobService {
     });
 
     return { data: similarJobs };
+  }
+
+  async applyForJob(jobId: string, seekerId: string) {
+    const job = await this.prisma.job.findUnique({
+      where: { id: jobId },
+    });
+
+    if (!job) {
+      throw new NotFoundException('Job not found');
+    }
+
+    const existingApplication = await this.prisma.application.findUnique({
+      where: {
+        seekerId_jobId: {
+          seekerId,
+          jobId,
+        },
+      },
+    });
+
+    if (existingApplication) {
+      throw new BadRequestException('You have already applied for this job');
+    }
+
+    const application = await this.prisma.application.create({
+      data: {
+        seekerId,
+        jobId,
+      },
+      include: {
+        job: {
+          include: {
+            company: {
+              select: {
+                id: true,
+                name: true,
+                logo: true,
+                location: true,
+                industry: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return application;
+  }
+
+  async getSeekerApplications(seekerId: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const total = await this.prisma.application.count({
+      where: { seekerId },
+    });
+
+    const applications = await this.prisma.application.findMany({
+      where: { seekerId },
+      skip,
+      take: Number(limit),
+      orderBy: { appliedAt: 'desc' },
+      include: {
+        job: {
+          include: {
+            company: {
+              select: {
+                id: true,
+                name: true,
+                logo: true,
+                location: true,
+                industry: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      data: applications,
+      meta: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getApplicationStats(seekerId: string) {
+    const total = await this.prisma.application.count({
+      where: { seekerId },
+    });
+
+    const statusCounts = await this.prisma.application.groupBy({
+      by: ['status'],
+      where: { seekerId },
+      _count: {
+        status: true,
+      },
+    });
+
+    const stats = statusCounts.reduce((acc, item) => {
+      acc[item.status] = item._count.status;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      total,
+      stats,
+    };
   }
 }
 
