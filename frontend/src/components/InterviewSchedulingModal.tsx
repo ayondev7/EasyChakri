@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Calendar, Clock, MapPin, Video, Eye } from "lucide-react"
+import { stripParenthesizedCompany } from "@/utils/utils"
 import type { Application } from "@/types"
 
 interface InterviewSchedulingModalProps {
@@ -68,7 +69,7 @@ export function InterviewSchedulingModal({ application, trigger, onSchedule }: I
         <div className="space-y-6">
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold text-sm text-gray-900 mb-2">Candidate Details</h3>
-            <p className="text-sm text-gray-600">{application.job.title}</p>
+            <p className="text-sm text-gray-600">{stripParenthesizedCompany(application.job.title)}</p>
             <p className="text-sm text-gray-600">Applied: {application.appliedAt.toLocaleDateString()}</p>
           </div>
 

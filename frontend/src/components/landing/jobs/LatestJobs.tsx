@@ -5,7 +5,7 @@ import { useJobs } from "@/hooks/jobHooks"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Briefcase, Clock, ArrowRight } from "lucide-react"
-import { formatDate } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany, formatSalary } from "@/utils/utils"
 import Image from "next/image"
 
 export function LatestJobs() {
@@ -72,7 +72,7 @@ export function LatestJobs() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-start gap-2 mb-2">
-                    <h3 className="font-semibold text-lg hover:text-emerald-500 transition-colors">{job.title}</h3>
+                    <h3 className="font-semibold text-lg hover:text-emerald-500 transition-colors">{stripParenthesizedCompany(job.title)}</h3>
                     {job.featured && <Badge className="bg-emerald-500 text-white hover:bg-emerald-600">Featured</Badge>}
                   </div>
                   <p className="text-sm text-muted-foreground mb-3">{job.company.name}</p>
@@ -93,7 +93,7 @@ export function LatestJobs() {
                 </div>
 
                 <div className="flex flex-col items-start md:items-end gap-2 flex-shrink-0">
-                  <span className="font-semibold text-emerald-500">{job.salary}</span>
+                  <span className="font-semibold text-emerald-500">{formatSalary(job.salary)}</span>
                   <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white">
                     Apply Now
                   </Button>

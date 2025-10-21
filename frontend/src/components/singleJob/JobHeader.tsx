@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Briefcase, Clock, Eye, Users, Bookmark, Share2 } from "lucide-react"
-import { formatDate } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
 import type { Job } from "@/types"
 
 interface JobHeaderProps {
@@ -30,7 +30,7 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
             />
           </div>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
+            <h1 className="text-3xl font-bold mb-2">{stripParenthesizedCompany(job.title)}</h1>
             <Link
               href={`/companies/${job.company.id}`}
               className="text-lg text-emerald-500 hover:underline mb-3 inline-block"

@@ -88,3 +88,13 @@ export function getInitials(name: string): string {
     .toUpperCase()
     .slice(0, 2)
 }
+
+/**
+ * Remove trailing parenthesized company name from a job title.
+ * Example: "Senior Engineer (Acme Corp)" -> "Senior Engineer"
+ */
+export function stripParenthesizedCompany(title?: string | null): string {
+  if (!title) return ""
+  // Remove any trailing ' (....)' including nested parentheses content
+  return String(title).replace(/\s*\([^)]*\)\s*$/, "").trim()
+}

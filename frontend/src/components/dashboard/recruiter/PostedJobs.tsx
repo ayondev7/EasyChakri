@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Users, Eye, Briefcase, Plus, MoreVertical, Edit, Trash2 } from "lucide-react"
-import { formatDate } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
 
 type Job = {
   id: string
@@ -56,7 +56,7 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
                         href={`/jobs/${job.id}`}
                         className="font-semibold hover:text-emerald-500 transition-colors line-clamp-1"
                       >
-                        {job.title}
+                        {stripParenthesizedCompany(job.title)}
                       </Link>
                       {job.featured && (
                         <Badge className="bg-emerald-500 text-white hover:bg-emerald-600 flex-shrink-0">Featured</Badge>

@@ -4,7 +4,7 @@ import type { Job } from "@/types"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Briefcase, Clock, Bookmark } from "lucide-react"
-import { formatDate } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany, formatSalary } from "@/utils/utils"
 import { useSavedJobs } from "@/contexts/SavedJobsContext"
 import ApplyButton from "@/components/jobs/ApplyButton"
 import { useAuth } from "@/contexts/AuthContext"
@@ -44,7 +44,7 @@ export function JobCard({ job }: JobCardProps) {
             </div>
             <div className="flex-1 min-w-0">
               <Link href={`/jobs/${job.id}`} className="group-hover:text-emerald-500 transition-colors">
-                <h3 className="font-semibold text-lg leading-tight mb-1 line-clamp-1">{job.title}</h3>
+                <h3 className="font-semibold text-lg leading-tight mb-1 line-clamp-1">{stripParenthesizedCompany(job.title)}</h3>
               </Link>
               <p className="text-sm text-gray-600 line-clamp-1">{job.company?.name || "N/A"}</p>
             </div>
@@ -76,7 +76,7 @@ export function JobCard({ job }: JobCardProps) {
           </div>
           <div className="flex items-center gap-2">
             <Briefcase className="h-4 w-4 flex-shrink-0" />
-            <span className="line-clamp-1">{job.salary}</span>
+            <span className="line-clamp-1">{formatSalary(job.salary)}</span>
           </div>
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 flex-shrink-0" />

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Interview } from "@/types"
 import { Calendar, Clock, MapPin, Video, CheckCircle, XCircle, AlertCircle, ExternalLink, User } from "lucide-react"
-import { formatDate } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
 
 export default function RecruiterInterviewsPage() {
   const router = useRouter()
@@ -119,7 +119,7 @@ export default function RecruiterInterviewsPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="font-semibold text-lg truncate">
-                            {interview.application.job.title}
+                            {stripParenthesizedCompany(interview.application.job.title)}
                           </h3>
                           <Badge variant="outline" className={getStatusColor(interview.status)}>
                             <span className="flex items-center gap-1.5">

@@ -9,7 +9,7 @@ import { useMyApplications, useApplicationStats } from "@/hooks"
 import { Briefcase, FileText, Eye, Clock, CheckCircle, XCircle, AlertCircle, Calendar } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { formatDate } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
 import Loader from "@/components/Loader"
 
 export default function SeekerDashboardPage() {
@@ -159,7 +159,7 @@ export default function SeekerDashboardPage() {
                                 href={`/jobs/${application.job.id}`}
                                 className="font-semibold hover:text-cyan-500 transition-colors line-clamp-1"
                               >
-                                {application.job.title}
+                                {stripParenthesizedCompany(application.job.title)}
                               </Link>
                               <p className="text-sm text-muted-foreground mb-2">{application.job.company?.name}</p>
                               <div className="flex items-center gap-2 text-xs text-muted-foreground">

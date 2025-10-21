@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { useMyJobs } from '@/hooks/jobHooks'
 import type { Job } from '@/types'
 import { Users, Eye, Plus, MoreVertical, Edit, Trash2 } from "lucide-react"
-import { formatDate } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function RecruiterJobsPage() {
@@ -96,7 +96,7 @@ export default function RecruiterJobsPage() {
                               href={`/jobs/${job.id}`}
                               className="font-semibold hover:text-cyan-500 transition-colors line-clamp-1"
                             >
-                              {job.title}
+                              {stripParenthesizedCompany(job.title)}
                             </Link>
                             {job.featured && (
                               <Badge className="bg-cyan-500 text-white hover:bg-cyan-600 flex-shrink-0">Featured</Badge>

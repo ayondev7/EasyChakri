@@ -13,7 +13,7 @@ import type { Application } from '@/types'
 import { Clock, CheckCircle, XCircle, Eye, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { formatDate } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
 
 export default function ApplicationsPage() {
   const router = useRouter()
@@ -122,7 +122,7 @@ export default function ApplicationsPage() {
                           href={`/jobs/${application.job.id}`}
                           className="font-semibold text-lg hover:text-cyan-500 transition-colors line-clamp-1 inline-block"
                         >
-                          {application.job.title}
+                          {stripParenthesizedCompany(application.job.title)}
                         </Link>
                         <p className="text-muted-foreground mb-2">{application.job.company.name}</p>
                         <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
