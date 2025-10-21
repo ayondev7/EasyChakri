@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Briefcase, Clock, Bookmark } from "lucide-react"
 import { formatDate } from "@/utils/utils"
 import { useSavedJobs } from "@/contexts/SavedJobsContext"
+import ApplyButton from "@/components/jobs/ApplyButton"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface JobCardProps {
   job: Job
@@ -13,6 +15,7 @@ interface JobCardProps {
 
 export function JobCard({ job }: JobCardProps) {
   const { isJobSaved, saveJob, unsaveJob } = useSavedJobs()
+  const { user } = useAuth()
 
   const handleBookmark = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -97,9 +100,21 @@ export function JobCard({ job }: JobCardProps) {
 
       {/* Card Footer */}
       <div className="px-6 pb-6 pt-4 border-t border-gray-200">
-        <Button asChild className="w-full bg-emerald-500 hover:bg-emerald-600 text-white">
-          <Link href={`/jobs/${job.id}`}>View Details</Link>
-        </Button>
+        {user?.role === "seeker" ? (
+          <div className="flex gap-2">
+            <Button asChild variant="outline" className="flex-1">
+              <Link href={`/jobs/${job.id}`}>View Details</Link>
+            </Button>
+            <ApplyButton 
+              jobId={job.id} 
+              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white"
+            />
+          </div>
+        ) : (
+          <Button asChild className="w-full bg-emerald-500 hover:bg-emerald-600 text-white">
+            <Link href={`/jobs/${job.id}`}>View Details</Link>
+          </Button>
+        )}
       </div>
     </div>
   )

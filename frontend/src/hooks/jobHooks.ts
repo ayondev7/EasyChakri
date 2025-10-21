@@ -1,7 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useGet, usePost, usePut, useDelete } from './index'
-import type { Job } from '@/types'
+import type { Job, Application } from '@/types'
 import JOB_ROUTES from '@/routes/jobRoutes'
+import apiClient from '@/utils/apiClient'
 
 export interface CreateJobInput {
   title: string
@@ -212,5 +213,63 @@ export function useSimilarJobs(jobId: string, limit?: number) {
     {
       enabled: !!jobId,
     }
+  )
+}
+
+export interface ApplicationsResponse {
+  data: Application[]
+  meta: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
+export interface ApplicationStatsResponse {
+  total: number
+  stats: Record<string, number>
+}
+
+export const applicationKeys = {
+  all: ['applications'] as const,
+  lists: () => [...applicationKeys.all, 'list'] as const,
+  stats: () => [...applicationKeys.all, 'stats'] as const,
+}
+
+export function useApplyForJob() {
+  const queryClient = useQueryClient()
+  
+  return usePost<{ message: string; data: Application }, { jobId: string }>(
+    '',
+    {
+      mutationFn: async ({ jobId }) => {
+        const { data } = await apiClient.post(JOB_ROUTES.apply(jobId))
+        return data
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: applicationKeys.lists() })
+        queryClient.invalidateQueries({ queryKey: applicationKeys.stats() })
+      },
+    }
+  )
+}
+
+export function useMyApplications(page?: number, limit?: number) {
+  const queryString = new URLSearchParams()
+  if (page) queryString.append('page', page.toString())
+  if (limit) queryString.append('limit', limit.toString())
+  const query = queryString.toString()
+  
+  return useGet<ApplicationsResponse>(
+    applicationKeys.lists(),
+    `${JOB_ROUTES.myApplications}${query ? `?${query}` : ''}`
+  )
+}
+
+export function useApplicationStats() {
+  return useGet<ApplicationStatsResponse>(
+    applicationKeys.stats(),
+    JOB_ROUTES.applicationStats
   )
 }

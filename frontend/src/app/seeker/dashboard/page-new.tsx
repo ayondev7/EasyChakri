@@ -27,22 +27,22 @@ export default function SeekerDashboardPage() {
       link: "/seeker/applications",
     },
     {
-      title: "Pending",
-      value: statsData?.stats?.PENDING || 0,
-      icon: Clock,
-      color: "text-yellow-500",
-      bgColor: "bg-yellow-500/10",
+      title: "Profile Views",
+      value: 234,
+      icon: Eye,
+      color: "text-blue-500",
+      bgColor: "bg-blue-500/10",
     },
     {
-      title: "Shortlisted",
-      value: statsData?.stats?.SHORTLISTED || 0,
-      icon: CheckCircle,
+      title: "Saved Jobs",
+      value: 12,
+      icon: Briefcase,
       color: "text-green-500",
       bgColor: "bg-green-500/10",
     },
     {
-      title: "Interviews",
-      value: statsData?.stats?.INTERVIEW_SCHEDULED || 0,
+      title: "Pending",
+      value: statsData?.stats?.PENDING || 0,
       icon: Calendar,
       color: "text-orange-500",
       bgColor: "bg-orange-500/10",
@@ -85,13 +85,12 @@ export default function SeekerDashboardPage() {
   return (
     <AuthGuard role="seeker">
       <main className="py-8">
-  <div className="container mx-auto">
+        <div className="container mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back, {user?.name || "User"}!</h1>
             <p className="text-muted-foreground">Track your applications and discover new opportunities</p>
           </div>
 
-          {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {stats.map((stat) => {
               const Icon = stat.icon
@@ -103,9 +102,7 @@ export default function SeekerDashboardPage() {
                         <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
                         <p className="text-3xl font-bold">{stat.value}</p>
                       </div>
-                      <div
-                        className={`h-12 w-12 rounded-lg ${stat.bgColor} ${stat.color} flex items-center justify-center`}
-                      >
+                      <div className={`h-12 w-12 rounded-lg ${stat.bgColor} ${stat.color} flex items-center justify-center`}>
                         <Icon className="h-6 w-6" />
                       </div>
                     </div>
@@ -124,7 +121,6 @@ export default function SeekerDashboardPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Recent Applications */}
             <div className="lg:col-span-2">
               <Card>
                 <CardHeader>

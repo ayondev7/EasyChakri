@@ -76,16 +76,16 @@ export default function ApplicantsPage({ params }: { params: Promise<{ id: strin
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
+    switch (status.toUpperCase()) {
+      case "PENDING":
         return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-      case "reviewed":
+      case "REVIEWED":
         return "bg-blue-500/10 text-blue-500 border-blue-500/20"
-      case "shortlisted":
+      case "SHORTLISTED":
         return "bg-green-500/10 text-green-500 border-green-500/20"
-      case "rejected":
+      case "REJECTED":
         return "bg-red-500/10 text-red-500 border-red-500/20"
-      case "accepted":
+      case "ACCEPTED":
         return "bg-cyan-500/10 text-cyan-500 border-cyan-500/20"
       default:
         return "bg-muted text-muted-foreground"
@@ -98,11 +98,11 @@ export default function ApplicantsPage({ params }: { params: Promise<{ id: strin
 
   const statusCounts = {
     all: applications.length,
-    pending: applications.filter(app => app.status === "pending").length,
-    reviewed: applications.filter(app => app.status === "reviewed").length,
-    shortlisted: applications.filter(app => app.status === "shortlisted").length,
-    rejected: applications.filter(app => app.status === "rejected").length,
-    accepted: applications.filter(app => app.status === "accepted").length,
+    pending: applications.filter(app => app.status === "PENDING").length,
+    reviewed: applications.filter(app => app.status === "REVIEWED").length,
+    shortlisted: applications.filter(app => app.status === "SHORTLISTED").length,
+    rejected: applications.filter(app => app.status === "REJECTED").length,
+    accepted: applications.filter(app => app.status === "ACCEPTED").length,
   }
 
     if (selectedApplicant) {
@@ -184,19 +184,6 @@ export default function ApplicantsPage({ params }: { params: Promise<{ id: strin
                     <p className="text-sm">{applicantUser?.education}</p>
                   </CardContent>
                 </Card>
-
-                {selectedApplicant.coverLetter && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Cover Letter</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm leading-relaxed text-muted-foreground">
-                        {selectedApplicant.coverLetter}
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
               </div>
 
               <div className="space-y-6">
@@ -215,11 +202,11 @@ export default function ApplicantsPage({ params }: { params: Promise<{ id: strin
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="reviewed">Reviewed</SelectItem>
-                          <SelectItem value="shortlisted">Shortlisted</SelectItem>
-                          <SelectItem value="rejected">Rejected</SelectItem>
-                          <SelectItem value="accepted">Accepted</SelectItem>
+                          <SelectItem value="PENDING">Pending</SelectItem>
+                          <SelectItem value="REVIEWED">Reviewed</SelectItem>
+                          <SelectItem value="SHORTLISTED">Shortlisted</SelectItem>
+                          <SelectItem value="REJECTED">Rejected</SelectItem>
+                          <SelectItem value="ACCEPTED">Accepted</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -227,12 +214,12 @@ export default function ApplicantsPage({ params }: { params: Promise<{ id: strin
                     <div className="pt-4 border-t space-y-3">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Applied</span>
-                        <span className="font-medium">{formatDate(selectedApplicant.appliedDate)}</span>
+                        <span className="font-medium">{formatDate(selectedApplicant.appliedAt)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Current Status</span>
                         <Badge variant="outline" className={getStatusColor(selectedApplicant.status)}>
-                          {selectedApplicant.status.charAt(0).toUpperCase() + selectedApplicant.status.slice(1)}
+                          {selectedApplicant.status.charAt(0).toUpperCase() + selectedApplicant.status.slice(1).toLowerCase().replace('_', ' ')}
                         </Badge>
                       </div>
                     </div>
@@ -335,7 +322,7 @@ export default function ApplicantsPage({ params }: { params: Promise<{ id: strin
                               {applicantUser?.experience}
                             </span>
                           </div>
-                          <p className="text-xs text-muted-foreground">Applied {formatDate(application.appliedDate)}</p>
+                          <p className="text-xs text-muted-foreground">Applied {formatDate(application.appliedAt)}</p>
                         </div>
 
                         <div className="flex flex-col gap-3 md:items-end">
@@ -350,13 +337,13 @@ export default function ApplicantsPage({ params }: { params: Promise<{ id: strin
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="pending">Pending</SelectItem>
-                                <SelectItem value="reviewed">Reviewed</SelectItem>
-                                <SelectItem value="shortlisted">Shortlisted</SelectItem>
-                                <SelectItem value="interview_scheduled">Interview Scheduled</SelectItem>
-                                <SelectItem value="interview_completed">Interview Completed</SelectItem>
-                                <SelectItem value="rejected">Rejected</SelectItem>
-                                <SelectItem value="accepted">Accepted</SelectItem>
+                                <SelectItem value="PENDING">Pending</SelectItem>
+                                <SelectItem value="REVIEWED">Reviewed</SelectItem>
+                                <SelectItem value="SHORTLISTED">Shortlisted</SelectItem>
+                                <SelectItem value="INTERVIEW_SCHEDULED">Interview Scheduled</SelectItem>
+                                <SelectItem value="INTERVIEW_COMPLETED">Interview Completed</SelectItem>
+                                <SelectItem value="REJECTED">Rejected</SelectItem>
+                                <SelectItem value="ACCEPTED">Accepted</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
