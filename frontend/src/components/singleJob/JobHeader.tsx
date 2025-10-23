@@ -7,9 +7,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Briefcase, Clock, Eye, Users, Bookmark, Share2 } from "lucide-react"
 import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
 import type { Job } from "@/types"
-import { useApplyForJob, useSaveJob, useUnsaveJob, useCheckIfSaved } from "@/hooks/jobHooks"
+import { useApplyForJob, useSaveJob, useUnsaveJob, jobKeys } from "@/hooks/jobHooks"
 import toast from "react-hot-toast"
 import { useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface JobHeaderProps {
   job: Job
@@ -20,13 +21,14 @@ interface JobHeaderProps {
 export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
   const applicantCount = job._count?.applications || 0
   const [isApplying, setIsApplying] = useState(false)
+  const queryClient = useQueryClient()
 
   const applyMutation = useApplyForJob()
   const saveMutation = useSaveJob()
   const unsaveMutation = useUnsaveJob()
-  const { data: savedData, refetch: refetchSaved } = useCheckIfSaved(job.id)
-  
-  const isSaved = savedData?.data?.isSaved || false
+
+  const isSaved = job.isSaved || false
+  const hasApplied = job.hasApplied || false
 
   const handleApply = async () => {
     if (!isAuthenticated) {
@@ -43,6 +45,9 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
     try {
       await applyMutation.mutateAsync({ jobId: job.id })
       toast.success("Application submitted successfully!")
+      
+      queryClient.invalidateQueries({ queryKey: jobKeys.detail(job.id) })
+      
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message || "Failed to submit application"
       toast.error(errorMessage)
@@ -65,7 +70,7 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
         await saveMutation.mutateAsync({ jobId: job.id })
         toast.success("Job saved successfully!")
       }
-      refetchSaved()
+      queryClient.invalidateQueries({ queryKey: jobKeys.detail(job.id) })
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message || (isSaved ? "Failed to unsave job" : "Failed to save job")
       toast.error(errorMessage)
@@ -140,18 +145,19 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
           {userRole === "seeker" && (
             <Button
               size="lg"
-              className="bg-emerald-500 hover:bg-emerald-600 text-white"
-              disabled={!isAuthenticated || isApplying}
+              className={`bg-emerald-500 hover:bg-emerald-600 text-white ${hasApplied ? 'opacity-80 cursor-not-allowed' : ''}`}
+              disabled={!isAuthenticated || isApplying || hasApplied}
               onClick={handleApply}
             >
-              {isApplying ? "Applying..." : !isAuthenticated ? "Sign in to Apply" : "Apply Now"}
+              {hasApplied ? 'Applied' : isApplying ? 'Applying...' : !isAuthenticated ? 'Sign in to Apply' : 'Apply Now'}
             </Button>
           )}
           <Button 
             size="lg" 
             variant="outline"
             onClick={handleSaveToggle}
-            disabled={saveMutation.isPending || unsaveMutation.isPending}
+            disabled={saveMutation.isPending || unsaveMutation.isPending || isSaved}
+            className={`${isSaved ? 'opacity-80 cursor-not-allowed' : ''}`}
           >
             <Bookmark className={`h-4 w-4 mr-2 ${isSaved ? "fill-current" : ""}`} />
             {isSaved ? "Saved" : "Save Job"}

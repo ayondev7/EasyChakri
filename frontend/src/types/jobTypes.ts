@@ -27,6 +27,8 @@ export interface Job {
   _count?: {
     applications: number
   }
+  hasApplied?: boolean
+  isSaved?: boolean
 }
 
 export interface SavedJob {
