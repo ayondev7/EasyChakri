@@ -38,11 +38,20 @@ export class UserController {
     return await this.userService.getUserProfile(user.id);
   }
 
+  @Get('profile-status')
+  async checkProfileComplete(@CurrentUser() user: any) {
+    console.log('Check profile complete - user from decorator:', user);
+    if (!user || !user.id) {
+      throw new BadRequestException('User not authenticated properly');
+    }
+    return await this.userService.checkProfileComplete(user.id);
+  }
+
   /**
-   * GET /api/users/:id
+   * GET /api/users/get-user/:id
    * Get user profile by ID (public)
    */
-  @Get(':id')
+  @Get('get-user/:id')
   async getUserById(@Param('id') id: string) {
     return await this.userService.getUserProfile(id);
   }
@@ -104,10 +113,5 @@ export class UserController {
   @Delete('me')
   async deleteAccount(@CurrentUser() user: any) {
     return await this.userService.deleteUser(user.id);
-  }
-
-  @Get('check-profile-complete')
-  async checkProfileComplete(@CurrentUser() user: any) {
-    return await this.userService.checkProfileComplete(user.id);
   }
 }

@@ -101,7 +101,7 @@ export class JobController {
     return await this.jobService.getTrendingSearches(limit);
   }
 
-  @Get('similar/:id')
+  @Get('similar-jobs/:id')
   async getSimilarJobs(
     @Param('id') id: string,
     @Query('limit') limit?: number,
@@ -109,7 +109,7 @@ export class JobController {
     return await this.jobService.getSimilarJobs(id, limit);
   }
 
-  @Post('apply/:id')
+  @Post('apply-job/:id')
   @UseGuards(JwtAuthGuard)
   async applyForJob(
     @Param('id') id: string,
@@ -138,7 +138,7 @@ export class JobController {
     return await this.jobService.getApplicationStats(user.id);
   }
 
-  @Post('save/:id')
+  @Post('save-job/:id')
   @UseGuards(JwtAuthGuard)
   async saveJob(
     @Param('id') id: string,
@@ -151,7 +151,7 @@ export class JobController {
     };
   }
 
-  @Delete('unsave/:id')
+  @Delete('unsave-job/:id')
   @UseGuards(JwtAuthGuard)
   async unsaveJob(
     @Param('id') id: string,
@@ -173,7 +173,7 @@ export class JobController {
     return await this.jobService.getSavedJobs(user.id, page, limit);
   }
 
-  @Get('saved/check/:id')
+  @Get('check-saved-job/:id')
   @UseGuards(JwtAuthGuard)
   async checkIfJobSaved(
     @Param('id') id: string,

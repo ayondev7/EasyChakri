@@ -52,6 +52,8 @@ export class JwtAuthGuard implements CanActivate {
     try {
       // Verify and decode token
       const payload = TokenUtil.verifyToken(token);
+      
+      console.log('JWT Guard - Token payload:', payload);
 
       // Find user in database
       const user = await this.prisma.user.findUnique({
@@ -64,6 +66,8 @@ export class JwtAuthGuard implements CanActivate {
         },
       });
 
+      console.log('JWT Guard - User found in DB:', user ? 'Yes' : 'No', user ? user.id : 'N/A');
+
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
@@ -73,6 +77,7 @@ export class JwtAuthGuard implements CanActivate {
 
       return true;
     } catch (error) {
+      console.error('JWT Guard - Error:', error.message);
       throw new UnauthorizedException(
         error.message || 'Invalid or expired token',
       );

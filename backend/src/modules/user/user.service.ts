@@ -71,6 +71,8 @@ export class UserService {
   }
 
   async checkProfileComplete(userId: string) {
+    console.log('checkProfileComplete called with userId:', userId);
+    
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -84,6 +86,8 @@ export class UserService {
         resume: true,
       },
     });
+
+    console.log('User found:', user ? 'Yes' : 'No');
 
     if (!user) {
       throw new NotFoundException('User not found');

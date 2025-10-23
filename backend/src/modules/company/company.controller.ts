@@ -38,7 +38,7 @@ export class CompanyController {
     return await this.companyService.getRecruiterCompany(user.id);
   }
 
-  @Get()
+  @Get('get-companies')
   async getAllCompanies(
     @Query('page') page?: number,
     @Query('limit') limit?: number,
@@ -46,16 +46,16 @@ export class CompanyController {
     return await this.companyService.getAllCompanies(page, limit);
   }
 
-  @Get(':id')
+  @Get('get-company/:id')
   async getCompany(@Param('id') id: string) {
     return await this.companyService.getCompanyById(id);
   }
 
   /**
-   * POST /api/companies
+   * POST /api/companies/create-company
    * Create company profile (Protected - Recruiter only)
    */
-  @Post()
+  @Post('create-company')
   @UseGuards(JwtAuthGuard)
   async createCompany(
     @CurrentUser() user: any,
@@ -69,10 +69,10 @@ export class CompanyController {
   }
 
   /**
-   * PUT /api/companies/:id
+   * PUT /api/companies/update-company/:id
    * Update company (Protected - Recruiter only, must own the company)
    */
-  @Put(':id')
+  @Put('update-company/:id')
   @UseGuards(JwtAuthGuard)
   async updateCompany(
     @Param('id') id: string,
@@ -87,11 +87,11 @@ export class CompanyController {
   }
 
   /**
-   * POST /api/companies/:id/upload-logo
+   * PUT /api/companies/upload-logo/:id
    * Upload company logo (Protected)
    */
   @UseInterceptors(FileInterceptor('logo'))
-  @Put(':id/upload-logo')
+  @Put('upload-logo/:id')
   @UseGuards(JwtAuthGuard)
   async uploadLogo(
     @Param('id') id: string,
@@ -123,10 +123,10 @@ export class CompanyController {
   }
 
   /**
-   * DELETE /api/companies/:id
+   * DELETE /api/companies/delete-company/:id
    * Delete company (Protected - Recruiter only, must own the company)
    */
-  @Delete(':id')
+  @Delete('delete-company/:id')
   @UseGuards(JwtAuthGuard)
   async deleteCompany(
     @Param('id') id: string,
