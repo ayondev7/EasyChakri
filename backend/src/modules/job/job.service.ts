@@ -12,7 +12,7 @@ export class JobService {
 
     company = await this.prisma.company.findFirst({ where: { recruiterId } });
     if (!company) {
-      throw new NotFoundException('No company associated with your account. Please create a company profile before posting jobs.');
+      throw new NotFoundException('Please create your company profile before posting jobs.');
     }
 
     const slug = await generateUniqueJobSlug(this.prisma as any, dto.title)
@@ -175,11 +175,11 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
     await this.prisma.job.update({
@@ -229,11 +229,11 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
     if (job.recruiterId !== recruiterId) {
-      throw new ForbiddenException('You do not have permission to update this job');
+      throw new ForbiddenException('You don\'t have permission to update this job listing.');
     }
 
     const updatedJob = await this.prisma.job.update({
@@ -264,11 +264,11 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
     if (job.recruiterId !== recruiterId) {
-      throw new ForbiddenException('You do not have permission to delete this job');
+      throw new ForbiddenException('You don\'t have permission to delete this job listing.');
     }
 
     await this.prisma.job.delete({
@@ -493,7 +493,7 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
     const similarJobs = await this.prisma.job.findMany({
@@ -538,7 +538,7 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
     // Check if profile is complete before allowing application
@@ -557,7 +557,7 @@ export class JobService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('We couldn\'t find your account. Please sign in again.');
     }
 
     const missingFields: string[] = [];
@@ -598,7 +598,7 @@ export class JobService {
     });
 
     if (existingApplication) {
-      throw new BadRequestException('You have already applied for this job');
+      throw new BadRequestException('You\'ve already applied for this job.');
     }
 
     const application = await this.prisma.application.create({
@@ -696,7 +696,7 @@ export class JobService {
     });
 
     if (!job) {
-      throw new NotFoundException('Job not found');
+      throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
     const existingSavedJob = await this.prisma.savedJob.findUnique({
@@ -709,7 +709,7 @@ export class JobService {
     });
 
     if (existingSavedJob) {
-      throw new BadRequestException('Job already saved');
+      throw new BadRequestException('You\'ve already saved this job.');
     }
 
     const savedJob = await this.prisma.savedJob.create({
@@ -748,7 +748,7 @@ export class JobService {
     });
 
     if (!savedJob) {
-      throw new NotFoundException('Saved job not found');
+      throw new NotFoundException('This job is not in your saved list.');
     }
 
     await this.prisma.savedJob.delete({

@@ -52,7 +52,7 @@ export class TokenUtil {
     try {
       return jwt.verify(token, process.env.JWT_SECRET) as TokenPayload;
     } catch (error) {
-      throw new Error('Invalid or expired token');
+      throw new Error('Your session has expired. Please sign in again.');
     }
   }
 

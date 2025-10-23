@@ -31,7 +31,7 @@ export class ImageUtil {
    */
   private static validateSize(buffer: Buffer): void {
     if (buffer.length > this.MAX_SIZE) {
-      throw new Error('Image size must be less than 3MB');
+      throw new Error('Your image is too large. Please choose an image smaller than 3MB.');
     }
   }
 
@@ -44,7 +44,7 @@ export class ImageUtil {
 
     if (!format || !this.ALLOWED_FORMATS.includes(format)) {
       throw new Error(
-        `Invalid image format. Allowed formats: ${this.ALLOWED_FORMATS.join(', ')}`,
+        `Please upload a valid image file. Supported formats: ${this.ALLOWED_FORMATS.join(', ').toUpperCase()}`,
       );
     }
 
@@ -81,7 +81,7 @@ export class ImageUtil {
         name: result.name,
       };
     } catch (error) {
-      throw new Error(`Failed to upload image: ${error.message}`);
+      throw new Error(`We couldn't upload your image. Please try again or choose a different image.`);
     }
   }
 
@@ -120,7 +120,7 @@ export class ImageUtil {
     try {
       await imagekit.deleteFile(fileId);
     } catch (error) {
-      throw new Error(`Failed to delete image: ${error.message}`);
+      throw new Error(`We couldn't delete the image. Please try again.`);
     }
   }
 }

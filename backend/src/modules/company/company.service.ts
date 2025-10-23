@@ -22,7 +22,7 @@ export class CompanyService {
     });
 
     if (existingCompany) {
-      throw new ConflictException('You already have a company profile');
+      throw new ConflictException('You already have a company profile. You can update your existing profile instead.');
     }
 
     const company = await this.prisma.company.create({
@@ -102,7 +102,7 @@ export class CompanyService {
     });
 
     if (!company) {
-      throw new NotFoundException('Company not found');
+      throw new NotFoundException('We couldn\'t find this company. It may have been removed.');
     }
 
     return company;
@@ -124,7 +124,7 @@ export class CompanyService {
     });
 
     if (!company) {
-      throw new NotFoundException('Company profile not found');
+      throw new NotFoundException('You don\'t have a company profile yet. Please create one to continue.');
     }
 
     return company;
@@ -140,11 +140,11 @@ export class CompanyService {
     });
 
     if (!company) {
-      throw new NotFoundException('Company not found');
+      throw new NotFoundException('We couldn\'t find this company. It may have been removed.');
     }
 
     if (company.recruiterId !== recruiterId) {
-      throw new ForbiddenException('You do not have permission to update this company');
+      throw new ForbiddenException('You don\'t have permission to update this company profile.');
     }
 
     const updatedCompany = await this.prisma.company.update({
@@ -161,11 +161,11 @@ export class CompanyService {
     });
 
     if (!company) {
-      throw new NotFoundException('Company not found');
+      throw new NotFoundException('We couldn\'t find this company. It may have been removed.');
     }
 
     if (company.recruiterId !== recruiterId) {
-      throw new ForbiddenException('You do not have permission to delete this company');
+      throw new ForbiddenException('You don\'t have permission to delete this company profile.');
     }
 
     await this.prisma.company.delete({

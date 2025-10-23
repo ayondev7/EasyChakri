@@ -99,7 +99,7 @@ export class CompanyController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
-      throw new BadRequestException('No file uploaded');
+      throw new BadRequestException('Please select a logo to upload.');
     }
 
     // Upload logo using ImageUtil

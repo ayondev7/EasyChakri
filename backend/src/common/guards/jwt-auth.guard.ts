@@ -46,7 +46,7 @@ export class JwtAuthGuard implements CanActivate {
     // Extract token from Authorization header
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException('Access token is required');
+      throw new UnauthorizedException('Please sign in to continue.');
     }
 
     try {
@@ -69,7 +69,7 @@ export class JwtAuthGuard implements CanActivate {
       console.log('JWT Guard - User found in DB:', user ? 'Yes' : 'No', user ? user.id : 'N/A');
 
       if (!user) {
-        throw new UnauthorizedException('User not found');
+        throw new UnauthorizedException('Your account could not be found. Please sign in again.');
       }
 
       // Attach user to request object
@@ -79,7 +79,7 @@ export class JwtAuthGuard implements CanActivate {
     } catch (error) {
       console.error('JWT Guard - Error:', error.message);
       throw new UnauthorizedException(
-        error.message || 'Invalid or expired token',
+        'Your session has expired. Please sign in again.',
       );
     }
   }

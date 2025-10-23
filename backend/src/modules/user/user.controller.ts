@@ -42,7 +42,7 @@ export class UserController {
   async checkProfileComplete(@CurrentUser() user: any) {
     console.log('Check profile complete - user from decorator:', user);
     if (!user || !user.id) {
-      throw new BadRequestException('User not authenticated properly');
+      throw new BadRequestException('Please sign in to continue.');
     }
     return await this.userService.checkProfileComplete(user.id);
   }
@@ -83,7 +83,7 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
-      throw new BadRequestException('No file uploaded');
+      throw new BadRequestException('Please select an image to upload.');
     }
 
     // Upload image using ImageUtil

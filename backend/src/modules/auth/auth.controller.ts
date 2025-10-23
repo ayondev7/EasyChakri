@@ -107,7 +107,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async verifyToken(@Headers('authorization') authorization: string) {
     if (!authorization) {
-      throw new UnauthorizedException('No token provided');
+      throw new UnauthorizedException('Please sign in to continue.');
     }
 
     const token = authorization.replace('Bearer ', '');

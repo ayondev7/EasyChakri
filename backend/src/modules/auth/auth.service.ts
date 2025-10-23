@@ -47,7 +47,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+      throw new ConflictException('This email is already registered. Please sign in or use a different email.');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -65,7 +65,7 @@ export class AuthService {
 
     if (dto.role === 'RECRUITER') {
       if (!dto.companyName || !dto.companyDescription || !dto.companyIndustry || !dto.companySize || !dto.companyLocation) {
-        throw new BadRequestException('Company details are required for recruiter registration');
+        throw new BadRequestException('Please provide your company information to continue as a recruiter.');
       }
 
       // Upload company logo if provided
@@ -169,13 +169,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('The email or password you entered is incorrect. Please try again.');
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('The email or password you entered is incorrect. Please try again.');
     }
 
     // Generate tokens
@@ -271,7 +271,7 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new UnauthorizedException('User not found');
+        throw new UnauthorizedException('Your session has expired. Please sign in again.');
       }
 
       const accessToken = TokenUtil.generateAccessToken({
@@ -282,7 +282,7 @@ export class AuthService {
 
       return { accessToken };
     } catch (error) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException('Your session has expired. Please sign in again.');
     }
   }
 
@@ -295,7 +295,7 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new UnauthorizedException('User not found');
+        throw new UnauthorizedException('Your session has expired. Please sign in again.');
       }
 
       return {
@@ -308,7 +308,7 @@ export class AuthService {
         },
       };
     } catch (error) {
-      throw new UnauthorizedException('Invalid or expired token');
+      throw new UnauthorizedException('Your session has expired. Please sign in again.');
     }
   }
 }

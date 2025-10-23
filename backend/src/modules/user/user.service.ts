@@ -31,7 +31,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('We couldn\'t find your account. Please sign in again.');
     }
 
     return {
@@ -90,7 +90,7 @@ export class UserService {
     console.log('User found:', user ? 'Yes' : 'No');
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('We couldn\'t find your account. Please sign in again.');
     }
 
     const missingFields: string[] = [];
