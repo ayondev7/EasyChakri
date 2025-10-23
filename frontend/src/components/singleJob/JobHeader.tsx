@@ -12,8 +12,6 @@ import { useApplyForJob, useSaveJob, useUnsaveJob, jobKeys } from "@/hooks/jobHo
 import toast from "react-hot-toast"
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
-import apiClient from "@/utils/apiClient"
-import { USER_ROUTES } from "@/routes"
 
 interface JobHeaderProps {
   job: Job
@@ -47,42 +45,35 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
 
     setIsApplying(true)
     try {
-      const { data } = await apiClient.get(USER_ROUTES.checkProfileComplete)
-      
-      if (!data.isComplete) {
-        const missingFieldsMap: Record<string, string> = {
-          name: "Full Name",
-          phone: "Phone Number",
-          location: "Location",
-          bio: "Bio",
-          skills: "Skills",
-          experience: "Years of Experience",
-          education: "Education",
-          resume: "Resume",
-        }
-        
-        const missingFieldsDisplay = data.missingFields.map((field: string) => missingFieldsMap[field]).join(", ")
-        
-        toast.error(
-          `Please complete your profile before applying. Missing: ${missingFieldsDisplay}`,
-          { duration: 6000 }
-        )
-        
-        setIsApplying(false)
-        setTimeout(() => {
-          router.push("/seeker/profile")
-        }, 1000)
-        return
-      }
-
       await applyMutation.mutateAsync({ jobId: job.id })
-      toast.success("Application submitted successfully!")
+      toast.success("Application submitted successfully! 🎉")
       
       queryClient.invalidateQueries({ queryKey: jobKeys.detail(job.id) })
       
     } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || "Failed to submit application"
-      toast.error(errorMessage)
+      const errorMessage = error?.response?.data?.message || "Failed to submit application. Please try again."
+      
+      // Check if it's a profile completion error
+      if (errorMessage.includes("complete your profile") || errorMessage.includes("Missing information")) {
+        toast.error("Please complete your profile before applying.  Visit your profile page to complete these details.", { 
+          duration: 8000,
+          style: {
+            maxWidth: '600px',
+          }
+        })
+        
+        // Navigate to profile page after a short delay
+        setTimeout(() => {
+          router.push("/seeker/profile")
+        }, 2000)
+      } else {
+        toast.error(errorMessage, {
+          duration: 5000,
+          style: {
+            maxWidth: '500px',
+          }
+        })
+      }
     } finally {
       setIsApplying(false)
     }

@@ -118,3 +118,23 @@
     display: none;
   }
 }
+
+/* React Hot Toast Custom Styles */
+[data-sonner-toaster] {
+  --toast-width: 500px;
+}
+
+/* Increase toast width for better readability */
+div[role="status"] {
+  min-width: 400px;
+  max-width: 600px;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+@media (max-width: 640px) {
+  div[role="status"] {
+    min-width: 300px;
+    max-width: 90vw;
+  }
+}
