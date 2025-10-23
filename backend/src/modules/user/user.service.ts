@@ -42,11 +42,31 @@ export class UserService {
 
   /**
    * Update user profile
+   * Only updates fields that are actually provided in the DTO
    */
   async updateUserProfile(userId: string, dto: UpdateUserDto) {
+    // Filter out undefined values to only update provided fields
+    const updateData: any = {};
+    
+    if (dto.name !== undefined) updateData.name = dto.name;
+    if (dto.phone !== undefined) updateData.phone = dto.phone;
+    if (dto.location !== undefined) updateData.location = dto.location;
+    if (dto.bio !== undefined) updateData.bio = dto.bio;
+    if (dto.skills !== undefined) updateData.skills = dto.skills;
+    if (dto.experience !== undefined) updateData.experience = dto.experience;
+    if (dto.education !== undefined) updateData.education = dto.education;
+    if (dto.image !== undefined) updateData.image = dto.image;
+    if (dto.resume !== undefined) updateData.resume = dto.resume;
+
+    // Only perform update if there are fields to update
+    if (Object.keys(updateData).length === 0) {
+      // No fields to update, just return current user data
+      return this.getUserProfile(userId);
+    }
+
     const user = await this.prisma.user.update({
       where: { id: userId },
-      data: dto,
+      data: updateData,
       select: {
         id: true,
         email: true,

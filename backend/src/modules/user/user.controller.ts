@@ -38,6 +38,18 @@ export class UserController {
     return await this.userService.getUserProfile(user.id);
   }
 
+  /**
+   * GET /api/users/profile-details
+   * Get current user full profile details (for profile page)
+   */
+  @Get('profile-details')
+  async getProfileDetails(@CurrentUser() user: any) {
+    if (!user || !user.id) {
+      throw new BadRequestException('Please sign in to continue.');
+    }
+    return await this.userService.getUserProfile(user.id);
+  }
+
   @Get('profile-status')
   async checkProfileComplete(@CurrentUser() user: any) {
     console.log('Check profile complete - user from decorator:', user);
