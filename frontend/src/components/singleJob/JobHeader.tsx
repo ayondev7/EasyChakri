@@ -46,7 +46,7 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
     setIsApplying(true)
     try {
       await applyMutation.mutateAsync({ jobId: job.id })
-      toast.success("Application submitted successfully! 🎉")
+      toast.success("Application submitted!")
       
       queryClient.invalidateQueries({ queryKey: jobKeys.detail(job.id) })
       

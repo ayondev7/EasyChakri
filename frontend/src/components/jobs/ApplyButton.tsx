@@ -51,7 +51,7 @@ export default function ApplyButton({ jobId, className, variant = "default", siz
       }
 
       await applyForJob.mutateAsync({ jobId })
-      toast.success("Application submitted successfully!")
+      toast.success("Application submitted!")
       
       setTimeout(() => {
         router.push("/seeker/dashboard")

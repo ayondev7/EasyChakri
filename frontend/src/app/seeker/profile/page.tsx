@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
-import { useUpdateUserProfile } from "@/hooks"
+import { useUpdateUserProfile, useUserProfileInformation } from "@/hooks"
 import { toast } from "react-hot-toast"
 import ProfileHeader from "@/components/profile/ProfileHeader"
 import PersonalInfoCard from "@/components/profile/PersonalInfoCard"
@@ -16,6 +16,8 @@ export default function ProfilePage() {
   const { user, isAuthenticated, isLoading } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const updateProfile = useUpdateUserProfile()
+  const { data: profileResp, isLoading: profileLoading } = useUserProfileInformation()
+  const profileUser = profileResp?.data
   const [isFormInitialized, setIsFormInitialized] = useState(false)
 
   const [formData, setFormData] = useState<{
@@ -40,33 +42,33 @@ export default function ProfilePage() {
 
   // Initialize form data only once when user data is first available
   useEffect(() => {
-    if (user && !isFormInitialized) {
+    if (profileUser && !isFormInitialized) {
       setFormData({
-        name: user.name || "",
-        phone: user.phone || "",
-        location: user.location || "",
-        bio: user.bio || "",
-        experience: user.experience || "",
-        education: user.education || "",
-        skills: user.skills || [],
-        resume: user.resume || "",
+        name: profileUser.name || "",
+        phone: profileUser.phone || "",
+        location: profileUser.location || "",
+        bio: profileUser.bio || "",
+        experience: profileUser.experience || "",
+        education: profileUser.education || "",
+        skills: profileUser.skills || [],
+        resume: profileUser.resume || "",
       })
       setIsFormInitialized(true)
     }
-  }, [user, isFormInitialized])
+  }, [profileUser, isFormInitialized])
 
   // Reset form initialization when entering edit mode to get latest user data
   const handleEditClick = () => {
-    if (user) {
+    if (profileUser) {
       setFormData({
-        name: user.name || "",
-        phone: user.phone || "",
-        location: user.location || "",
-        bio: user.bio || "",
-        experience: user.experience || "",
-        education: user.education || "",
-        skills: user.skills || [],
-        resume: user.resume || "",
+        name: profileUser.name || "",
+        phone: profileUser.phone || "",
+        location: profileUser.location || "",
+        bio: profileUser.bio || "",
+        experience: profileUser.experience || "",
+        education: profileUser.education || "",
+        skills: profileUser.skills || [],
+        resume: profileUser.resume || "",
       })
     }
     setIsEditing(true)
@@ -85,11 +87,11 @@ export default function ProfilePage() {
     }
   }, [isAuthenticated, user, router, isLoading])
 
-  if (isLoading) {
+  if (isLoading || profileLoading) {
     return null
   }
 
-  if (!isAuthenticated || !user || user.role !== "seeker") {
+  if (!isAuthenticated || !user || user.role !== "seeker" || !profileUser) {
     return null
   }
 
@@ -102,16 +104,16 @@ export default function ProfilePage() {
       // Only send fields that have actually changed
       const changedFields: any = {};
       
-      if (formData.name !== user.name) changedFields.name = formData.name;
-      if (formData.phone !== user.phone) changedFields.phone = formData.phone;
-      if (formData.location !== user.location) changedFields.location = formData.location;
-      if (formData.bio !== user.bio) changedFields.bio = formData.bio;
-      if (formData.experience !== user.experience) changedFields.experience = formData.experience;
-      if (formData.education !== user.education) changedFields.education = formData.education;
-      if (formData.resume !== user.resume) changedFields.resume = formData.resume;
+  if (formData.name !== profileUser.name) changedFields.name = formData.name;
+  if (formData.phone !== profileUser.phone) changedFields.phone = formData.phone;
+  if (formData.location !== profileUser.location) changedFields.location = formData.location;
+  if (formData.bio !== profileUser.bio) changedFields.bio = formData.bio;
+  if (formData.experience !== profileUser.experience) changedFields.experience = formData.experience;
+  if (formData.education !== profileUser.education) changedFields.education = formData.education;
+  if (formData.resume !== profileUser.resume) changedFields.resume = formData.resume;
       
       // Compare skills arrays
-      const skillsChanged = JSON.stringify(formData.skills?.sort()) !== JSON.stringify(user.skills?.sort());
+  const skillsChanged = JSON.stringify(formData.skills?.sort()) !== JSON.stringify((profileUser.skills || [])?.sort());
       if (skillsChanged) changedFields.skills = formData.skills;
 
       // If no fields changed, show info message
@@ -137,14 +139,14 @@ export default function ProfilePage() {
 
   const handleCancel = () => {
     setFormData({
-      name: user.name || "",
-      phone: user.phone || "",
-      location: user.location || "",
-      bio: user.bio || "",
-      experience: user.experience || "",
-      education: user.education || "",
-      skills: user.skills || [],
-      resume: user.resume || "",
+      name: profileUser.name || "",
+      phone: profileUser.phone || "",
+      location: profileUser.location || "",
+      bio: profileUser.bio || "",
+      experience: profileUser.experience || "",
+      education: profileUser.education || "",
+      skills: profileUser.skills || [],
+      resume: profileUser.resume || "",
     })
     setIsEditing(false)
   }
@@ -178,24 +180,24 @@ export default function ProfilePage() {
         </div>
 
         <div className="space-y-6">
-          <ProfileHeader user={user} />
+          <ProfileHeader user={profileUser} />
 
           <PersonalInfoCard
-            user={user}
+            user={profileUser}
             isEditing={isEditing}
             formData={formData}
             onFormChange={handleFormChange}
           />
 
           <ProfessionalInfoCard
-            user={user}
+            user={profileUser}
             isEditing={isEditing}
             formData={formData}
             onFormChange={handleFormChange}
           />
 
           <ResumeCard
-            user={user}
+            user={profileUser}
             isEditing={isEditing}
             formData={formData}
             onFormChange={handleFormChange}

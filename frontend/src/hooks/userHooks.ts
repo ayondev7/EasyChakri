@@ -3,12 +3,29 @@ import apiClient from "@/utils/apiClient"
 import { USER_ROUTES } from "@/routes"
 import { User } from "@/types"
 
+export interface UserResponse {
+  data: User
+  message?: string
+}
+
 export const useUserProfile = () => {
   return useQuery({
     queryKey: ["user", "profile"],
     queryFn: async () => {
       const response = await apiClient.get(USER_ROUTES.me)
       return response.data as User
+    },
+    refetchOnWindowFocus: false,
+  })
+}
+
+// New hook to fetch user profile information via the formal endpoint
+export const useUserProfileInformation = () => {
+  return useQuery<UserResponse>({
+    queryKey: ["user", "profile-information"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<UserResponse>(USER_ROUTES.getProfileInformation)
+      return data
     },
     refetchOnWindowFocus: false,
   })
@@ -30,6 +47,7 @@ export const useUpdateUserProfile = () => {
       // Also invalidate to trigger refetch if the component is using these queries
       queryClient.invalidateQueries({ queryKey: ["user", "profile"] })
       queryClient.invalidateQueries({ queryKey: ["auth", "me"] })
+      queryClient.invalidateQueries({ queryKey: ["user", "profile-information"] })
       
       // Invalidate profile completion check as well
       queryClient.invalidateQueries({ queryKey: ["user", "profile-complete"] })
