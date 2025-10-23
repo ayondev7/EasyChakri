@@ -144,7 +144,7 @@ export class JobService {
     };
   }
 
-  async getJobById(id: string) {
+  async getJobById(id: string, seekerId?: string) {
     const job = await this.prisma.job.findUnique({
       where: { id },
       include: {
@@ -178,12 +178,49 @@ export class JobService {
       throw new NotFoundException('Job not found');
     }
 
+    if (!job) {
+      throw new NotFoundException('Job not found');
+    }
+
     await this.prisma.job.update({
       where: { id },
       data: { views: { increment: 1 } },
     });
 
-    return job;
+    let hasApplied = false
+    let isSaved = false
+
+    if (seekerId) {
+      const application = await this.prisma.application.findUnique({
+        where: {
+          seekerId_jobId: {
+            seekerId,
+            jobId: id,
+          },
+        },
+        select: { id: true },
+      })
+
+      hasApplied = !!application
+
+      const saved = await this.prisma.savedJob.findUnique({
+        where: {
+          userId_jobId: {
+            userId: seekerId,
+            jobId: id,
+          },
+        },
+        select: { id: true },
+      })
+
+      isSaved = !!saved
+    }
+
+    return {
+      ...job,
+      hasApplied,
+      isSaved,
+    }
   }
 
   async updateJob(jobId: string, recruiterId: string, dto: UpdateJobDto) {
@@ -604,6 +641,137 @@ export class JobService {
       total,
       stats,
     };
+  }
+
+  async saveJob(jobId: string, userId: string) {
+    const job = await this.prisma.job.findUnique({
+      where: { id: jobId },
+    });
+
+    if (!job) {
+      throw new NotFoundException('Job not found');
+    }
+
+    const existingSavedJob = await this.prisma.savedJob.findUnique({
+      where: {
+        userId_jobId: {
+          userId,
+          jobId,
+        },
+      },
+    });
+
+    if (existingSavedJob) {
+      throw new BadRequestException('Job already saved');
+    }
+
+    const savedJob = await this.prisma.savedJob.create({
+      data: {
+        userId,
+        jobId,
+      },
+      include: {
+        job: {
+          include: {
+            company: {
+              select: {
+                id: true,
+                name: true,
+                logo: true,
+                location: true,
+                industry: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return savedJob;
+  }
+
+  async unsaveJob(jobId: string, userId: string) {
+    const savedJob = await this.prisma.savedJob.findUnique({
+      where: {
+        userId_jobId: {
+          userId,
+          jobId,
+        },
+      },
+    });
+
+    if (!savedJob) {
+      throw new NotFoundException('Saved job not found');
+    }
+
+    await this.prisma.savedJob.delete({
+      where: {
+        userId_jobId: {
+          userId,
+          jobId,
+        },
+      },
+    });
+
+    return true;
+  }
+
+  async getSavedJobs(userId: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const total = await this.prisma.savedJob.count({
+      where: { userId },
+    });
+
+    const savedJobs = await this.prisma.savedJob.findMany({
+      where: { userId },
+      skip,
+      take: Number(limit),
+      orderBy: { savedAt: 'desc' },
+      include: {
+        job: {
+          include: {
+            company: {
+              select: {
+                id: true,
+                name: true,
+                logo: true,
+                location: true,
+                industry: true,
+              },
+            },
+            _count: {
+              select: {
+                applications: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      data: savedJobs,
+      meta: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async isJobSaved(jobId: string, userId: string) {
+    const savedJob = await this.prisma.savedJob.findUnique({
+      where: {
+        userId_jobId: {
+          userId,
+          jobId,
+        },
+      },
+    });
+
+    return !!savedJob;
   }
 }
 

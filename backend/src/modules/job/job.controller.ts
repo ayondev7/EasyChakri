@@ -12,6 +12,7 @@ import {
 import { JobService } from './job.service';
 import { CreateJobDto, UpdateJobDto, JobQueryDto } from './dto/job.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../../common/guards/optional-jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @Controller('jobs')
@@ -24,8 +25,9 @@ export class JobController {
   }
 
   @Get('get-job-details/:id')
-  async getJob(@Param('id') id: string) {
-    return await this.jobService.getJobById(id);
+  @UseGuards(OptionalJwtAuthGuard)
+  async getJob(@Param('id') id: string, @CurrentUser() user?: any) {
+    return await this.jobService.getJobById(id, user?.id);
   }
 
   @Post('create-job')
@@ -134,5 +136,52 @@ export class JobController {
   @UseGuards(JwtAuthGuard)
   async getApplicationStats(@CurrentUser() user: any) {
     return await this.jobService.getApplicationStats(user.id);
+  }
+
+  @Post('save/:id')
+  @UseGuards(JwtAuthGuard)
+  async saveJob(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+  ) {
+    const savedJob = await this.jobService.saveJob(id, user.id);
+    return {
+      message: 'Job saved successfully',
+      data: savedJob,
+    };
+  }
+
+  @Delete('unsave/:id')
+  @UseGuards(JwtAuthGuard)
+  async unsaveJob(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+  ) {
+    await this.jobService.unsaveJob(id, user.id);
+    return {
+      message: 'Job removed from saved list',
+    };
+  }
+
+  @Get('seeker/saved-jobs')
+  @UseGuards(JwtAuthGuard)
+  async getSavedJobs(
+    @CurrentUser() user: any,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return await this.jobService.getSavedJobs(user.id, page, limit);
+  }
+
+  @Get('saved/check/:id')
+  @UseGuards(JwtAuthGuard)
+  async checkIfJobSaved(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+  ) {
+    const isSaved = await this.jobService.isJobSaved(id, user.id);
+    return {
+      data: { isSaved },
+    };
   }
 }
