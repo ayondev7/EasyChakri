@@ -541,6 +541,53 @@ export class JobService {
       throw new NotFoundException('Job not found');
     }
 
+    // Check if profile is complete before allowing application
+    const user = await this.prisma.user.findUnique({
+      where: { id: seekerId },
+      select: {
+        name: true,
+        phone: true,
+        location: true,
+        bio: true,
+        skills: true,
+        experience: true,
+        education: true,
+        resume: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const missingFields: string[] = [];
+    const fieldLabels: Record<string, string> = {
+      name: 'Full Name',
+      phone: 'Phone Number',
+      location: 'Location',
+      bio: 'Bio',
+      skills: 'Skills',
+      experience: 'Years of Experience',
+      education: 'Education',
+      resume: 'Resume',
+    };
+
+    if (!user.name || user.name.trim() === '') missingFields.push('name');
+    if (!user.phone || user.phone.trim() === '') missingFields.push('phone');
+    if (!user.location || user.location.trim() === '') missingFields.push('location');
+    if (!user.bio || user.bio.trim() === '') missingFields.push('bio');
+    if (!user.skills || user.skills.length === 0) missingFields.push('skills');
+    if (!user.experience || user.experience.trim() === '') missingFields.push('experience');
+    if (!user.education || user.education.trim() === '') missingFields.push('education');
+    if (!user.resume || user.resume.trim() === '') missingFields.push('resume');
+
+    if (missingFields.length > 0) {
+      const missingFieldsDisplay = missingFields.map(field => fieldLabels[field]).join(', ');
+      throw new BadRequestException(
+        `Please complete your profile before applying. Missing information: ${missingFieldsDisplay}. Visit your profile page to complete these details.`
+      );
+    }
+
     const existingApplication = await this.prisma.application.findUnique({
       where: {
         seekerId_jobId: {
