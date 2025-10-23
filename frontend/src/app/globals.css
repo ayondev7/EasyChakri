@@ -119,22 +119,23 @@
   }
 }
 
-/* React Hot Toast Custom Styles */
+/* React Hot Toast Custom Styles - Dynamic width based on content */
 [data-sonner-toaster] {
-  --toast-width: 500px;
+  --toast-width: fit-content;
 }
 
-/* Increase toast width for better readability */
+/* Dynamic toast width for better UX */
 div[role="status"] {
-  min-width: 400px;
-  max-width: 600px;
+  min-width: 200px;
+  max-width: 500px;
+  width: fit-content;
   word-wrap: break-word;
-  white-space: normal;
+  white-space: pre-wrap;
 }
 
 @media (max-width: 640px) {
   div[role="status"] {
-    min-width: 300px;
+    min-width: 200px;
     max-width: 90vw;
   }
 }

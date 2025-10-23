@@ -46,27 +46,29 @@ export default function ProfessionalInfoCard({ user, isEditing, formData, onForm
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="experience">Years of Experience</Label>
+          <Label htmlFor="experience">Years of Experience (Optional)</Label>
           <Input
             id="experience"
             value={isEditing ? formData.experience : (user.experience || "")}
             onChange={(e) => onFormChange("experience", e.target.value)}
             placeholder="e.g., 5 years"
             disabled={!isEditing}
+            maxLength={2000}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="education">Education</Label>
+          <Label htmlFor="education">Education (Optional)</Label>
           <Input
             id="education"
             value={isEditing ? formData.education : (user.education || "")}
             onChange={(e) => onFormChange("education", e.target.value)}
             placeholder="e.g., BS in Computer Science"
             disabled={!isEditing}
+            maxLength={2000}
           />
         </div>
         <div className="space-y-2">
-          <Label>Skills</Label>
+          <Label>Skills (Optional)</Label>
           <div className="flex flex-wrap gap-2 mb-3">
             {displaySkills.map((skill) => (
               <Badge key={skill} variant="secondary" className="bg-emerald-500/10 text-emerald-500">

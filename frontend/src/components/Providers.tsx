@@ -22,6 +22,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 style: {
                   background: '#fff',
                   color: '#363636',
+                  maxWidth: '500px',
+                  minWidth: '200px',
+                  width: 'fit-content',
+                  wordWrap: 'break-word',
+                  whiteSpace: 'pre-wrap',
                 },
                 success: {
                   iconTheme: {

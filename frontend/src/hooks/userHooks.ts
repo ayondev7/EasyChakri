@@ -22,9 +22,17 @@ export const useUpdateUserProfile = () => {
       const response = await apiClient.put(USER_ROUTES.me, data)
       return response.data
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Update the cache with the new data immediately
+      queryClient.setQueryData(["user", "profile"], data)
+      queryClient.setQueryData(["auth", "me"], data)
+      
+      // Also invalidate to trigger refetch if the component is using these queries
       queryClient.invalidateQueries({ queryKey: ["user", "profile"] })
       queryClient.invalidateQueries({ queryKey: ["auth", "me"] })
+      
+      // Invalidate profile completion check as well
+      queryClient.invalidateQueries({ queryKey: ["user", "profile-complete"] })
     },
   })
 }

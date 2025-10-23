@@ -37,6 +37,7 @@ export default function PersonalInfoCard({ user, isEditing, formData, onFormChan
               id="name"
               value={isEditing ? formData.name : user.name}
               onChange={(e) => onFormChange("name", e.target.value)}
+              placeholder="Enter your full name"
               disabled={!isEditing}
             />
           </div>
@@ -45,7 +46,7 @@ export default function PersonalInfoCard({ user, isEditing, formData, onFormChan
             <Input id="email" type="email" value={user.email} disabled className="bg-muted" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">Phone (Optional)</Label>
             <Input
               id="phone"
               value={isEditing ? formData.phone : (user.phone || "")}
@@ -55,7 +56,7 @@ export default function PersonalInfoCard({ user, isEditing, formData, onFormChan
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
+            <Label htmlFor="location">Location (Optional)</Label>
             <Input
               id="location"
               value={isEditing ? formData.location : (user.location || "")}
@@ -66,7 +67,7 @@ export default function PersonalInfoCard({ user, isEditing, formData, onFormChan
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="bio">Bio</Label>
+          <Label htmlFor="bio">Bio (Optional)</Label>
           <Textarea
             id="bio"
             value={isEditing ? formData.bio : (user.bio || "")}
@@ -74,7 +75,13 @@ export default function PersonalInfoCard({ user, isEditing, formData, onFormChan
             placeholder="Tell us about yourself..."
             rows={4}
             disabled={!isEditing}
+            maxLength={1000}
           />
+          {isEditing && formData.bio && (
+            <p className="text-xs text-muted-foreground text-right">
+              {formData.bio.length}/1000 characters
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

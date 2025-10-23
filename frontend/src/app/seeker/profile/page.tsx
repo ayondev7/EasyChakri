@@ -99,11 +99,39 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      await updateProfile.mutateAsync(formData)
-      toast.success("Profile updated successfully!")
-      setIsEditing(false)
+      // Only send fields that have actually changed
+      const changedFields: any = {};
+      
+      if (formData.name !== user.name) changedFields.name = formData.name;
+      if (formData.phone !== user.phone) changedFields.phone = formData.phone;
+      if (formData.location !== user.location) changedFields.location = formData.location;
+      if (formData.bio !== user.bio) changedFields.bio = formData.bio;
+      if (formData.experience !== user.experience) changedFields.experience = formData.experience;
+      if (formData.education !== user.education) changedFields.education = formData.education;
+      if (formData.resume !== user.resume) changedFields.resume = formData.resume;
+      
+      // Compare skills arrays
+      const skillsChanged = JSON.stringify(formData.skills?.sort()) !== JSON.stringify(user.skills?.sort());
+      if (skillsChanged) changedFields.skills = formData.skills;
+
+      // If no fields changed, show info message
+      if (Object.keys(changedFields).length === 0) {
+        toast.success("No changes to save");
+        setIsEditing(false);
+        return;
+      }
+
+      await updateProfile.mutateAsync(changedFields);
+      toast.success("Profile updated successfully!");
+      setIsEditing(false);
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to update profile")
+      const errorMessage = error?.response?.data?.message;
+      if (Array.isArray(errorMessage)) {
+        // Handle validation errors array
+        toast.error(errorMessage.join(', '));
+      } else {
+        toast.error(errorMessage || "Failed to update profile");
+      }
     }
   }
 

@@ -29,7 +29,7 @@ export default function ResumeCard({ user, isEditing, formData, onFormChange }: 
         {isEditing ? (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="resume">Resume Link (Google Drive)</Label>
+              <Label htmlFor="resume">Resume Link (Google Drive) - Optional</Label>
               <Input
                 id="resume"
                 type="url"
