@@ -3,6 +3,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { useSession, signOut } from "next-auth/react"
 import type { User } from "@/types"
+import { refreshAuthToken, clearAuthToken } from "@/utils/apiClient"
 
 interface AuthContextType {
   user: User | null
@@ -40,9 +41,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         createdAt: new Date(), 
       })
       setIsAuthenticated(true)
+      // Refresh token cache when user logs in
+      refreshAuthToken()
     } else {
       setUser(null)
       setIsAuthenticated(false)
+      // Clear token cache when user logs out
+      clearAuthToken()
     }
   }, [session, status])
 
@@ -52,6 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
+    clearAuthToken() // Clear token cache before signing out
     await signOut({ callbackUrl: "/" })
   }
 

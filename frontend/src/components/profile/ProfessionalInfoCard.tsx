@@ -69,10 +69,10 @@ export default function ProfessionalInfoCard({ user, isEditing, formData, onForm
           <Label>Skills</Label>
           <div className="flex flex-wrap gap-2 mb-3">
             {displaySkills.map((skill) => (
-              <Badge key={skill} variant="secondary" className="bg-cyan-500/10 text-cyan-500">
+              <Badge key={skill} variant="secondary" className="bg-emerald-500/10 text-emerald-500">
                 {skill}
                 {isEditing && (
-                  <button onClick={() => handleRemoveSkill(skill)} className="ml-2 hover:text-cyan-600">
+                  <button onClick={() => handleRemoveSkill(skill)} className="ml-2 hover:text-emerald-600">
                     <X className="h-3 w-3" />
                   </button>
                 )}

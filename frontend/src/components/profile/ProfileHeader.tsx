@@ -24,7 +24,7 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
           <div className="relative">
             <Avatar className="h-24 w-24">
               <AvatarImage src={user.image || "/placeholder.svg"} alt={user.name} />
-              <AvatarFallback className="bg-cyan-500/10 text-cyan-500 text-2xl">
+              <AvatarFallback className="bg-emerald-500/10 text-emerald-500 text-2xl">
                 {getInitials(user.name)}
               </AvatarFallback>
             </Avatar>

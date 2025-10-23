@@ -16,19 +16,47 @@ export default function ProfilePage() {
   const { user, isAuthenticated, isLoading } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const updateProfile = useUpdateUserProfile()
+  const [isFormInitialized, setIsFormInitialized] = useState(false)
 
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    phone: user?.phone || "",
-    location: user?.location || "",
-    bio: user?.bio || "",
-    experience: user?.experience || "",
-    education: user?.education || "",
-    skills: user?.skills || [],
-    resume: user?.resume || "",
+  const [formData, setFormData] = useState<{
+    name: string
+    phone: string
+    location: string
+    bio: string
+    experience: string
+    education: string
+    skills: string[]
+    resume: string
+  }>({
+    name: "",
+    phone: "",
+    location: "",
+    bio: "",
+    experience: "",
+    education: "",
+    skills: [],
+    resume: "",
   })
 
+  // Initialize form data only once when user data is first available
   useEffect(() => {
+    if (user && !isFormInitialized) {
+      setFormData({
+        name: user.name || "",
+        phone: user.phone || "",
+        location: user.location || "",
+        bio: user.bio || "",
+        experience: user.experience || "",
+        education: user.education || "",
+        skills: user.skills || [],
+        resume: user.resume || "",
+      })
+      setIsFormInitialized(true)
+    }
+  }, [user, isFormInitialized])
+
+  // Reset form initialization when entering edit mode to get latest user data
+  const handleEditClick = () => {
     if (user) {
       setFormData({
         name: user.name || "",
@@ -41,7 +69,8 @@ export default function ProfilePage() {
         resume: user.resume || "",
       })
     }
-  }, [user])
+    setIsEditing(true)
+  }
 
   useEffect(() => {
     if (isLoading) return
@@ -101,7 +130,7 @@ export default function ProfilePage() {
             <p className="text-muted-foreground">Manage your personal information and preferences</p>
           </div>
           {!isEditing ? (
-            <Button onClick={() => setIsEditing(true)} className="bg-cyan-500 hover:bg-cyan-600 text-white">
+            <Button onClick={handleEditClick} className="bg-emerald-500 hover:bg-emerald-600 text-white">
               Edit Profile
             </Button>
           ) : (
@@ -111,7 +140,7 @@ export default function ProfilePage() {
               </Button>
               <Button 
                 onClick={handleSave} 
-                className="bg-cyan-500 hover:bg-cyan-600 text-white"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white"
                 disabled={updateProfile.isPending}
               >
                 {updateProfile.isPending ? "Saving..." : "Save Changes"}

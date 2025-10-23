@@ -44,7 +44,7 @@ export default function ResumeCard({ user, isEditing, formData, onFormChange }: 
             </div>
             {currentResume && (
               <div className="flex items-center gap-2 p-4 rounded-lg border border-border/40 bg-muted/30">
-                <FileText className="h-5 w-5 text-cyan-500" />
+                <FileText className="h-5 w-5 text-emerald-500" />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm">Current Resume</p>
                   <p className="text-xs text-muted-foreground truncate">{currentResume}</p>
@@ -66,7 +66,7 @@ export default function ResumeCard({ user, isEditing, formData, onFormChange }: 
             {currentResume ? (
               <div className="flex items-center justify-between p-4 rounded-lg border border-border/40">
                 <div className="flex items-center gap-3">
-                  <FileText className="h-5 w-5 text-cyan-500" />
+                  <FileText className="h-5 w-5 text-emerald-500" />
                   <div>
                     <p className="font-medium">Resume</p>
                     <p className="text-sm text-muted-foreground">View your uploaded resume</p>
