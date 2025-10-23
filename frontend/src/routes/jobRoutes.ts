@@ -18,6 +18,10 @@ export const JOB_ROUTES = {
     apply: (id: string) => `${BASE}/apply/${id}`,
     myApplications: `${BASE}/seeker/my-applications`,
     applicationStats: `${BASE}/seeker/application-stats`,
+    saveJob: (id: string) => `${BASE}/save/${id}`,
+    unsaveJob: (id: string) => `${BASE}/unsave/${id}`,
+    savedJobs: `${BASE}/seeker/saved-jobs`,
+    checkSaved: (id: string) => `${BASE}/saved/check/${id}`,
 } as const;
 
 export default JOB_ROUTES;

@@ -28,3 +28,12 @@ export interface Job {
     applications: number
   }
 }
+
+export interface SavedJob {
+  id: string
+  userId: string
+  jobId: string
+  job: Job
+  savedAt: Date
+}
+

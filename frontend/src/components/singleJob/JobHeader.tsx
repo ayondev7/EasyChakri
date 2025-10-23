@@ -7,6 +7,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Briefcase, Clock, Eye, Users, Bookmark, Share2 } from "lucide-react"
 import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
 import type { Job } from "@/types"
+import { useApplyForJob, useSaveJob, useUnsaveJob, useCheckIfSaved } from "@/hooks/jobHooks"
+import toast from "react-hot-toast"
+import { useState } from "react"
 
 interface JobHeaderProps {
   job: Job
@@ -16,6 +19,77 @@ interface JobHeaderProps {
 
 export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
   const applicantCount = job._count?.applications || 0
+  const [isApplying, setIsApplying] = useState(false)
+
+  const applyMutation = useApplyForJob()
+  const saveMutation = useSaveJob()
+  const unsaveMutation = useUnsaveJob()
+  const { data: savedData, refetch: refetchSaved } = useCheckIfSaved(job.id)
+  
+  const isSaved = savedData?.data?.isSaved || false
+
+  const handleApply = async () => {
+    if (!isAuthenticated) {
+      toast.error("Please sign in to apply for this job")
+      return
+    }
+
+    if (userRole !== "seeker") {
+      toast.error("Only job seekers can apply for jobs")
+      return
+    }
+
+    setIsApplying(true)
+    try {
+      await applyMutation.mutateAsync({ jobId: job.id })
+      toast.success("Application submitted successfully!")
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || "Failed to submit application"
+      toast.error(errorMessage)
+    } finally {
+      setIsApplying(false)
+    }
+  }
+
+  const handleSaveToggle = async () => {
+    if (!isAuthenticated) {
+      toast.error("Please sign in to save jobs")
+      return
+    }
+
+    try {
+      if (isSaved) {
+        await unsaveMutation.mutateAsync({ jobId: job.id })
+        toast.success("Job removed from saved list")
+      } else {
+        await saveMutation.mutateAsync({ jobId: job.id })
+        toast.success("Job saved successfully!")
+      }
+      refetchSaved()
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || (isSaved ? "Failed to unsave job" : "Failed to save job")
+      toast.error(errorMessage)
+    }
+  }
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: job.title,
+        text: `Check out this job at ${job.company.name}`,
+        url: window.location.href,
+      }).catch(() => {
+        copyToClipboard()
+      })
+    } else {
+      copyToClipboard()
+    }
+  }
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href)
+    toast.success("Link copied to clipboard!")
+  }
 
   return (
     <Card>
@@ -67,16 +141,22 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
             <Button
               size="lg"
               className="bg-emerald-500 hover:bg-emerald-600 text-white"
-              disabled={!isAuthenticated}
+              disabled={!isAuthenticated || isApplying}
+              onClick={handleApply}
             >
-              {!isAuthenticated ? "Sign in to Apply" : "Apply Now"}
+              {isApplying ? "Applying..." : !isAuthenticated ? "Sign in to Apply" : "Apply Now"}
             </Button>
           )}
-          <Button size="lg" variant="outline">
-            <Bookmark className="h-4 w-4 mr-2" />
-            Save Job
+          <Button 
+            size="lg" 
+            variant="outline"
+            onClick={handleSaveToggle}
+            disabled={saveMutation.isPending || unsaveMutation.isPending}
+          >
+            <Bookmark className={`h-4 w-4 mr-2 ${isSaved ? "fill-current" : ""}`} />
+            {isSaved ? "Saved" : "Save Job"}
           </Button>
-          <Button size="lg" variant="outline">
+          <Button size="lg" variant="outline" onClick={handleShare}>
             <Share2 className="h-4 w-4 mr-2" />
             Share
           </Button>

@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useGet, usePost, usePut, useDelete } from './index'
-import type { Job, Application } from '@/types'
+import type { Job, Application, SavedJob } from '@/types'
 import JOB_ROUTES from '@/routes/jobRoutes'
 import apiClient from '@/utils/apiClient'
 
@@ -271,5 +271,79 @@ export function useApplicationStats() {
   return useGet<ApplicationStatsResponse>(
     applicationKeys.stats(),
     JOB_ROUTES.applicationStats
+  )
+}
+
+export interface SavedJobsResponse {
+  data: SavedJob[]
+  meta: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
+export const savedJobKeys = {
+  all: ['savedJobs'] as const,
+  lists: () => [...savedJobKeys.all, 'list'] as const,
+  check: (jobId: string) => [...savedJobKeys.all, 'check', jobId] as const,
+}
+
+export function useSaveJob() {
+  const queryClient = useQueryClient()
+  
+  return usePost<{ message: string; data: SavedJob }, { jobId: string }>(
+    '',
+    {
+      mutationFn: async ({ jobId }) => {
+        const { data } = await apiClient.post(JOB_ROUTES.saveJob(jobId))
+        return data
+      },
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries({ queryKey: savedJobKeys.lists() })
+        queryClient.invalidateQueries({ queryKey: savedJobKeys.check(variables.jobId) })
+      },
+    }
+  )
+}
+
+export function useUnsaveJob() {
+  const queryClient = useQueryClient()
+  
+  return useDelete<{ message: string }, { jobId: string }>(
+    '',
+    {
+      mutationFn: async ({ jobId }) => {
+        const { data } = await apiClient.delete(JOB_ROUTES.unsaveJob(jobId))
+        return data
+      },
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries({ queryKey: savedJobKeys.lists() })
+        queryClient.invalidateQueries({ queryKey: savedJobKeys.check(variables.jobId) })
+      },
+    }
+  )
+}
+
+export function useSavedJobs(page?: number, limit?: number) {
+  const queryString = new URLSearchParams()
+  if (page) queryString.append('page', page.toString())
+  if (limit) queryString.append('limit', limit.toString())
+  const query = queryString.toString()
+  
+  return useGet<SavedJobsResponse>(
+    savedJobKeys.lists(),
+    `${JOB_ROUTES.savedJobs}${query ? `?${query}` : ''}`
+  )
+}
+
+export function useCheckIfSaved(jobId: string) {
+  return useGet<{ data: { isSaved: boolean } }>(
+    savedJobKeys.check(jobId),
+    JOB_ROUTES.checkSaved(jobId),
+    {
+      enabled: !!jobId,
+    }
   )
 }

@@ -5,32 +5,49 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Briefcase, Clock, Bookmark } from "lucide-react"
 import { formatDate, stripParenthesizedCompany, formatSalary } from "@/utils/utils"
-import { useSavedJobs } from "@/contexts/SavedJobsContext"
 import ApplyButton from "@/components/jobs/ApplyButton"
 import { useAuth } from "@/contexts/AuthContext"
+import { useSaveJob, useUnsaveJob, useCheckIfSaved } from "@/hooks/jobHooks"
+import toast from "react-hot-toast"
 
 interface JobCardProps {
   job: Job
 }
 
 export function JobCard({ job }: JobCardProps) {
-  const { isJobSaved, saveJob, unsaveJob } = useSavedJobs()
-  const { user } = useAuth()
+  const { user, isAuthenticated } = useAuth()
+  const saveMutation = useSaveJob()
+  const unsaveMutation = useUnsaveJob()
+  const { data: savedData, refetch: refetchSaved } = useCheckIfSaved(job.id)
+  
+  const isSaved = savedData?.data?.isSaved || false
 
-  const handleBookmark = (e: React.MouseEvent) => {
+  const handleBookmark = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
-    if (isJobSaved(job.id)) {
-      unsaveJob(job.id)
-    } else {
-      saveJob(job.id)
+    if (!isAuthenticated) {
+      toast.error("Please sign in to save jobs")
+      return
+    }
+
+    try {
+      if (isSaved) {
+        await unsaveMutation.mutateAsync({ jobId: job.id })
+        toast.success("Job removed from saved list")
+      } else {
+        await saveMutation.mutateAsync({ jobId: job.id })
+        toast.success("Job saved successfully!")
+      }
+      refetchSaved()
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || (isSaved ? "Failed to unsave job" : "Failed to save job")
+      toast.error(errorMessage)
     }
   }
 
   return (
     <div className="group bg-white border border-gray-200 rounded-lg hover:border-emerald-500/50 transition-all duration-300 hover:shadow-lg overflow-hidden">
-      {/* Card Header */}
       <div className="p-6 pb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3 flex-1">
@@ -54,13 +71,13 @@ export function JobCard({ job }: JobCardProps) {
             size="icon"
             className="flex-shrink-0"
             onClick={handleBookmark}
+            disabled={saveMutation.isPending || unsaveMutation.isPending}
           >
-            <Bookmark className={`h-4 w-4 ${isJobSaved(job.id) ? 'fill-current text-emerald-500' : ''}`} />
+            <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current text-emerald-500' : ''}`} />
           </Button>
         </div>
       </div>
 
-      {/* Card Content */}
       <div className="px-6 pb-6 space-y-3">
         <div className="flex flex-wrap gap-2">
           <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20">
@@ -98,7 +115,6 @@ export function JobCard({ job }: JobCardProps) {
         </div>
       </div>
 
-      {/* Card Footer */}
       <div className="px-6 pb-6 pt-4 border-t border-gray-200">
         {user?.role === "seeker" ? (
           <div className="flex gap-2">
