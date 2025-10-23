@@ -14,14 +14,14 @@ export const JOB_ROUTES = {
     statsByLocation: `${BASE}/stats/by-location`,
     statsBySkill: `${BASE}/stats/by-skill`,
     statsTrending: `${BASE}/stats/trending`,
-    similarJobs: (id: string) => `${BASE}/similar/${id}`,
-    apply: (id: string) => `${BASE}/apply/${id}`,
+    similarJobs: (id: string) => `${BASE}/similar-jobs/${id}`,
+    apply: (id: string) => `${BASE}/apply-job/${id}`,
     myApplications: `${BASE}/seeker/my-applications`,
     applicationStats: `${BASE}/seeker/application-stats`,
-    saveJob: (id: string) => `${BASE}/save/${id}`,
-    unsaveJob: (id: string) => `${BASE}/unsave/${id}`,
+    saveJob: (id: string) => `${BASE}/save-job/${id}`,
+    unsaveJob: (id: string) => `${BASE}/unsave-job/${id}`,
     savedJobs: `${BASE}/seeker/saved-jobs`,
-    checkSaved: (id: string) => `${BASE}/saved/check/${id}`,
+    checkSaved: (id: string) => `${BASE}/check-saved-job/${id}`,
 } as const;
 
 export default JOB_ROUTES;

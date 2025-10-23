@@ -4,7 +4,8 @@ const BASE = `${API_URL}/users`
 
 export const USER_ROUTES = {
   me: `${BASE}/me`,
-  checkProfileComplete: `${BASE}/check-profile-complete`,
+  checkProfileComplete: `${BASE}/profile-status`,
+  getById: (id: string) => `${BASE}/get-user/${id}`,
 } as const
 
 export default USER_ROUTES
