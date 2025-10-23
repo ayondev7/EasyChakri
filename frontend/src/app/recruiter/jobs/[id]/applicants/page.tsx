@@ -196,7 +196,7 @@ export default function ApplicantsPage({
                     <div className="flex items-center gap-4">
                       <Avatar className="h-20 w-20">
                         <AvatarImage
-                          src={applicantUser?.avatar || "/placeholder.svg"}
+                          src={applicantUser?.image || "/placeholder.svg"}
                           alt={applicantUser?.name}
                         />
                         <AvatarFallback className="bg-cyan-500/10 text-cyan-500 text-xl">
@@ -417,7 +417,7 @@ export default function ApplicantsPage({
                     >
                       <Avatar className="h-12 w-12">
                         <AvatarImage
-                          src={applicantUser?.avatar || "/placeholder.svg"}
+                          src={applicantUser?.image || "/placeholder.svg"}
                           alt={applicantUser?.name}
                         />
                         <AvatarFallback className="bg-cyan-500/10 text-cyan-500">

@@ -10,6 +10,7 @@ export const useUserProfile = () => {
       const response = await apiClient.get(USER_ROUTES.me)
       return response.data as User
     },
+    refetchOnWindowFocus: false,
   })
 }
 
@@ -36,5 +37,6 @@ export const useCheckProfileComplete = () => {
       return response.data as { isComplete: boolean; missingFields: string[] }
     },
     enabled: false,
+    refetchOnWindowFocus: false,
   })
 }

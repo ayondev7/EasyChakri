@@ -170,14 +170,16 @@ export interface TrendingKeyword {
 export function useJobsByExperience() {
   return useGet<{ data: ExperienceLevel[] }>(
     ['jobs', 'stats', 'by-experience'],
-    JOB_ROUTES.statsByExperience
+    JOB_ROUTES.statsByExperience,
+    { refetchOnWindowFocus: false }
   )
 }
 
 export function useJobsByCategory() {
   return useGet<{ data: JobCategory[] }>(
     ['jobs', 'stats', 'by-category'],
-    JOB_ROUTES.statsByCategory
+    JOB_ROUTES.statsByCategory,
+    { refetchOnWindowFocus: false }
   )
 }
 
@@ -185,7 +187,8 @@ export function useJobsByLocation(limit?: number) {
   const queryString = limit ? `?limit=${limit}` : ''
   return useGet<{ data: JobLocation[] }>(
     ['jobs', 'stats', 'by-location', limit],
-    `${JOB_ROUTES.statsByLocation}${queryString}`
+    `${JOB_ROUTES.statsByLocation}${queryString}`,
+    { refetchOnWindowFocus: false }
   )
 }
 
@@ -193,7 +196,8 @@ export function useJobsBySkill(limit?: number) {
   const queryString = limit ? `?limit=${limit}` : ''
   return useGet<{ data: JobSkill[] }>(
     ['jobs', 'stats', 'by-skill', limit],
-    `${JOB_ROUTES.statsBySkill}${queryString}`
+    `${JOB_ROUTES.statsBySkill}${queryString}`,
+    { refetchOnWindowFocus: false }
   )
 }
 
@@ -201,7 +205,8 @@ export function useTrendingSearches(limit?: number) {
   const queryString = limit ? `?limit=${limit}` : ''
   return useGet<{ data: TrendingKeyword[] }>(
     ['jobs', 'stats', 'trending', limit],
-    `${JOB_ROUTES.statsTrending}${queryString}`
+    `${JOB_ROUTES.statsTrending}${queryString}`,
+    { refetchOnWindowFocus: false }
   )
 }
 
@@ -212,6 +217,7 @@ export function useSimilarJobs(jobId: string, limit?: number) {
     `${JOB_ROUTES.similarJobs(jobId)}${queryString}`,
     {
       enabled: !!jobId,
+      refetchOnWindowFocus: false,
     }
   )
 }

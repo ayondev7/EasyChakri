@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: session.user.email!,
         name: session.user.name!,
         role: session.user.role,
-        avatar: session.user.image,
+        image: session.user.image,
         createdAt: new Date(), 
       })
       setIsAuthenticated(true)

@@ -5,9 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Briefcase, Clock, Bookmark } from "lucide-react"
 import { formatDate, stripParenthesizedCompany, formatSalary } from "@/utils/utils"
-import ApplyButton from "@/components/jobs/ApplyButton"
 import { useAuth } from "@/contexts/AuthContext"
-import { useSaveJob, useUnsaveJob, useCheckIfSaved } from "@/hooks/jobHooks"
+import { useSaveJob } from "@/hooks/jobHooks"
 import toast from "react-hot-toast"
 
 interface JobCardProps {
@@ -17,10 +16,6 @@ interface JobCardProps {
 export function JobCard({ job }: JobCardProps) {
   const { user, isAuthenticated } = useAuth()
   const saveMutation = useSaveJob()
-  const unsaveMutation = useUnsaveJob()
-  const { data: savedData, refetch: refetchSaved } = useCheckIfSaved(job.id)
-  
-  const isSaved = savedData?.data?.isSaved || false
 
   const handleBookmark = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -32,16 +27,10 @@ export function JobCard({ job }: JobCardProps) {
     }
 
     try {
-      if (isSaved) {
-        await unsaveMutation.mutateAsync({ jobId: job.id })
-        toast.success("Job removed from saved list")
-      } else {
-        await saveMutation.mutateAsync({ jobId: job.id })
-        toast.success("Job saved successfully!")
-      }
-      refetchSaved()
+      await saveMutation.mutateAsync({ jobId: job.id })
+      toast.success("Job saved successfully!")
     } catch (error: any) {
-      const errorMessage = error?.response?.data?.message || (isSaved ? "Failed to unsave job" : "Failed to save job")
+      const errorMessage = error?.response?.data?.message || "Failed to save job"
       toast.error(errorMessage)
     }
   }
@@ -71,9 +60,9 @@ export function JobCard({ job }: JobCardProps) {
             size="icon"
             className="flex-shrink-0"
             onClick={handleBookmark}
-            disabled={saveMutation.isPending || unsaveMutation.isPending}
+            disabled={saveMutation.isPending}
           >
-            <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current text-emerald-500' : ''}`} />
+            <Bookmark className="h-4 w-4" />
           </Button>
         </div>
       </div>

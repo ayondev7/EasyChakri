@@ -100,6 +100,7 @@ export interface IndustryData {
 export function useCompaniesByIndustry() {
   return useGet<{ data: IndustryData[] }>(
     ['companies', 'stats', 'by-industry'],
-    COMPANY_ROUTES.statsByIndustry
+    COMPANY_ROUTES.statsByIndustry,
+    { refetchOnWindowFocus: false }
   )
 }

@@ -93,7 +93,7 @@ export function Navbar() {
                   >
                     <Avatar className="h-9 w-9">
                       <AvatarImage
-                        src={user.avatar || "/placeholder.svg"}
+                        src={user.image || "/placeholder.svg"}
                         alt={user.name}
                       />
                       <AvatarFallback className="bg-emerald-500/10 text-emerald-500">

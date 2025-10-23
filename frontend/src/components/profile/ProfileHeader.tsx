@@ -13,6 +13,7 @@ interface ProfileHeaderProps {
 }
 
 export default function ProfileHeader({ user }: ProfileHeaderProps) {
+  console.log("user",user);
   return (
     <Card>
       <CardHeader>
