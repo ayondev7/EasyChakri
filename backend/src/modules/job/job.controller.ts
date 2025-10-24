@@ -24,6 +24,14 @@ export class JobController {
     return await this.jobService.getJobs(query);
   }
 
+  @Get('search-suggestions')
+  async getSearchSuggestions(
+    @Query('q') query: string,
+    @Query('limit') limit?: number,
+  ) {
+    return await this.jobService.getSearchSuggestions(query, limit);
+  }
+
   @Get('get-job-details/:id')
   @UseGuards(OptionalJwtAuthGuard)
   async getJob(@Param('id') id: string, @CurrentUser() user?: any) {

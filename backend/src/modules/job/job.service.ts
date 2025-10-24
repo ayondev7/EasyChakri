@@ -41,6 +41,46 @@ export class JobService {
     return job;
   }
 
+  async getSearchSuggestions(query: string, limit: number = 5) {
+    if (!query || query.trim().length < 2) {
+      return { data: [] };
+    }
+
+    const searchTerm = query.trim();
+
+    // Search for jobs by title, description, or company name
+    const jobs = await this.prisma.job.findMany({
+      where: {
+        OR: [
+          { title: { contains: searchTerm, mode: 'insensitive' } },
+          { description: { contains: searchTerm, mode: 'insensitive' } },
+          { company: { name: { contains: searchTerm, mode: 'insensitive' } } },
+          { category: { contains: searchTerm, mode: 'insensitive' } },
+        ],
+      },
+      take: limit,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        location: true,
+        type: true,
+        company: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return { data: jobs };
+  }
+
   async getJobs(query: JobQueryDto) {
     const {
       search,
