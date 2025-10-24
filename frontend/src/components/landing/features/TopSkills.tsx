@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Code, Database, Cloud, Smartphone, Shield, Brain } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { useJobsBySkill } from "@/hooks/jobHooks"
+import Loader from "@/components/Loader"
 
 const skillIcons: Record<string, any> = {
   "React": Code,
@@ -34,9 +35,7 @@ export function TopSkills() {
             <h2 className="text-3xl md:text-4xl font-bold mb-2">In-Demand Skills</h2>
             <p className="text-muted-foreground">Explore jobs by the most sought-after skills</p>
           </div>
-          <div className="flex items-center justify-center">
-            <div className="text-muted-foreground">Loading skills...</div>
-          </div>
+          <Loader />
         </div>
       </section>
     )

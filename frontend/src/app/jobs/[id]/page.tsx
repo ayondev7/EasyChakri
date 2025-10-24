@@ -8,6 +8,7 @@ import { JobHeader } from "@/components/singleJob/JobHeader"
 import { JobDescription } from "@/components/singleJob/JobDescription"
 import { JobOverview } from "@/components/singleJob/JobOverview"
 import { CompanyInfo } from "@/components/singleJob/CompanyInfo"
+import Loader from "@/components/Loader"
 
 export default function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -20,9 +21,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
     return (
       <main className="py-8">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center py-12">
-            <div className="text-lg text-muted-foreground">Loading job details...</div>
-          </div>
+          <Loader />
         </div>
       </main>
     )

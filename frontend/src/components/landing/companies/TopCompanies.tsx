@@ -6,6 +6,7 @@ import { useCompanies } from "@/hooks/companyHooks"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, MapPin, Briefcase } from "lucide-react"
+import Loader from "@/components/Loader"
 
 export function TopCompanies() {
   const { data, isLoading } = useCompanies(6, 1)
@@ -16,9 +17,7 @@ export function TopCompanies() {
     return (
       <section className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center">
-            <div className="text-muted-foreground">Loading companies...</div>
-          </div>
+          <Loader />
         </div>
       </section>
     )

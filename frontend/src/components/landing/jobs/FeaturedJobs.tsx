@@ -4,6 +4,7 @@ import { JobCard } from "@/components/JobCard"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { useJobs } from "@/hooks/jobHooks"
+import Loader from "@/components/Loader"
 
 export function FeaturedJobs() {
   const { data: jobsResponse, isLoading, error } = useJobs({ limit: 9 })
@@ -13,7 +14,7 @@ export function FeaturedJobs() {
     return (
       <section className="py-[100px] md:py-[100px]">
   <div className="container mx-auto">
-          <div className="text-center">Loading jobs...</div>
+          <Loader />
         </div>
       </section>
     )

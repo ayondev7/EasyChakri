@@ -4,6 +4,7 @@ import type { Job } from '@/types'
 import { JobCard } from '@/components/JobCard'
 import Pagination from '@/components/pagination/Pagination'
 import { useJobs } from '@/hooks/jobHooks'
+import Loader from '@/components/Loader'
 
 interface JobsListProps {
   initialPage?: number
@@ -31,11 +32,7 @@ export const JobsList: React.FC<JobsListProps> = ({ initialPage = 1, pageSize = 
   const totalPages = data?.meta?.totalPages || 1
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-lg text-muted-foreground">Loading jobs...</div>
-      </div>
-    )
+    return <Loader />
   }
 
   if (error) {

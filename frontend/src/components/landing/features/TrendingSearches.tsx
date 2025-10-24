@@ -3,6 +3,7 @@ import Link from "next/link"
 import { TrendingUp, Search } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useTrendingSearches } from "@/hooks/jobHooks"
+import Loader from "@/components/Loader"
 
 export function TrendingSearches() {
   const { data, isLoading } = useTrendingSearches(12)
@@ -20,9 +21,7 @@ export function TrendingSearches() {
               <p className="text-muted-foreground">Most searched job titles this week</p>
             </div>
           </div>
-          <div className="flex items-center justify-center">
-            <div className="text-muted-foreground">Loading trending searches...</div>
-          </div>
+          <Loader />
         </div>
       </section>
     )

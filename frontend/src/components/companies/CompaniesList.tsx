@@ -7,6 +7,7 @@ import { MapPin, Briefcase } from "lucide-react"
 import { useCompanies } from "@/hooks/companyHooks"
 import Pagination from "@/components/pagination/Pagination"
 import { useState } from "react"
+import Loader from "@/components/Loader"
 
 interface CompaniesListProps {
   initialPage?: number
@@ -18,11 +19,7 @@ export function CompaniesList({ initialPage = 1, pageSize = 6 }: CompaniesListPr
   const { data, isLoading, error } = useCompanies(pageSize, currentPage)
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-muted-foreground">Loading companies...</div>
-      </div>
-    )
+    return <Loader />
   }
 
   if (error) {

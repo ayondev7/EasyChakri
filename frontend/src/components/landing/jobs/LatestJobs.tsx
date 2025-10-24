@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { MapPin, Briefcase, Clock, ArrowRight } from "lucide-react"
 import { formatDate, stripParenthesizedCompany, formatSalary } from "@/utils/utils"
 import Image from "next/image"
+import Loader from "@/components/Loader"
 
 export function LatestJobs() {
   const { data, isLoading } = useJobs({ limit: 8 })
@@ -17,9 +18,7 @@ export function LatestJobs() {
     return (
       <section className="py-[100px] md:py-[100px]">
   <div className="container mx-auto">
-          <div className="flex items-center justify-center">
-            <div className="text-muted-foreground">Loading latest jobs...</div>
-          </div>
+          <Loader />
         </div>
       </section>
     )

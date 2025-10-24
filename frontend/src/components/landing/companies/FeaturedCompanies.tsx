@@ -5,6 +5,7 @@ import { ChevronRight, ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CompanyCard } from "./CompanyCard"
 import { useCompanies } from "@/hooks/companyHooks"
+import Loader from "@/components/Loader"
 
 export function FeaturedCompanies() {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -29,7 +30,7 @@ export function FeaturedCompanies() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Featured companies actively hiring</h2>
           </div>
-          <div className="text-center">Loading companies...</div>
+          <Loader />
         </div>
       </section>
     )

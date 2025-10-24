@@ -61,12 +61,12 @@ export const recruiterMenuItems = [
     icon: "PlusCircle",
   },
   {
-    label: "My Jobs",
+    label: "Manage Jobs",
     href: "/recruiter/jobs",
     icon: "Briefcase",
   },
   {
-    label: "Interviews",
+    label: "Manage Interviews",
     href: "/recruiter/interviews",
     icon: "Calendar",
   },

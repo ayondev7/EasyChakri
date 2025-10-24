@@ -6,6 +6,7 @@ import Image from "next/image"
 import { ChevronRight, ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCompaniesByIndustry } from "@/hooks/companyHooks"
+import Loader from "@/components/Loader"
 
 export function CompaniesHiringNow() {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -30,9 +31,7 @@ export function CompaniesHiringNow() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Top companies hiring now</h2>
           </div>
-          <div className="flex items-center justify-center">
-            <div className="text-muted-foreground">Loading companies...</div>
-          </div>
+          <Loader />
         </div>
       </section>
     )

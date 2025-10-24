@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Briefcase, GraduationCap, Award } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { useJobsByExperience } from "@/hooks/jobHooks"
+import Loader from "@/components/Loader"
 
 const experienceLevelConfig = {
   "Fresher": {
@@ -32,9 +33,7 @@ export function JobsByExperience() {
     return (
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center">
-            <div className="text-muted-foreground">Loading experience levels...</div>
-          </div>
+          <Loader />
         </div>
       </section>
     )

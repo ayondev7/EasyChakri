@@ -4,6 +4,7 @@ import Link from "next/link"
 import { MapPin } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { useJobsByLocation } from "@/hooks/jobHooks"
+import Loader from "@/components/Loader"
 
 export function JobsByLocation() {
   const { data, isLoading } = useJobsByLocation(8)
@@ -18,9 +19,7 @@ export function JobsByLocation() {
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Jobs by Location</h2>
             <p className="text-muted-foreground">Find opportunities in your preferred city</p>
           </div>
-          <div className="flex items-center justify-center">
-            <div className="text-muted-foreground">Loading locations...</div>
-          </div>
+          <Loader />
         </div>
       </section>
     )

@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useJob } from '@/hooks/jobHooks'
 import EditJobForm from '@/components/jobs/EditJobForm'
-import { Loader2 } from 'lucide-react'
+import Loader from '@/components/Loader'
 
 export default function EditJobPage() {
   const router = useRouter()
@@ -26,9 +26,7 @@ export default function EditJobPage() {
     return (
       <main className="py-8">
         <div className="container mx-auto max-w-4xl">
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-          </div>
+          <Loader />
         </div>
       </main>
     )
