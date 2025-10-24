@@ -8,6 +8,8 @@ export const APPLICATION_ROUTES = {
     recruiterAllApplications: `${BASE}/recruiter/all-applications`,
     updateApplicationStatus: (id: string) => `${BASE}/update-application-status/${id}`,
     recruiterApplicationStatistics: `${BASE}/recruiter/application-statistics`,
+    seekerMyApplications: `${BASE}/seeker/my-applications`,
+    seekerApplicationStatistics: `${BASE}/seeker/application-statistics`,
     withdrawApplication: (id: string) => `${BASE}/withdraw-application/${id}`,
 } as const;
 

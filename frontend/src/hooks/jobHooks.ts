@@ -240,38 +240,6 @@ export function useApplyForJob() {
   )
 }
 
-export function useMyApplications(
-  page?: number,
-  limit?: number,
-  options?: Omit<
-    UseQueryOptions<
-      { data: Application[]; meta: { page: number; limit: number; total: number; totalPages: number } },
-      AxiosError<ApiError>,
-      { data: Application[]; meta: { page: number; limit: number; total: number; totalPages: number } },
-      QueryKey
-    >,
-    'queryKey' | 'queryFn'
-  >
-) {
-  const queryString = new URLSearchParams()
-  if (page) queryString.append('page', page.toString())
-  if (limit) queryString.append('limit', limit.toString())
-  const query = queryString.toString()
-  
-  return useGet<{ data: Application[], meta: { page: number, limit: number, total: number, totalPages: number } }>(
-    ['applications', 'list'],
-    `${JOB_ROUTES.myApplications}${query ? `?${query}` : ''}`,
-    options
-  )
-}
-
-export function useApplicationStats() {
-  return useGet<{ total: number, stats: Record<string, number> }>(
-    ['applications', 'stats'],
-    JOB_ROUTES.applicationStats
-  )
-}
-
 export interface SavedJobsResponse {
   data: SavedJob[]
   meta: {

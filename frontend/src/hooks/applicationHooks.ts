@@ -31,8 +31,10 @@ export interface UpdateApplicationStatusInput {
 }
 
 export interface ApplicationStatsResponse {
-  total: number
-  stats: Record<string, number>
+  data: {
+    total: number
+    stats: Record<string, number>
+  }
 }
 
 export const applicationKeys = {
@@ -40,9 +42,11 @@ export const applicationKeys = {
   lists: () => [...applicationKeys.all, 'list'] as const,
   jobApplications: (jobId: string, params?: ApplicationQueryParams) => [...applicationKeys.all, 'job', jobId, params] as const,
   recruiterApplications: (params?: ApplicationQueryParams) => [...applicationKeys.all, 'recruiter', params] as const,
+  seekerApplications: (params?: ApplicationQueryParams) => [...applicationKeys.all, 'seeker', params] as const,
   details: () => [...applicationKeys.all, 'detail'] as const,
   detail: (id: string) => [...applicationKeys.details(), id] as const,
   recruiterStats: () => [...applicationKeys.all, 'recruiter-stats'] as const,
+  seekerStats: () => [...applicationKeys.all, 'seeker-stats'] as const,
 }
 
 export function useApplication(id: string) {
@@ -103,6 +107,26 @@ export function useRecruiterApplicationStats() {
   return useGet<ApplicationStatsResponse>(
     applicationKeys.recruiterStats(),
     APPLICATION_ROUTES.recruiterApplicationStatistics
+  )
+}
+
+export function useMyApplications(params?: ApplicationQueryParams) {
+  const queryString = new URLSearchParams()
+  if (params?.page) queryString.append('page', params.page.toString())
+  if (params?.limit) queryString.append('limit', params.limit.toString())
+  if (params?.status) queryString.append('status', params.status)
+  const query = queryString.toString()
+  
+  return useGet<ApplicationsResponse>(
+    applicationKeys.seekerApplications(params),
+    `${APPLICATION_ROUTES.seekerMyApplications}${query ? `?${query}` : ''}`
+  )
+}
+
+export function useApplicationStats() {
+  return useGet<ApplicationStatsResponse>(
+    applicationKeys.seekerStats(),
+    APPLICATION_ROUTES.seekerApplicationStatistics
   )
 }
 

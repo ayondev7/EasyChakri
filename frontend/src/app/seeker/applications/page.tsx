@@ -21,9 +21,9 @@ export default function ApplicationsPage() {
   const [filter, setFilter] = useState("all")
 
   // Always call data hooks at the top; gate execution via `enabled` to avoid changing hook order
-  const { data: applicationsData } = useMyApplications(1, 50, {
-    enabled: !!user && isAuthenticated && user.role === "seeker",
-    refetchOnWindowFocus: false,
+  const { data: applicationsData } = useMyApplications({
+    page: 1,
+    limit: 50,
   })
 
   useEffect(() => {
