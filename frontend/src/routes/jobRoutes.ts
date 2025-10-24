@@ -22,6 +22,8 @@ export const JOB_ROUTES = {
     unsaveJob: (id: string) => `${BASE}/unsave-job/${id}`,
     savedJobs: `${BASE}/seeker/saved-jobs`,
     checkSaved: (id: string) => `${BASE}/check-saved-job/${id}`,
+    recruiterDashboardStats: `${BASE}/recruiter/dashboard-statistics`,
+    seekerDashboardStats: `${BASE}/seeker/dashboard-statistics`,
 } as const;
 
 export default JOB_ROUTES;

@@ -222,27 +222,6 @@ export function useSimilarJobs(jobId: string, limit?: number) {
   )
 }
 
-export interface ApplicationsResponse {
-  data: Application[]
-  meta: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-  }
-}
-
-export interface ApplicationStatsResponse {
-  total: number
-  stats: Record<string, number>
-}
-
-export const applicationKeys = {
-  all: ['applications'] as const,
-  lists: () => [...applicationKeys.all, 'list'] as const,
-  stats: () => [...applicationKeys.all, 'stats'] as const,
-}
-
 export function useApplyForJob() {
   const queryClient = useQueryClient()
   
@@ -254,8 +233,7 @@ export function useApplyForJob() {
         return data
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: applicationKeys.lists() })
-        queryClient.invalidateQueries({ queryKey: applicationKeys.stats() })
+        queryClient.invalidateQueries({ queryKey: ['applications'] })
       },
     }
   )
@@ -267,15 +245,15 @@ export function useMyApplications(page?: number, limit?: number) {
   if (limit) queryString.append('limit', limit.toString())
   const query = queryString.toString()
   
-  return useGet<ApplicationsResponse>(
-    applicationKeys.lists(),
+  return useGet<{ data: Application[], meta: { page: number, limit: number, total: number, totalPages: number } }>(
+    ['applications', 'list'],
     `${JOB_ROUTES.myApplications}${query ? `?${query}` : ''}`
   )
 }
 
 export function useApplicationStats() {
-  return useGet<ApplicationStatsResponse>(
-    applicationKeys.stats(),
+  return useGet<{ total: number, stats: Record<string, number> }>(
+    ['applications', 'stats'],
     JOB_ROUTES.applicationStats
   )
 }
@@ -351,5 +329,37 @@ export function useCheckIfSaved(jobId: string) {
     {
       enabled: !!jobId,
     }
+  )
+}
+
+export interface RecruiterDashboardStats {
+  totalJobs: number
+  totalApplications: number
+  activeJobs: number
+  totalViews: number
+  applicationsByStatus: Record<string, number>
+  recentApplications: number
+}
+
+export interface SeekerDashboardStats {
+  totalApplications: number
+  savedJobsCount: number
+  interviewsCount: number
+  upcomingInterviews: number
+  applicationsByStatus: Record<string, number>
+  recentApplications: number
+}
+
+export function useRecruiterDashboardStats() {
+  return useGet<RecruiterDashboardStats>(
+    ['dashboard', 'recruiter', 'stats'],
+    JOB_ROUTES.recruiterDashboardStats
+  )
+}
+
+export function useSeekerDashboardStats() {
+  return useGet<SeekerDashboardStats>(
+    ['dashboard', 'seeker', 'stats'],
+    JOB_ROUTES.seekerDashboardStats
   )
 }

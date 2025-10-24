@@ -1,6 +1,12 @@
 import type { Application } from "./applicationTypes"
 import type { User } from "./userTypes"
 
+export type InterviewType = "ONLINE" | "PHYSICAL"
+
+export type InterviewStatus = "SCHEDULED" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | "RESCHEDULED"
+
+export type InterviewPlatform = "ZOOM" | "GOOGLE_MEET" | "TEAMS" | "SKYPE" | "OTHER"
+
 export interface Interview {
   id: string
   applicationId: string
@@ -9,15 +15,37 @@ export interface Interview {
   interviewer: User
   seekerId: string
   seeker: User
-  type: "online" | "physical"
-  status: "scheduled" | "confirmed" | "completed" | "cancelled" | "rescheduled"
-  scheduledDate: Date
-  duration: number // in minutes
-  location?: string // for physical interviews
-  meetingLink?: string // for online interviews
-  meetingPlatform?: "zoom" | "google_meet" | "teams" | "skype" | "other" // for online interviews
+  type: InterviewType
+  status: InterviewStatus
+  scheduledAt: Date
+  duration: number
+  location?: string
+  meetingLink?: string
+  platform?: InterviewPlatform
   notes?: string
-  feedback?: string
   createdAt: Date
   updatedAt: Date
 }
+
+export interface CreateInterviewInput {
+  applicationId: string
+  type: InterviewType
+  scheduledAt: Date
+  duration: number
+  location?: string
+  meetingLink?: string
+  platform?: InterviewPlatform
+  notes?: string
+}
+
+export interface UpdateInterviewInput {
+  type?: InterviewType
+  status?: InterviewStatus
+  scheduledAt?: Date
+  duration?: number
+  location?: string
+  meetingLink?: string
+  platform?: InterviewPlatform
+  notes?: string
+}
+

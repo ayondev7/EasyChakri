@@ -1,45 +1,36 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext } from "react"
 import { useAuth } from "./AuthContext"
+import { useSavedJobs as useSavedJobsQuery, useSaveJob, useUnsaveJob } from "@/hooks"
 
 interface SavedJobsContextType {
   savedJobIds: string[]
   saveJob: (jobId: string) => void
   unsaveJob: (jobId: string) => void
   isJobSaved: (jobId: string) => boolean
+  isLoading: boolean
 }
 
 const SavedJobsContext = createContext<SavedJobsContextType | undefined>(undefined)
 
 export function SavedJobsProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
-  const [savedJobIds, setSavedJobIds] = useState<string[]>([])
+  const { data: savedJobsData, isLoading } = useSavedJobsQuery()
+  const saveJobMutation = useSaveJob()
+  const unsaveJobMutation = useUnsaveJob()
 
-  useEffect(() => {
-    if (user) {
-      const stored = localStorage.getItem(`saved_jobs_${user.id}`)
-      if (stored) {
-        setSavedJobIds(JSON.parse(stored))
-      }
-    }
-  }, [user])
+  const savedJobIds = savedJobsData?.data?.map((saved) => saved.jobId) || []
 
   const saveJob = (jobId: string) => {
     if (!user) return
-
-    const newSavedJobs = [...savedJobIds, jobId]
-    setSavedJobIds(newSavedJobs)
-    localStorage.setItem(`saved_jobs_${user.id}`, JSON.stringify(newSavedJobs))
+    saveJobMutation.mutate({ jobId })
   }
 
   const unsaveJob = (jobId: string) => {
     if (!user) return
-
-    const newSavedJobs = savedJobIds.filter(id => id !== jobId)
-    setSavedJobIds(newSavedJobs)
-    localStorage.setItem(`saved_jobs_${user.id}`, JSON.stringify(newSavedJobs))
+    unsaveJobMutation.mutate({ jobId })
   }
 
   const isJobSaved = (jobId: string) => {
@@ -51,7 +42,8 @@ export function SavedJobsProvider({ children }: { children: React.ReactNode }) {
       savedJobIds,
       saveJob,
       unsaveJob,
-      isJobSaved
+      isJobSaved,
+      isLoading,
     }}>
       {children}
     </SavedJobsContext.Provider>

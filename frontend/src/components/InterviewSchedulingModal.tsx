@@ -10,47 +10,55 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Calendar, Clock, MapPin, Video, Eye } from "lucide-react"
 import { stripParenthesizedCompany } from "@/utils/utils"
 import type { Application } from "@/types"
+import { useScheduleInterview } from "@/hooks"
+import { toast } from "react-hot-toast"
 
 interface InterviewSchedulingModalProps {
   application: Application
   trigger: React.ReactNode
-  onSchedule: (interviewData: any) => void
 }
 
-export function InterviewSchedulingModal({ application, trigger, onSchedule }: InterviewSchedulingModalProps) {
+export function InterviewSchedulingModal({ application, trigger }: InterviewSchedulingModalProps) {
   const [open, setOpen] = useState(false)
-  const [interviewType, setInterviewType] = useState<"online" | "physical">("online")
+  const [interviewType, setInterviewType] = useState<"ONLINE" | "PHYSICAL">("ONLINE")
   const [date, setDate] = useState("")
   const [time, setTime] = useState("")
   const [duration, setDuration] = useState("60")
-  const [meetingPlatform, setMeetingPlatform] = useState("")
+  const [meetingPlatform, setMeetingPlatform] = useState<"ZOOM" | "GOOGLE_MEET" | "TEAMS" | "SKYPE" | "OTHER">("ZOOM")
   const [meetingLink, setMeetingLink] = useState("")
   const [location, setLocation] = useState("")
   const [notes, setNotes] = useState("")
+
+  const scheduleInterviewMutation = useScheduleInterview()
 
   const handleSchedule = () => {
     const interviewData = {
       applicationId: application.id,
       type: interviewType,
-      scheduledDate: new Date(`${date}T${time}`),
+      scheduledAt: new Date(`${date}T${time}`),
       duration: parseInt(duration),
-      meetingPlatform: interviewType === "online" ? meetingPlatform : undefined,
-      meetingLink: interviewType === "online" ? meetingLink : undefined,
-      location: interviewType === "physical" ? location : undefined,
-      notes,
+      platform: interviewType === "ONLINE" ? meetingPlatform : undefined,
+      meetingLink: interviewType === "ONLINE" ? meetingLink : undefined,
+      location: interviewType === "PHYSICAL" ? location : undefined,
+      notes: notes || undefined,
     }
 
-    onSchedule(interviewData)
-    setOpen(false)
-
-    // Reset form
-    setDate("")
-    setTime("")
-    setDuration("60")
-    setMeetingPlatform("")
-    setMeetingLink("")
-    setLocation("")
-    setNotes("")
+    scheduleInterviewMutation.mutate(interviewData, {
+      onSuccess: () => {
+        toast.success("Interview scheduled successfully")
+        setOpen(false)
+        setDate("")
+        setTime("")
+        setDuration("60")
+        setMeetingPlatform("ZOOM")
+        setMeetingLink("")
+        setLocation("")
+        setNotes("")
+      },
+      onError: (error: any) => {
+        toast.error(error?.response?.data?.message || "Failed to schedule interview")
+      },
+    })
   }
 
   return (
@@ -70,22 +78,22 @@ export function InterviewSchedulingModal({ application, trigger, onSchedule }: I
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold text-sm text-gray-900 mb-2">Candidate Details</h3>
             <p className="text-sm text-gray-600">{stripParenthesizedCompany(application.job.title)}</p>
-            <p className="text-sm text-gray-600">Applied: {application.appliedAt.toLocaleDateString()}</p>
+            <p className="text-sm text-gray-600">Applied: {new Date(application.appliedAt).toLocaleDateString()}</p>
           </div>
 
           <div className="space-y-4">
             <div>
               <Label className="text-sm font-medium">Interview Type</Label>
-              <RadioGroup value={interviewType} onValueChange={(value: "online" | "physical") => setInterviewType(value)} className="flex gap-6 mt-2">
+              <RadioGroup value={interviewType} onValueChange={(value: "ONLINE" | "PHYSICAL") => setInterviewType(value)} className="flex gap-6 mt-2">
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="online" id="online" />
+                  <RadioGroupItem value="ONLINE" id="online" />
                   <Label htmlFor="online" className="flex items-center gap-2 cursor-pointer">
                     <Video className="h-4 w-4" />
                     Online
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="physical" id="physical" />
+                  <RadioGroupItem value="PHYSICAL" id="physical" />
                   <Label htmlFor="physical" className="flex items-center gap-2 cursor-pointer">
                     <MapPin className="h-4 w-4" />
                     Physical
@@ -140,20 +148,20 @@ export function InterviewSchedulingModal({ application, trigger, onSchedule }: I
               </Select>
             </div>
 
-            {interviewType === "online" && (
+            {interviewType === "ONLINE" && (
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="platform" className="text-sm font-medium">Meeting Platform</Label>
-                  <Select value={meetingPlatform} onValueChange={setMeetingPlatform}>
+                  <Select value={meetingPlatform} onValueChange={(value: any) => setMeetingPlatform(value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Select platform" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="zoom">Zoom</SelectItem>
-                      <SelectItem value="google_meet">Google Meet</SelectItem>
-                      <SelectItem value="teams">Microsoft Teams</SelectItem>
-                      <SelectItem value="skype">Skype</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="ZOOM">Zoom</SelectItem>
+                      <SelectItem value="GOOGLE_MEET">Google Meet</SelectItem>
+                      <SelectItem value="TEAMS">Microsoft Teams</SelectItem>
+                      <SelectItem value="SKYPE">Skype</SelectItem>
+                      <SelectItem value="OTHER">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -171,7 +179,7 @@ export function InterviewSchedulingModal({ application, trigger, onSchedule }: I
               </div>
             )}
 
-            {interviewType === "physical" && (
+            {interviewType === "PHYSICAL" && (
               <div>
                 <Label htmlFor="location" className="text-sm font-medium">Location</Label>
                 <Textarea
@@ -205,9 +213,9 @@ export function InterviewSchedulingModal({ application, trigger, onSchedule }: I
             <Button
               onClick={handleSchedule}
               className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white"
-              disabled={!date || !time || (interviewType === "online" && (!meetingPlatform || !meetingLink)) || (interviewType === "physical" && !location)}
+              disabled={!date || !time || (interviewType === "ONLINE" && (!meetingPlatform || !meetingLink)) || (interviewType === "PHYSICAL" && !location) || scheduleInterviewMutation.isPending}
             >
-              Schedule Interview
+              {scheduleInterviewMutation.isPending ? "Scheduling..." : "Schedule Interview"}
             </Button>
           </div>
         </div>
