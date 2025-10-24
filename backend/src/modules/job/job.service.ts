@@ -184,7 +184,7 @@ export class JobService {
     };
   }
 
-  async getJobById(id: string, seekerId?: string) {
+  async getJobById(id: string, userId?: string) {
     const job = await this.prisma.job.findUnique({
       where: { id },
       include: {
@@ -218,23 +218,31 @@ export class JobService {
       throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
-    if (!job) {
-      throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
-    }
+    // Increment view count only if user is a seeker
+    // Don't increment for recruiters or unauthenticated users
+    if (userId) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true },
+      });
 
-    await this.prisma.job.update({
-      where: { id },
-      data: { views: { increment: 1 } },
-    });
+      // Only increment views for seekers
+      if (user && user.role === 'SEEKER') {
+        await this.prisma.job.update({
+          where: { id },
+          data: { views: { increment: 1 } },
+        });
+      }
+    }
 
     let hasApplied = false
     let isSaved = false
 
-    if (seekerId) {
+    if (userId) {
       const application = await this.prisma.application.findUnique({
         where: {
           seekerId_jobId: {
-            seekerId,
+            seekerId: userId,
             jobId: id,
           },
         },
@@ -246,7 +254,7 @@ export class JobService {
       const saved = await this.prisma.savedJob.findUnique({
         where: {
           userId_jobId: {
-            userId: seekerId,
+            userId: userId,
             jobId: id,
           },
         },
