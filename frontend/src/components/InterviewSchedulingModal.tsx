@@ -16,9 +16,10 @@ import { toast } from "react-hot-toast"
 interface InterviewSchedulingModalProps {
   application: Application
   trigger: React.ReactNode
+  onSchedule?: (interviewData: any) => void
 }
 
-export function InterviewSchedulingModal({ application, trigger }: InterviewSchedulingModalProps) {
+export function InterviewSchedulingModal({ application, trigger, onSchedule }: InterviewSchedulingModalProps) {
   const [open, setOpen] = useState(false)
   const [interviewType, setInterviewType] = useState<"ONLINE" | "PHYSICAL">("ONLINE")
   const [date, setDate] = useState("")
@@ -54,6 +55,12 @@ export function InterviewSchedulingModal({ application, trigger }: InterviewSche
         setMeetingLink("")
         setLocation("")
         setNotes("")
+        // Call optional callback so parent can react to scheduling
+        try {
+          if (onSchedule) onSchedule(interviewData)
+        } catch (err) {
+          // ignore callback errors
+        }
       },
       onError: (error: any) => {
         toast.error(error?.response?.data?.message || "Failed to schedule interview")

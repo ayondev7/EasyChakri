@@ -46,19 +46,19 @@ export default function RecruiterInterviewsPage() {
   const userInterviews: Interview[] = []
 
   const filteredInterviews: Interview[] =
-    filter === "all" ? userInterviews : userInterviews.filter((interview) => interview.status === filter)
+    filter === "all" ? userInterviews : userInterviews.filter((interview) => interview.status === filter.toUpperCase())
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "scheduled":
+      case "SCHEDULED":
         return <Calendar className="h-4 w-4 text-blue-500" />
-      case "confirmed":
+      case "CONFIRMED":
         return <CheckCircle className="h-4 w-4 text-green-500" />
-      case "completed":
+      case "COMPLETED":
         return <CheckCircle className="h-4 w-4 text-cyan-500" />
-      case "cancelled":
+      case "CANCELLED":
         return <XCircle className="h-4 w-4 text-red-500" />
-      case "rescheduled":
+      case "RESCHEDULED":
         return <AlertCircle className="h-4 w-4 text-orange-500" />
       default:
         return <AlertCircle className="h-4 w-4 text-gray-500" />
@@ -67,15 +67,15 @@ export default function RecruiterInterviewsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "scheduled":
+      case "SCHEDULED":
         return "bg-blue-500/10 text-blue-700 border-blue-200"
-      case "confirmed":
+      case "CONFIRMED":
         return "bg-green-500/10 text-green-700 border-green-200"
-      case "completed":
+      case "COMPLETED":
         return "bg-cyan-500/10 text-cyan-700 border-cyan-200"
-      case "cancelled":
+      case "CANCELLED":
         return "bg-red-500/10 text-red-700 border-red-200"
-      case "rescheduled":
+      case "RESCHEDULED":
         return "bg-orange-500/10 text-orange-700 border-orange-200"
       default:
         return "bg-gray-500/10 text-gray-700 border-gray-200"
@@ -83,7 +83,7 @@ export default function RecruiterInterviewsPage() {
   }
 
   const getInterviewTypeIcon = (type: string) => {
-    return type === "online" ? (
+    return type === "ONLINE" ? (
       <Video className="h-4 w-4 text-cyan-500" />
     ) : (
       <MapPin className="h-4 w-4 text-orange-500" />
@@ -124,7 +124,7 @@ export default function RecruiterInterviewsPage() {
                           <Badge variant="outline" className={getStatusColor(interview.status)}>
                             <span className="flex items-center gap-1.5">
                               {getStatusIcon(interview.status)}
-                              {interview.status.charAt(0).toUpperCase() + interview.status.slice(1)}
+                                {interview.status.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
                             </span>
                           </Badge>
                         </div>
@@ -139,7 +139,7 @@ export default function RecruiterInterviewsPage() {
                         <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-3">
                           <span className="flex items-center gap-1.5">
                             <Calendar className="h-3 w-3" />
-                            {formatDate(interview.scheduledDate)}
+                              {formatDate(interview.scheduledAt)}
                           </span>
                           <span className="flex items-center gap-1.5">
                             <Clock className="h-3 w-3" />
@@ -147,11 +147,11 @@ export default function RecruiterInterviewsPage() {
                           </span>
                           <span className="flex items-center gap-1.5">
                             {getInterviewTypeIcon(interview.type)}
-                            {interview.type.charAt(0).toUpperCase() + interview.type.slice(1)}
+                            {interview.type.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
                           </span>
                         </div>
 
-                        {interview.type === "online" && interview.meetingLink && (
+                          {interview.type === "ONLINE" && interview.meetingLink && (
                           <div className="flex items-center gap-2 text-sm">
                             <span className="text-muted-foreground">Meeting:</span>
                             <Button
@@ -161,12 +161,12 @@ export default function RecruiterInterviewsPage() {
                               className="h-7 px-2"
                             >
                               <ExternalLink className="h-3 w-3 mr-1" />
-                              {interview.meetingPlatform?.replace("_", " ").toUpperCase()}
+                              {interview.platform?.replace("_", " ").toUpperCase()}
                             </Button>
                           </div>
                         )}
 
-                        {interview.type === "physical" && interview.location && (
+                        {interview.type === "PHYSICAL" && interview.location && (
                           <div className="flex items-start gap-2 text-sm">
                             <MapPin className="h-3 w-3 mt-0.5 text-muted-foreground" />
                             <span className="text-muted-foreground">{interview.location}</span>
@@ -179,26 +179,21 @@ export default function RecruiterInterviewsPage() {
                           </div>
                         )}
 
-                        {interview.feedback && (
-                          <div className="mt-3 p-3 bg-cyan-50 border border-cyan-200 rounded-lg">
-                            <p className="text-sm font-medium text-cyan-800 mb-1">Feedback:</p>
-                            <p className="text-sm text-cyan-700">{interview.feedback}</p>
-                          </div>
-                        )}
+                        {false}
                       </div>
 
                       <div className="flex flex-col gap-2 lg:min-w-[140px]">
-                        {interview.status === "scheduled" && (
+                        {interview.status === "SCHEDULED" && (
                           <Button variant="outline" size="sm">
                             Confirm Interview
                           </Button>
                         )}
-                        {interview.status === "confirmed" && (
+                        {interview.status === "CONFIRMED" && (
                           <Button variant="outline" size="sm">
                             Mark Completed
                           </Button>
                         )}
-                        {interview.status !== "completed" && interview.status !== "cancelled" && (
+                        {interview.status !== "COMPLETED" && interview.status !== "CANCELLED" && (
                           <Button variant="outline" size="sm">
                             Reschedule
                           </Button>
