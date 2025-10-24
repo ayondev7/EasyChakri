@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import {
   LayoutDashboard,
@@ -11,80 +11,82 @@ import {
   User,
   Building2,
   PlusCircle,
-  Users,
   Bell,
+  LogOut,
 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { seekerMenuItems, recruiterMenuItems } from "@/constants/navigation"
 
 interface NavItem {
   label: string
   href: string
-  icon: React.ElementType
+  icon: string
+  isDangerous?: boolean
+}
+
+const getIconComponent = (iconName: string) => {
+  const iconMap: Record<string, React.ElementType> = {
+    LayoutDashboard,
+    FileText,
+    Calendar,
+    User,
+    Briefcase,
+    PlusCircle,
+    Building2,
+    Bell,
+    LogOut,
+  }
+  return iconMap[iconName] || LayoutDashboard
 }
 
 export function SideNavigation() {
   const pathname = usePathname()
-  const { user } = useAuth()
+  const router = useRouter()
+  const { user, logout } = useAuth()
 
+  // Add logout option to menu items
   const seekerNavItems: NavItem[] = [
+    ...seekerMenuItems.map(item => ({
+      ...item,
+      icon: item.icon,
+    })),
     {
-      label: "Dashboard",
-      href: "/seeker/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      label: "My Applications",
-      href: "/seeker/applications",
-      icon: FileText,
-    },
-    {
-      label: "My Interviews",
-      href: "/seeker/interviews",
-      icon: Calendar,
-    },
-    {
-      label: "My Profile",
-      href: "/seeker/profile",
-      icon: User,
+      label: "Logout",
+      href: "#logout",
+      icon: "LogOut",
+      isDangerous: true,
     },
   ]
 
   const recruiterNavItems: NavItem[] = [
+    ...recruiterMenuItems.map(item => ({
+      ...item,
+      icon: item.icon,
+    })),
     {
-      label: "Dashboard",
-      href: "/recruiter/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      label: "Post New Job",
-      href: "/recruiter/post-job",
-      icon: PlusCircle,
-    },
-    {
-      label: "My Jobs",
-      href: "/recruiter/jobs",
-      icon: Briefcase,
-    },
-    {
-      label: "Interviews",
-      href: "/recruiter/interviews",
-      icon: Calendar,
-    },
-    {
-      label: "Company Profile",
-      href: "/recruiter/company-profile",
-      icon: Building2,
+      label: "Logout",
+      href: "#logout",
+      icon: "LogOut",
+      isDangerous: true,
     },
   ]
 
   const navItems = user?.role === "recruiter" ? recruiterNavItems : seekerNavItems
 
   const isActive = (href: string) => {
+    if (href.startsWith("#")) return false
     if (href === "/seeker/dashboard" || href === "/recruiter/dashboard") {
       return pathname === href
     }
     return pathname.startsWith(href)
+  }
+
+  const handleNavClick = (href: string) => {
+    if (href === "#logout") {
+      logout()
+      router.push("/")
+    }
   }
 
   return (
@@ -93,10 +95,24 @@ export function SideNavigation() {
         <Card className="p-4 border-border/50 shadow-sm">
           <nav className="space-y-1">
             {navItems.map((item) => {
-              const Icon = item.icon
+              const Icon = getIconComponent(item.icon)
               const active = isActive(item.href)
               
-              return (
+              return item.href === "#logout" ? (
+                <button
+                  key={item.href}
+                  onClick={() => handleNavClick(item.href)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 text-left",
+                    item.isDangerous
+                      ? "text-red-500 hover:bg-red-500/10"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  )}
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                </button>
+              ) : (
                 <Link
                   key={item.href}
                   href={item.href}
