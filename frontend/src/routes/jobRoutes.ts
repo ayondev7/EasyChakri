@@ -5,6 +5,7 @@ const BASE = `${API_URL}/jobs`;
 export const JOB_ROUTES = {
     create: `${BASE}/create-job`,
     getAll: `${BASE}/get-jobs`,
+    searchSuggestions: `${BASE}/search-suggestions`,
     getById: (id: string) => `${BASE}/get-job-details/${id}`,
     updateById: (id: string) => `${BASE}/update-job/${id}`,
     deleteById: (id: string) => `${BASE}/delete-job/${id}`,

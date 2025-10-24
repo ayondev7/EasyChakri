@@ -58,6 +58,29 @@ export const jobKeys = {
   details: () => [...jobKeys.all, 'detail'] as const,
   detail: (id: string) => [...jobKeys.details(), id] as const,
   myJobs: () => [...jobKeys.all, 'my-jobs'] as const,
+  searchSuggestions: (query: string) => [...jobKeys.all, 'search-suggestions', query] as const,
+}
+
+export function useSearchSuggestions(query: string, limit: number = 5) {
+  return useGet<{ data: Array<{
+    id: string
+    title: string
+    slug: string
+    location: string
+    type: string
+    company: {
+      id: string
+      name: string
+      logo: string | null
+    }
+  }> }>(
+    jobKeys.searchSuggestions(query),
+    `${JOB_ROUTES.searchSuggestions}?q=${encodeURIComponent(query)}&limit=${limit}`,
+    {
+      enabled: query.trim().length >= 2,
+      staleTime: 1000 * 60, // 1 minute
+    }
+  )
 }
 
 export function useJobs(params?: JobQueryParams) {
