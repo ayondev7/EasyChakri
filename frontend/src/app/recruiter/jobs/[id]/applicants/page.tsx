@@ -13,6 +13,7 @@ import ApplicantCard from "@/components/applicants/ApplicantCard"
 import ApplicantDetails from "@/components/applicants/ApplicantDetails"
 import EmptyState from "@/components/EmptyState"
 import { Briefcase } from "lucide-react"
+import { APPLICANT_TABS } from "@/constants/tabConstants"
 
 const placeholderJob: Job = {
   id: "",
@@ -156,14 +157,10 @@ export default function ApplicantsPage({
     accepted: applications.filter((app) => app.status === "ACCEPTED").length,
   }
 
-  const tabOptions = [
-    { label: "All", value: "all", count: statusCounts.all },
-    { label: "Pending", value: "pending", count: statusCounts.pending },
-    { label: "Reviewed", value: "reviewed", count: statusCounts.reviewed },
-    { label: "Shortlisted", value: "shortlisted", count: statusCounts.shortlisted },
-    { label: "Rejected", value: "rejected", count: statusCounts.rejected },
-    { label: "Accepted", value: "accepted", count: statusCounts.accepted },
-  ]
+  const tabOptions = APPLICANT_TABS.map((tab) => ({
+    ...tab,
+    count: statusCounts[tab.value as keyof typeof statusCounts] || 0,
+  }))
 
   if (selectedApplicant) {
     const applicantUser = getApplicantDetails(selectedApplicant.seekerId)

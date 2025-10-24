@@ -9,6 +9,7 @@ import { Briefcase } from "lucide-react"
 import TabsField from "@/components/form/TabsField"
 import ApplicationCard from "@/components/applications/ApplicationCard"
 import EmptyState from "@/components/EmptyState"
+import { APPLICATION_TABS } from "@/constants/tabConstants"
 
 export default function ApplicationsPage() {
   const router = useRouter()
@@ -49,29 +50,15 @@ export default function ApplicationsPage() {
   const filteredApplications =
     filter === "all" ? allApplications : allApplications.filter((app) => app.status.toUpperCase() === filter.toUpperCase())
 
-  const tabOptions = [
-    { label: "All", value: "all", count: allApplications.length },
-    {
-      label: "Pending",
-      value: "PENDING",
-      count: allApplications.filter((app) => app.status.toUpperCase() === "PENDING").length,
-    },
-    {
-      label: "Reviewed",
-      value: "REVIEWED",
-      count: allApplications.filter((app) => app.status.toUpperCase() === "REVIEWED").length,
-    },
-    {
-      label: "Shortlisted",
-      value: "SHORTLISTED",
-      count: allApplications.filter((app) => app.status.toUpperCase() === "SHORTLISTED").length,
-    },
-    {
-      label: "Rejected",
-      value: "REJECTED",
-      count: allApplications.filter((app) => app.status.toUpperCase() === "REJECTED").length,
-    },
-  ]
+  const tabOptions = APPLICATION_TABS.map((tab) => {
+    if (tab.value === "all") {
+      return { ...tab, count: allApplications.length }
+    }
+    return {
+      ...tab,
+      count: allApplications.filter((app) => app.status.toUpperCase() === tab.value).length,
+    }
+  })
 
   return (
     <div>

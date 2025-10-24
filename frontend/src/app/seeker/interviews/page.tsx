@@ -8,6 +8,7 @@ import { Calendar } from "lucide-react"
 import TabsField from "@/components/form/TabsField"
 import InterviewCard from "@/components/interviews/InterviewCard"
 import EmptyState from "@/components/EmptyState"
+import { INTERVIEW_TABS } from "@/constants/tabConstants"
 
 export default function InterviewsPage() {
   const router = useRouter()
@@ -44,13 +45,11 @@ export default function InterviewsPage() {
   const filteredInterviews: Interview[] =
     filter === "all" ? userInterviews : userInterviews.filter((interview) => interview.status === filter.toUpperCase())
 
-  const tabOptions = [
-    { label: "All", value: "all", count: userInterviews.length },
-    { label: "Scheduled", value: "scheduled" },
-    { label: "Confirmed", value: "confirmed" },
-    { label: "Completed", value: "completed" },
-    { label: "Cancelled", value: "cancelled" },
-  ]
+  const tabOptions = INTERVIEW_TABS.map((tab) =>
+    tab.value === "all"
+      ? { ...tab, count: userInterviews.length }
+      : tab
+  )
 
   return (
     <div>

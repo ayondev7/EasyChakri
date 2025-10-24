@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import toast from "react-hot-toast"
+import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE_BYTES, FILE_VALIDATION_MESSAGES } from "@/constants/fileConstants"
 
 type Props = {
   label?: string
@@ -21,15 +22,14 @@ export default function FileInput({ label, id, className = "", accept, onFileCha
       return
     }
 
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
-    if (!validTypes.includes(file.type)) {
-      toast.error("File must be JPG, JPEG, PNG, or WEBP")
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      toast.error(FILE_VALIDATION_MESSAGES.invalidType)
       e.target.value = ""
       return
     }
 
-    if (file.size > 3 * 1024 * 1024) {
-      toast.error("File must be less than 3MB")
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      toast.error(FILE_VALIDATION_MESSAGES.sizeTooLarge)
       e.target.value = ""
       return
     }

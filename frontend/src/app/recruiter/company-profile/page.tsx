@@ -113,9 +113,9 @@ export default function CompanyProfilePage() {
             ? {
                 companyName: company.name,
                 industry: company.industry,
-                size: company.size || undefined,
+                size: company.size,
                 location: company.location,
-                website: company.website || undefined,
+                website: company.website,
                 description: company.description,
               }
             : undefined

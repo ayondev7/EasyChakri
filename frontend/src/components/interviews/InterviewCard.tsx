@@ -3,47 +3,14 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Calendar, Clock, MapPin, Video, ExternalLink, User, CheckCircle, XCircle, AlertCircle } from "lucide-react"
+import { Calendar, Clock, MapPin, Video, ExternalLink, User } from "lucide-react"
 import type { Interview } from "@/types"
 import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
+import { getInterviewStatusIcon, getInterviewStatusColor } from "@/constants/statusConstants"
 
 interface InterviewCardProps {
   interview: Interview
   role: "seeker" | "recruiter"
-}
-
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case "SCHEDULED":
-      return <Calendar className="h-4 w-4 text-blue-500" />
-    case "CONFIRMED":
-      return <CheckCircle className="h-4 w-4 text-green-500" />
-    case "COMPLETED":
-      return <CheckCircle className="h-4 w-4 text-cyan-500" />
-    case "CANCELLED":
-      return <XCircle className="h-4 w-4 text-red-500" />
-    case "RESCHEDULED":
-      return <AlertCircle className="h-4 w-4 text-orange-500" />
-    default:
-      return <AlertCircle className="h-4 w-4 text-gray-500" />
-  }
-}
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "SCHEDULED":
-      return "bg-blue-500/10 text-blue-700 border-blue-200"
-    case "CONFIRMED":
-      return "bg-green-500/10 text-green-700 border-green-200"
-    case "COMPLETED":
-      return "bg-cyan-500/10 text-cyan-700 border-cyan-200"
-    case "CANCELLED":
-      return "bg-red-500/10 text-red-700 border-red-200"
-    case "RESCHEDULED":
-      return "bg-orange-500/10 text-orange-700 border-orange-200"
-    default:
-      return "bg-gray-500/10 text-gray-700 border-gray-200"
-  }
 }
 
 const getInterviewTypeIcon = (type: string) => {
@@ -55,6 +22,8 @@ const getInterviewTypeIcon = (type: string) => {
 }
 
 export default function InterviewCard({ interview, role }: InterviewCardProps) {
+  const StatusIcon = getInterviewStatusIcon(interview.status)
+  
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-6">
@@ -64,9 +33,9 @@ export default function InterviewCard({ interview, role }: InterviewCardProps) {
               <h3 className="font-semibold text-lg truncate">
                 {stripParenthesizedCompany(interview.application.job.title)}
               </h3>
-              <Badge variant="outline" className={getStatusColor(interview.status)}>
+              <Badge variant="outline" className={getInterviewStatusColor(interview.status)}>
                 <span className="flex items-center gap-1.5">
-                  {getStatusIcon(interview.status)}
+                  <StatusIcon className="h-4 w-4" />
                   {interview.status
                     .toLowerCase()
                     .replace(/_/g, " ")

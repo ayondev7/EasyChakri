@@ -9,6 +9,7 @@ import { Bell } from "lucide-react"
 import TabsField from "@/components/form/TabsField"
 import NotificationCard from "@/components/notifications/NotificationCard"
 import EmptyState from "@/components/EmptyState"
+import { NOTIFICATION_TABS } from "@/constants/tabConstants"
 
 export default function NotificationsPage() {
   const router = useRouter()
@@ -28,13 +29,6 @@ export default function NotificationsPage() {
   const userNotifications: Notification[] = []
   const filteredNotifications: Notification[] = []
 
-  const tabOptions = [
-    { label: "All", value: "all" },
-    { label: "Applications", value: "application" },
-    { label: "Jobs", value: "job" },
-    { label: "System", value: "system" },
-  ]
-
   return (
     <main className="py-8">
       <div className="container mx-auto px-4 max-w-4xl">
@@ -48,7 +42,7 @@ export default function NotificationsPage() {
           </Button>
         </div>
 
-        <TabsField options={tabOptions} value={filter} onChange={setFilter} className="mb-6" />
+        <TabsField options={NOTIFICATION_TABS} value={filter} onChange={setFilter} className="mb-6" />
 
         {filteredNotifications.length > 0 ? (
           <div className="space-y-3">

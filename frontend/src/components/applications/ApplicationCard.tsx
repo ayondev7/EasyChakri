@@ -3,9 +3,9 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, CheckCircle, XCircle, Eye, AlertCircle } from "lucide-react"
 import type { Application } from "@/types"
 import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
+import { getApplicationStatusIcon, getApplicationStatusColor } from "@/constants/statusConstants"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -13,41 +13,8 @@ interface ApplicationCardProps {
   application: Application
 }
 
-const getStatusIcon = (status: string) => {
-  switch (status.toUpperCase()) {
-    case "PENDING":
-      return <Clock className="h-4 w-4" />
-    case "REVIEWED":
-      return <Eye className="h-4 w-4" />
-    case "SHORTLISTED":
-      return <CheckCircle className="h-4 w-4" />
-    case "REJECTED":
-      return <XCircle className="h-4 w-4" />
-    case "ACCEPTED":
-      return <CheckCircle className="h-4 w-4" />
-    default:
-      return <AlertCircle className="h-4 w-4" />
-  }
-}
-
-const getStatusColor = (status: string) => {
-  switch (status.toUpperCase()) {
-    case "PENDING":
-      return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-    case "REVIEWED":
-      return "bg-blue-500/10 text-blue-500 border-blue-500/20"
-    case "SHORTLISTED":
-      return "bg-green-500/10 text-green-500 border-green-500/20"
-    case "REJECTED":
-      return "bg-red-500/10 text-red-500 border-red-500/20"
-    case "ACCEPTED":
-      return "bg-cyan-500/10 text-cyan-500 border-cyan-500/20"
-    default:
-      return "bg-muted text-muted-foreground"
-  }
-}
-
 export default function ApplicationCard({ application }: ApplicationCardProps) {
+  const StatusIcon = getApplicationStatusIcon(application.status)
   return (
     <Card className="hover:border-cyan-500/50 transition-all">
       <CardContent className="p-6">
@@ -79,9 +46,9 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
           </div>
 
           <div className="flex flex-col items-start md:items-end gap-3">
-            <Badge variant="outline" className={getStatusColor(application.status)}>
+            <Badge variant="outline" className={getApplicationStatusColor(application.status)}>
               <span className="flex items-center gap-1.5">
-                {getStatusIcon(application.status)}
+                <StatusIcon className="h-4 w-4" />
                 {application.status.charAt(0).toUpperCase() +
                   application.status.slice(1).toLowerCase().replace("_", " ")}
               </span>

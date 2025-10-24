@@ -1,5 +1,4 @@
 "use client"
-
 import type React from "react"
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,6 +7,7 @@ import { Loader2 } from "lucide-react"
 import InputField from "@/components/form/InputField"
 import TextareaField from "@/components/form/TextareaField"
 import SelectFieldWithLabel from "@/components/form/SelectFieldWithLabel"
+import { INDUSTRY_OPTIONS, COMPANY_SIZE_OPTIONS } from "@/constants/companyConstants"
 
 interface CompanyProfileFormProps {
   hasProfile: boolean
@@ -24,26 +24,6 @@ interface CompanyProfileFormProps {
   }
 }
 
-const INDUSTRY_OPTIONS = [
-  { label: "Technology", value: "Technology" },
-  { label: "Finance", value: "Finance" },
-  { label: "Healthcare", value: "Healthcare" },
-  { label: "Education", value: "Education" },
-  { label: "Retail", value: "Retail" },
-  { label: "Manufacturing", value: "Manufacturing" },
-  { label: "Consulting", value: "Consulting" },
-  { label: "Other", value: "Other" },
-]
-
-const COMPANY_SIZE_OPTIONS = [
-  { label: "1-10 employees", value: "1-10" },
-  { label: "11-50 employees", value: "11-50" },
-  { label: "51-200 employees", value: "51-200" },
-  { label: "201-500 employees", value: "201-500" },
-  { label: "501-1000 employees", value: "501-1000" },
-  { label: "1000+ employees", value: "1000+" },
-]
-
 export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, onCancel, defaultValues }: CompanyProfileFormProps) {
   const [formData, setFormData] = useState<{
     companyName: string
@@ -53,12 +33,12 @@ export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, on
     website: string
     description: string
   }>({
-    companyName: defaultValues?.companyName || "",
-    industry: defaultValues?.industry || undefined,
-    size: defaultValues?.size || undefined,
-    location: defaultValues?.location || "",
-    website: defaultValues?.website || "",
-    description: defaultValues?.description || "",
+    companyName: "",
+    industry: undefined,
+    size: undefined,
+    location: "",
+    website: "",
+    description: "",
   })
 
   // Update form when defaultValues change
@@ -66,8 +46,8 @@ export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, on
     if (defaultValues) {
       setFormData({
         companyName: defaultValues.companyName || "",
-        industry: defaultValues.industry || undefined,
-        size: defaultValues.size || undefined,
+        industry: defaultValues.industry,
+        size: defaultValues.size,
         location: defaultValues.location || "",
         website: defaultValues.website || "",
         description: defaultValues.description || "",
