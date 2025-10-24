@@ -29,7 +29,7 @@ export function Header() {
   <div className="container mx-auto flex h-[100px] items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.png" alt="EasyChakri" width={800} height={800} className="object-contain w-[200px] h-[80px]" />
+            <Image src="/logo.png" alt="EasyChakri" width={800} height={800} priority className="object-contain w-[200px] h-[80px]" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">

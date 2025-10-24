@@ -1,5 +1,6 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { useGet, usePost, usePut, useDelete } from './index'
+import { useQueryClient, type UseQueryOptions, type QueryKey } from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
+import { useGet, usePost, usePut, useDelete, type ApiError } from './index'
 import type { Job, Application, SavedJob } from '@/types'
 import JOB_ROUTES from '@/routes/jobRoutes'
 import apiClient from '@/utils/apiClient'
@@ -239,7 +240,19 @@ export function useApplyForJob() {
   )
 }
 
-export function useMyApplications(page?: number, limit?: number) {
+export function useMyApplications(
+  page?: number,
+  limit?: number,
+  options?: Omit<
+    UseQueryOptions<
+      { data: Application[]; meta: { page: number; limit: number; total: number; totalPages: number } },
+      AxiosError<ApiError>,
+      { data: Application[]; meta: { page: number; limit: number; total: number; totalPages: number } },
+      QueryKey
+    >,
+    'queryKey' | 'queryFn'
+  >
+) {
   const queryString = new URLSearchParams()
   if (page) queryString.append('page', page.toString())
   if (limit) queryString.append('limit', limit.toString())
@@ -247,7 +260,8 @@ export function useMyApplications(page?: number, limit?: number) {
   
   return useGet<{ data: Application[], meta: { page: number, limit: number, total: number, totalPages: number } }>(
     ['applications', 'list'],
-    `${JOB_ROUTES.myApplications}${query ? `?${query}` : ''}`
+    `${JOB_ROUTES.myApplications}${query ? `?${query}` : ''}`,
+    options
   )
 }
 

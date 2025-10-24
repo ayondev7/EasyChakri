@@ -20,6 +20,12 @@ export default function ApplicationsPage() {
   const { user, isAuthenticated, isLoading } = useAuth()
   const [filter, setFilter] = useState("all")
 
+  // Always call data hooks at the top; gate execution via `enabled` to avoid changing hook order
+  const { data: applicationsData } = useMyApplications(1, 50, {
+    enabled: !!user && isAuthenticated && user.role === "seeker",
+    refetchOnWindowFocus: false,
+  })
+
   useEffect(() => {
     // Don't redirect while session is still loading
     if (isLoading) return
@@ -44,23 +50,21 @@ export default function ApplicationsPage() {
   if (!isAuthenticated || !user || user.role !== "seeker") {
     return null
   }
-
-  const { data: applicationsData } = useMyApplications(1, 50)
   const allApplications: Application[] = applicationsData?.data ?? []
   const filteredApplications =
-    filter === "all" ? allApplications : allApplications.filter((app) => app.status === filter)
+    filter === "all" ? allApplications : allApplications.filter((app) => app.status.toUpperCase() === filter.toUpperCase())
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "pending":
+    switch (status.toUpperCase()) {
+      case "PENDING":
         return <Clock className="h-4 w-4" />
-      case "reviewed":
+      case "REVIEWED":
         return <Eye className="h-4 w-4" />
-      case "shortlisted":
+      case "SHORTLISTED":
         return <CheckCircle className="h-4 w-4" />
-      case "rejected":
+      case "REJECTED":
         return <XCircle className="h-4 w-4" />
-      case "accepted":
+      case "ACCEPTED":
         return <CheckCircle className="h-4 w-4" />
       default:
         return <AlertCircle className="h-4 w-4" />
@@ -68,16 +72,16 @@ export default function ApplicationsPage() {
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
+    switch (status.toUpperCase()) {
+      case "PENDING":
         return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-      case "reviewed":
+      case "REVIEWED":
         return "bg-blue-500/10 text-blue-500 border-blue-500/20"
-      case "shortlisted":
+      case "SHORTLISTED":
         return "bg-green-500/10 text-green-500 border-green-500/20"
-      case "rejected":
+      case "REJECTED":
         return "bg-red-500/10 text-red-500 border-red-500/20"
-      case "accepted":
+      case "ACCEPTED":
         return "bg-cyan-500/10 text-cyan-500 border-cyan-500/20"
       default:
         return "bg-muted text-muted-foreground"
@@ -95,10 +99,10 @@ export default function ApplicationsPage() {
           <Tabs value={filter} onValueChange={setFilter} className="mb-6">
             <TabsList>
               <TabsTrigger value="all">All ({allApplications.length})</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
-              <TabsTrigger value="shortlisted">Shortlisted</TabsTrigger>
-              <TabsTrigger value="rejected">Rejected</TabsTrigger>
+              <TabsTrigger value="PENDING">Pending ({allApplications.filter(app => app.status.toUpperCase() === "PENDING").length})</TabsTrigger>
+              <TabsTrigger value="REVIEWED">Reviewed ({allApplications.filter(app => app.status.toUpperCase() === "REVIEWED").length})</TabsTrigger>
+              <TabsTrigger value="SHORTLISTED">Shortlisted ({allApplications.filter(app => app.status.toUpperCase() === "SHORTLISTED").length})</TabsTrigger>
+              <TabsTrigger value="REJECTED">Rejected ({allApplications.filter(app => app.status.toUpperCase() === "REJECTED").length})</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -138,7 +142,7 @@ export default function ApplicationsPage() {
                         <Badge variant="outline" className={getStatusColor(application.status)}>
                           <span className="flex items-center gap-1.5">
                             {getStatusIcon(application.status)}
-                            {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                            {application.status.charAt(0).toUpperCase() + application.status.slice(1).toLowerCase().replace('_', ' ')}
                           </span>
                         </Badge>
                         <Button variant="outline" size="sm" asChild>

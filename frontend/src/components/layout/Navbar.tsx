@@ -42,6 +42,7 @@ export function Navbar() {
               alt="EasyChakri"
               width={800}
               height={800}
+              priority
               className="object-contain w-[200px] h-[80px]"
             />
           </Link>

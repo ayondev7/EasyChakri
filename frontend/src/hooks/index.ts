@@ -20,9 +20,9 @@ const defaultQueryOptions: Partial<UseQueryOptions<any, any, any, any>> = {
 export function useGet<TData = unknown>(
   key: QueryKey,
   url: string,
-  options?: Omit<UseQueryOptions<TData, AxiosError<ApiError>>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<TData, AxiosError<ApiError>, TData, QueryKey>, 'queryKey' | 'queryFn'>
 ) {
-  return useQuery<TData, AxiosError<ApiError>>({
+  return useQuery<TData, AxiosError<ApiError>, TData, QueryKey>({
     queryKey: key,
     queryFn: async () => {
       const { data } = await apiClient.get<TData>(url)
