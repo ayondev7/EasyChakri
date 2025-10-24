@@ -52,6 +52,19 @@ export class ApplicationController {
     return await this.applicationService.getRecruiterApplicationStats(user.id);
   }
 
+  @Get('seeker/my-applications')
+  async getMyApplications(
+    @CurrentUser() user: any,
+    @Query() query: ApplicationQueryDto,
+  ) {
+    return await this.applicationService.getSeekerApplications(user.id, query);
+  }
+
+  @Get('seeker/application-statistics')
+  async getSeekerApplicationStats(@CurrentUser() user: any) {
+    return await this.applicationService.getSeekerApplicationStats(user.id);
+  }
+
   @Delete('withdraw-application/:id')
   async withdrawApplication(
     @Param('id') id: string,

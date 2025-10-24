@@ -260,6 +260,62 @@ export class ApplicationService {
     };
   }
 
+  async getSeekerApplications(seekerId: string, query: ApplicationQueryDto) {
+    const { page = 1, limit = 10, status } = query;
+    const skip = (page - 1) * limit;
+
+    const where: any = { seekerId };
+    if (status) where.status = status;
+
+    const [applications, total] = await Promise.all([
+      this.prisma.application.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { appliedAt: 'desc' },
+        include: {
+          job: {
+            include: {
+              company: true,
+            },
+          },
+          interviews: {
+            orderBy: { scheduledAt: 'desc' },
+            take: 1,
+          },
+        },
+      }),
+      this.prisma.application.count({ where }),
+    ]);
+
+    return {
+      data: applications,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getSeekerApplicationStats(seekerId: string) {
+    const applications = await this.prisma.application.findMany({
+      where: { seekerId },
+      select: { status: true },
+    });
+
+    const stats = applications.reduce((acc, app) => {
+      acc[app.status] = (acc[app.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      total: applications.length,
+      stats,
+    };
+  }
+
   async deleteApplication(applicationId: string, seekerId: string) {
     const application = await this.prisma.application.findUnique({
       where: { id: applicationId },
