@@ -67,29 +67,27 @@ export default function CompanyProfilePage() {
   }
 
   return (
-    <main className="py-8">
-      <div className="container mx-auto px-4 max-w-3xl">
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-lg bg-emerald-500/10 text-emerald-500 mb-4">
-            <Building2 className="h-8 w-8" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            {hasProfile ? "Update Company Profile" : "Complete Your Company Profile"}
-          </h1>
-          <p className="text-muted-foreground">
-            {hasProfile
-              ? "Keep your company information up to date"
-              : "You need to add your company details before posting jobs"}
-          </p>
+    <div>
+      <div className="mb-8 text-center">
+        <div className="inline-flex items-center justify-center h-16 w-16 rounded-lg bg-emerald-500/10 text-emerald-500 mb-4">
+          <Building2 className="h-8 w-8" />
         </div>
-
-        <CompanyProfileForm
-          hasProfile={hasProfile}
-          isLoading={isLoading}
-          onSubmit={handleSubmit}
-          onCancel={hasProfile ? () => router.back() : undefined}
-        />
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">
+          {hasProfile ? "Update Company Profile" : "Complete Your Company Profile"}
+        </h1>
+        <p className="text-muted-foreground">
+          {hasProfile
+            ? "Keep your company information up to date"
+            : "You need to add your company details before posting jobs"}
+        </p>
       </div>
-    </main>
+
+      <CompanyProfileForm
+        hasProfile={hasProfile}
+        isLoading={isLoading}
+        onSubmit={handleSubmit}
+        onCancel={hasProfile ? () => router.back() : undefined}
+      />
+    </div>
   )
 }

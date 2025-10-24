@@ -152,58 +152,56 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="py-8">
-      <div className="container mx-auto max-w-4xl">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">My Profile</h1>
-            <p className="text-muted-foreground">Manage your personal information and preferences</p>
-          </div>
-          {!isEditing ? (
-            <Button onClick={handleEditClick} className="bg-emerald-500 hover:bg-emerald-600 text-white">
-              Edit Profile
+    <div>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">My Profile</h1>
+          <p className="text-muted-foreground">Manage your personal information and preferences</p>
+        </div>
+        {!isEditing ? (
+          <Button onClick={handleEditClick} className="bg-emerald-500 hover:bg-emerald-600 text-white">
+            Edit Profile
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
             </Button>
-          ) : (
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleSave} 
-                className="bg-emerald-500 hover:bg-emerald-600 text-white"
-                disabled={updateProfile.isPending}
-              >
-                {updateProfile.isPending ? "Saving..." : "Save Changes"}
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-6">
-          <ProfileHeader user={profileUser} />
-
-          <PersonalInfoCard
-            user={profileUser}
-            isEditing={isEditing}
-            formData={formData}
-            onFormChange={handleFormChange}
-          />
-
-          <ProfessionalInfoCard
-            user={profileUser}
-            isEditing={isEditing}
-            formData={formData}
-            onFormChange={handleFormChange}
-          />
-
-          <ResumeCard
-            user={profileUser}
-            isEditing={isEditing}
-            formData={formData}
-            onFormChange={handleFormChange}
-          />
-        </div>
+            <Button 
+              onClick={handleSave} 
+              className="bg-emerald-500 hover:bg-emerald-600 text-white"
+              disabled={updateProfile.isPending}
+            >
+              {updateProfile.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        )}
       </div>
-    </main>
+
+      <div className="space-y-6">
+        <ProfileHeader user={profileUser} />
+
+        <PersonalInfoCard
+          user={profileUser}
+          isEditing={isEditing}
+          formData={formData}
+          onFormChange={handleFormChange}
+        />
+
+        <ProfessionalInfoCard
+          user={profileUser}
+          isEditing={isEditing}
+          formData={formData}
+          onFormChange={handleFormChange}
+        />
+
+        <ResumeCard
+          user={profileUser}
+          isEditing={isEditing}
+          formData={formData}
+          onFormChange={handleFormChange}
+        />
+      </div>
+    </div>
   )
 }

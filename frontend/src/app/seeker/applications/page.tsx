@@ -74,25 +74,23 @@ export default function ApplicationsPage() {
   ]
 
   return (
-    <main className="py-8">
-      <div className="container mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">My Applications</h1>
-          <p className="text-muted-foreground">Track the status of your job applications</p>
-        </div>
-
-        <TabsField options={tabOptions} value={filter} onChange={setFilter} className="mb-6" />
-
-        {filteredApplications.length > 0 ? (
-          <div className="space-y-4">
-            {filteredApplications.map((application: Application) => (
-              <ApplicationCard key={application.id} application={application} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState icon={Briefcase} title="No applications found" actionLabel="Browse Jobs" actionHref="/jobs" />
-        )}
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">My Applications</h1>
+        <p className="text-muted-foreground">Track the status of your job applications</p>
       </div>
-    </main>
+
+      <TabsField options={tabOptions} value={filter} onChange={setFilter} className="mb-6" />
+
+      {filteredApplications.length > 0 ? (
+        <div className="space-y-4">
+          {filteredApplications.map((application: Application) => (
+            <ApplicationCard key={application.id} application={application} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState icon={Briefcase} title="No applications found" actionLabel="Browse Jobs" actionHref="/jobs" />
+      )}
+    </div>
   )
 }

@@ -53,30 +53,28 @@ export default function InterviewsPage() {
   ]
 
   return (
-    <main className="py-8">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">My Interviews</h1>
-          <p className="text-muted-foreground">Manage your upcoming and past interviews</p>
-        </div>
-
-        <TabsField options={tabOptions} value={filter} onChange={setFilter} className="mb-6" />
-
-        {filteredInterviews.length > 0 ? (
-          <div className="space-y-4">
-            {filteredInterviews.map((interview) => (
-              <InterviewCard key={interview.id} interview={interview} role="seeker" />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            icon={Calendar}
-            title={filter === "all" ? "No interviews scheduled yet" : `No ${filter} interviews`}
-            actionLabel="Browse Jobs"
-            actionHref="/jobs"
-          />
-        )}
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">My Interviews</h1>
+        <p className="text-muted-foreground">Manage your upcoming and past interviews</p>
       </div>
-    </main>
+
+      <TabsField options={tabOptions} value={filter} onChange={setFilter} className="mb-6" />
+
+      {filteredInterviews.length > 0 ? (
+        <div className="space-y-4">
+          {filteredInterviews.map((interview) => (
+            <InterviewCard key={interview.id} interview={interview} role="seeker" />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon={Calendar}
+          title={filter === "all" ? "No interviews scheduled yet" : `No ${filter} interviews`}
+          actionLabel="Browse Jobs"
+          actionHref="/jobs"
+        />
+      )}
+    </div>
   )
 }

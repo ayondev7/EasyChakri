@@ -180,52 +180,50 @@ export default function ApplicantsPage({
   }
 
   return (
-    <main className="py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Jobs
-        </Button>
+    <div>
+      <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back to Jobs
+      </Button>
 
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">{placeholderJob.title}</h1>
-          <p className="text-muted-foreground">
-            {applications.length} {applications.length === 1 ? "applicant" : "applicants"}
-          </p>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <CardTitle>Applicants</CardTitle>
-              <TabsField options={tabOptions} value={filterStatus} onChange={setFilterStatus} fullWidth={false} />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {filteredApplications.length > 0 ? (
-              <div className="space-y-3">
-                {filteredApplications.map((application) => {
-                  const applicantUser = getApplicantDetails(application.seekerId)
-                  return (
-                    <ApplicantCard
-                      key={application.id}
-                      application={application}
-                      applicantUser={applicantUser}
-                      onStatusChange={handleStatusChange}
-                      onViewDetails={setSelectedApplicant}
-                    />
-                  )
-                })}
-              </div>
-            ) : (
-              <EmptyState
-                icon={Briefcase}
-                title={filterStatus === "all" ? "No applicants yet for this position" : `No ${filterStatus} applicants`}
-              />
-            )}
-          </CardContent>
-        </Card>
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">{placeholderJob.title}</h1>
+        <p className="text-muted-foreground">
+          {applications.length} {applications.length === 1 ? "applicant" : "applicants"}
+        </p>
       </div>
-    </main>
+
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <CardTitle>Applicants</CardTitle>
+            <TabsField options={tabOptions} value={filterStatus} onChange={setFilterStatus} fullWidth={false} />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {filteredApplications.length > 0 ? (
+            <div className="space-y-3">
+              {filteredApplications.map((application) => {
+                const applicantUser = getApplicantDetails(application.seekerId)
+                return (
+                  <ApplicantCard
+                    key={application.id}
+                    application={application}
+                    applicantUser={applicantUser}
+                    onStatusChange={handleStatusChange}
+                    onViewDetails={setSelectedApplicant}
+                  />
+                )
+              })}
+            </div>
+          ) : (
+            <EmptyState
+              icon={Briefcase}
+              title={filterStatus === "all" ? "No applicants yet for this position" : `No ${filterStatus} applicants`}
+            />
+          )}
+        </CardContent>
+      </Card>
+    </div>
   )
 }

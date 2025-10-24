@@ -7,7 +7,6 @@ import { Briefcase, Users, Eye, Calendar } from "lucide-react"
 import StatsGrid from "@/components/dashboard/StatsGrid"
 import RecruiterHeader from "@/components/dashboard/recruiter/RecruiterHeader"
 import PostedJobs from "@/components/dashboard/recruiter/PostedJobs"
-import RecruiterQuickActions from "@/components/dashboard/recruiter/RecruiterQuickActions"
 
 export default function RecruiterDashboardPage() {
   const router = useRouter()
@@ -70,21 +69,11 @@ export default function RecruiterDashboardPage() {
   ]
 
   return (
-    <main className="py-8">
-      <div className="container mx-auto">
-        <RecruiterHeader />
-        <StatsGrid stats={stats} />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <PostedJobs jobs={myJobs} getApplicantCount={getJobApplicantCount} />
-          </div>
-          
-          <div>
-            <RecruiterQuickActions />
-          </div>
-        </div>
-      </div>
-    </main>
+    <div>
+      <RecruiterHeader />
+      <StatsGrid stats={stats} />
+      
+      <PostedJobs jobs={myJobs} getApplicantCount={getJobApplicantCount} />
+    </div>
   )
 }

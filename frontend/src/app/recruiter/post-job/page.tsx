@@ -32,15 +32,13 @@ export default function PostJobPage() {
   if (!isAuthenticated || !user || user.role !== 'recruiter') return null
 
   return (
-    <main className="py-8">
-  <div className="container mx-auto max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Post a New Job</h1>
-          <p className="text-muted-foreground">Fill in the details to create a job posting</p>
-        </div>
-
-        <AddJobForm companyId={companyId} />
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Post a New Job</h1>
+        <p className="text-muted-foreground">Fill in the details to create a job posting</p>
       </div>
-    </main>
+
+      <AddJobForm companyId={companyId} />
+    </div>
   )
 }
