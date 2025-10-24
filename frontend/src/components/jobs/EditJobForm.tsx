@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import * as z from 'zod'
 import toast from 'react-hot-toast'
@@ -12,8 +12,9 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Plus, X, Loader2 } from 'lucide-react'
-import { useCreateJob } from '@/hooks/jobHooks'
+import { X, Loader2 } from 'lucide-react'
+import { useUpdateJob } from '@/hooks/jobHooks'
+import type { Job } from '@/types'
 
 const jobSchema = z.object({
   title: z.string().min(3),
@@ -33,27 +34,27 @@ const jobSchema = z.object({
 
 type FormValues = z.infer<typeof jobSchema>
 
-export default function AddJobForm({ companyId }: { companyId: string | null }) {
+export default function EditJobForm({ job }: { job: Job }) {
   const router = useRouter()
-  const createJobMutation = useCreateJob()
-  const [skills, setSkills] = useState<string[]>([])
+  const updateJobMutation = useUpdateJob()
+  const [skills, setSkills] = useState<string[]>(job.skills || [])
   const [newSkill, setNewSkill] = useState('')
 
   const form = useForm<FormValues>({
     defaultValues: {
-      title: '',
-      description: '',
-      type: '',
-      experience: '',
-      location: '',
-      salary: '',
-      category: '',
-      isRemote: false,
-      deadline: '',
-      requirements: [],
-      responsibilities: [],
-      benefits: [],
-      skills: [],
+      title: job.title || '',
+      description: job.description || '',
+      type: job.type || '',
+      experience: job.experience || '',
+      location: job.location || '',
+      salary: job.salary || '',
+      category: job.category || '',
+      isRemote: job.isRemote || false,
+      deadline: job.deadline ? new Date(job.deadline).toISOString().split('T')[0] : '',
+      requirements: job.requirements || [],
+      responsibilities: job.responsibilities || [],
+      benefits: job.benefits || [],
+      skills: job.skills || [],
     },
   })
 
@@ -86,23 +87,20 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
   }
 
   const onSubmit = (values: FormValues) => {
-    // Allow backend to resolve company for recruiter accounts.
-    // If companyId exists we include it, otherwise send payload without blocking submission.
     const payload: any = {
+      id: job.id,
       ...values,
       skills,
     }
 
-    if (companyId) payload.companyId = companyId
-
-    createJobMutation.mutate(payload, {
+    updateJobMutation.mutate(payload, {
       onSuccess: () => {
-        toast.success('Job posted successfully')
+        toast.success('Job updated successfully')
         router.push('/recruiter/dashboard')
       },
-      onError: (error) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        toast.error((error as any)?.response?.data?.message || 'Failed to create job')
+      onError: (error: any) => {
+        const errorMessage = error?.response?.data?.message || 'Failed to update job. Please try again.'
+        toast.error(errorMessage)
       },
     })
   }
@@ -386,17 +384,17 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
       </Card>
 
       <div className="flex gap-4">
-        <Button type="button" variant="outline" onClick={() => router.back()} className="flex-1" disabled={createJobMutation.isPending}>
+        <Button type="button" variant="outline" onClick={() => router.back()} className="flex-1" disabled={updateJobMutation.isPending}>
           Cancel
         </Button>
-        <Button type="submit" className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white" disabled={createJobMutation.isPending || isSubmitting}>
-          {createJobMutation.isPending || isSubmitting ? (
+        <Button type="submit" className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white" disabled={updateJobMutation.isPending || isSubmitting}>
+          {updateJobMutation.isPending || isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Posting Job...
+              Updating Job...
             </>
           ) : (
-            'Post Job'
+            'Update Job'
           )}
         </Button>
       </div>

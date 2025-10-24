@@ -1,12 +1,21 @@
 "use client"
-import React from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Users, Eye, Briefcase, Plus, MoreVertical, Edit, Trash2 } from "lucide-react"
 import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
+import { useDeleteJob } from "@/hooks/jobHooks"
+import toast from "react-hot-toast"
 
 type Job = {
   id: string
@@ -17,10 +26,35 @@ type Job = {
   location?: string
   type?: string
   views?: number
-  postedDate?: Date
+  createdAt?: Date
 }
 
 export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; getApplicantCount: (jobId: string) => number }) {
+  const router = useRouter()
+  const deleteJobMutation = useDeleteJob()
+  const [deletingJobId, setDeletingJobId] = useState<string | null>(null)
+
+  const handleDeleteJob = async (jobId: string, jobTitle: string) => {
+    if (!confirm(`Are you sure you want to delete "${jobTitle}"? This action cannot be undone.`)) {
+      return
+    }
+
+    setDeletingJobId(jobId)
+    try {
+      await deleteJobMutation.mutateAsync({ id: jobId })
+      toast.success("Job deleted successfully")
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || "Failed to delete job. Please try again."
+      toast.error(errorMessage)
+    } finally {
+      setDeletingJobId(null)
+    }
+  }
+
+  const handleEditJob = (jobId: string) => {
+    router.push(`/recruiter/jobs/${jobId}/edit`)
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -77,7 +111,7 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
                         <Eye className="h-4 w-4" />
                         {job.views}
                       </span>
-                      <span>Posted {job.postedDate ? formatDate(job.postedDate) : "-"}</span>
+                      <span>Posted {job.createdAt ? formatDate(job.createdAt) : "-"}</span>
                     </div>
                   </div>
 
@@ -87,11 +121,34 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
                         View Applicants
                       </Link>
                     </Button>
-                    <div className="relative">
-                      <Button variant="ghost" size="icon">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          disabled={deletingJobId === job.id}
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => handleEditJob(job.id)}
+                          className="cursor-pointer"
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Job
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteJob(job.id, stripParenthesizedCompany(job.title))}
+                          className="cursor-pointer text-red-600 focus:text-red-600"
+                          disabled={deletingJobId === job.id}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          {deletingJobId === job.id ? "Deleting..." : "Delete Job"}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               )
