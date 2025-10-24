@@ -17,26 +17,22 @@ import { UserModule } from './modules/user/user.module';
 import { JobModule } from './modules/job/job.module';
 import { CompanyModule } from './modules/company/company.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { InterviewModule } from './modules/interview/interview.module';
+import { ApplicationModule } from './modules/application/application.module';
 
 @Module({
   imports: [
-    // ConfigModule - loads environment variables
-    // Express equivalent: require('dotenv').config()
     ConfigModule.forRoot({
-      isGlobal: true, // Makes ConfigService available everywhere without importing
+      isGlobal: true,
       envFilePath: '.env',
     }),
-
-    // Database Module - Prisma
-    // Express equivalent: your db.js connection file
     PrismaModule,
-
-    // Feature Modules - organized by domain
-    // Express equivalent: app.use('/api/users', userRoutes)
     AuthModule,
     UserModule,
     JobModule,
     CompanyModule,
+    InterviewModule,
+    ApplicationModule,
   ],
   controllers: [],
   providers: [],

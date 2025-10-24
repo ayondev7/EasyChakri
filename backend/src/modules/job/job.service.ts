@@ -820,5 +820,100 @@ export class JobService {
 
     return !!savedJob;
   }
+
+  async getRecruiterDashboardStats(recruiterId: string) {
+    const [totalJobs, totalApplications, activeJobs, totalViews] = await Promise.all([
+      this.prisma.job.count({
+        where: { recruiterId },
+      }),
+      this.prisma.application.count({
+        where: { job: { recruiterId } },
+      }),
+      this.prisma.job.count({
+        where: {
+          recruiterId,
+          deadline: { gte: new Date() },
+        },
+      }),
+      this.prisma.job.aggregate({
+        where: { recruiterId },
+        _sum: { views: true },
+      }),
+    ]);
+
+    const applications = await this.prisma.application.findMany({
+      where: { job: { recruiterId } },
+      select: { status: true },
+    });
+
+    const applicationsByStatus = applications.reduce((acc, app) => {
+      acc[app.status] = (acc[app.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const recentApplications = await this.prisma.application.count({
+      where: {
+        job: { recruiterId },
+        appliedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+      },
+    });
+
+    return {
+      totalJobs,
+      totalApplications,
+      activeJobs,
+      totalViews: totalViews._sum.views || 0,
+      applicationsByStatus,
+      recentApplications,
+    };
+  }
+
+  async getSeekerDashboardStats(seekerId: string) {
+    const [totalApplications, savedJobsCount, interviewsCount] = await Promise.all([
+      this.prisma.application.count({
+        where: { seekerId },
+      }),
+      this.prisma.savedJob.count({
+        where: { userId: seekerId },
+      }),
+      this.prisma.interview.count({
+        where: { seekerId },
+      }),
+    ]);
+
+    const applications = await this.prisma.application.findMany({
+      where: { seekerId },
+      select: { status: true },
+    });
+
+    const applicationsByStatus = applications.reduce((acc, app) => {
+      acc[app.status] = (acc[app.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const upcomingInterviews = await this.prisma.interview.count({
+      where: {
+        seekerId,
+        scheduledAt: { gte: new Date() },
+        status: { in: ['SCHEDULED', 'CONFIRMED'] },
+      },
+    });
+
+    const recentApplications = await this.prisma.application.count({
+      where: {
+        seekerId,
+        appliedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+      },
+    });
+
+    return {
+      totalApplications,
+      savedJobsCount,
+      interviewsCount,
+      upcomingInterviews,
+      applicationsByStatus,
+      recentApplications,
+    };
+  }
 }
 

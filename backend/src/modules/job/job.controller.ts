@@ -184,4 +184,16 @@ export class JobController {
       data: { isSaved },
     };
   }
+
+  @Get('recruiter/dashboard-statistics')
+  @UseGuards(JwtAuthGuard)
+  async getRecruiterDashboardStats(@CurrentUser() user: any) {
+    return await this.jobService.getRecruiterDashboardStats(user.id);
+  }
+
+  @Get('seeker/dashboard-statistics')
+  @UseGuards(JwtAuthGuard)
+  async getSeekerDashboardStats(@CurrentUser() user: any) {
+    return await this.jobService.getSeekerDashboardStats(user.id);
+  }
 }
