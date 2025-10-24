@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
@@ -11,12 +12,19 @@ import SelectFieldWithLabel from "@/components/form/SelectFieldWithLabel"
 interface CompanyProfileFormProps {
   hasProfile: boolean
   isLoading: boolean
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
+  onSubmit: (data: FormData) => Promise<void>
   onCancel?: () => void
+  defaultValues?: {
+    companyName?: string
+    industry?: string
+    size?: string
+    location?: string
+    website?: string
+    description?: string
+  }
 }
 
 const INDUSTRY_OPTIONS = [
-  { label: "Select industry", value: "" },
   { label: "Technology", value: "Technology" },
   { label: "Finance", value: "Finance" },
   { label: "Healthcare", value: "Healthcare" },
@@ -28,7 +36,6 @@ const INDUSTRY_OPTIONS = [
 ]
 
 const COMPANY_SIZE_OPTIONS = [
-  { label: "Select size", value: "" },
   { label: "1-10 employees", value: "1-10" },
   { label: "11-50 employees", value: "11-50" },
   { label: "51-200 employees", value: "51-200" },
@@ -37,19 +44,57 @@ const COMPANY_SIZE_OPTIONS = [
   { label: "1000+ employees", value: "1000+" },
 ]
 
-export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, onCancel }: CompanyProfileFormProps) {
+export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, onCancel, defaultValues }: CompanyProfileFormProps) {
+  const [formData, setFormData] = useState<{
+    companyName: string
+    industry: string | undefined
+    size: string | undefined
+    location: string
+    website: string
+    description: string
+  }>({
+    companyName: defaultValues?.companyName || "",
+    industry: defaultValues?.industry || undefined,
+    size: defaultValues?.size || undefined,
+    location: defaultValues?.location || "",
+    website: defaultValues?.website || "",
+    description: defaultValues?.description || "",
+  })
+
+  // Update form when defaultValues change
+  useEffect(() => {
+    if (defaultValues) {
+      setFormData({
+        companyName: defaultValues.companyName || "",
+        industry: defaultValues.industry || undefined,
+        size: defaultValues.size || undefined,
+        location: defaultValues.location || "",
+        website: defaultValues.website || "",
+        description: defaultValues.description || "",
+      })
+    }
+  }, [defaultValues])
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formDataObj = new FormData(e.currentTarget)
+    await onSubmit(formDataObj)
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Company Information</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <InputField
             id="companyName"
             name="companyName"
             label="Company Name *"
             placeholder="e.g., Tech Innovations Inc."
+            value={formData.companyName}
+            onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
             required
           />
 
@@ -60,6 +105,8 @@ export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, on
               label="Industry"
               options={INDUSTRY_OPTIONS}
               placeholder="Select industry"
+              value={formData.industry}
+              onChange={(value) => setFormData({ ...formData, industry: value })}
               required
             />
 
@@ -69,6 +116,8 @@ export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, on
               label="Company Size"
               options={COMPANY_SIZE_OPTIONS}
               placeholder="Select size"
+              value={formData.size}
+              onChange={(value) => setFormData({ ...formData, size: value })}
               required
             />
           </div>
@@ -78,6 +127,8 @@ export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, on
             name="location"
             label="Headquarters Location *"
             placeholder="e.g., San Francisco, CA"
+            value={formData.location}
+            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
             required
           />
 
@@ -87,6 +138,8 @@ export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, on
             type="url"
             label="Company Website"
             placeholder="https://www.example.com"
+            value={formData.website}
+            onChange={(e) => setFormData({ ...formData, website: e.target.value })}
           />
 
           <TextareaField
@@ -95,6 +148,8 @@ export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, on
             label="Company Description *"
             placeholder="Tell us about your company, its mission, and what makes it unique..."
             rows={6}
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             required
           />
 
