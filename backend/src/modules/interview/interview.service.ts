@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationService } from '../notification/notification.service';
 import { CreateInterviewDto, UpdateInterviewDto, InterviewQueryDto } from './dto/interview.dto';
 
 @Injectable()
 export class InterviewService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationService,
+  ) {}
 
   async createInterview(recruiterId: string, dto: CreateInterviewDto) {
     const application = await this.prisma.application.findUnique({
@@ -77,14 +81,12 @@ export class InterviewService {
       data: { status: 'INTERVIEW_SCHEDULED' },
     });
 
-    await this.prisma.notification.create({
-      data: {
-        userId: application.seekerId,
-        type: 'INTERVIEW',
-        title: 'Interview Scheduled',
-        message: `Your interview for ${application.job.title} has been scheduled`,
-        link: `/seeker/interviews/${interview.id}`,
-      },
+    await this.notificationService.createNotification({
+      userId: application.seekerId,
+      type: 'INTERVIEW',
+      title: 'Interview Scheduled',
+      message: `Your interview for ${application.job.title} has been scheduled`,
+      link: `/seeker/interviews/${interview.id}`,
     });
 
     return interview;
@@ -154,14 +156,14 @@ export class InterviewService {
     }
 
     const notificationUserId = interview.interviewerId === userId ? interview.seekerId : interview.interviewerId;
-    await this.prisma.notification.create({
-      data: {
-        userId: notificationUserId,
-        type: 'INTERVIEW',
-        title: 'Interview Updated',
-        message: `Interview for ${interview.application.job.title} has been updated`,
-        link: `/interviews/${interview.id}`,
-      },
+    const notificationTitle = dto.status === 'CONFIRMED' ? 'Interview Confirmed' : 'Interview Updated';
+    
+    await this.notificationService.createNotification({
+      userId: notificationUserId,
+      type: 'INTERVIEW',
+      title: notificationTitle,
+      message: `Interview for ${interview.application.job.title} has been updated`,
+      link: interview.interviewerId === userId ? `/seeker/interviews/${interview.id}` : `/recruiter/interviews/${interview.id}`,
     });
 
     return updatedInterview;
@@ -352,14 +354,12 @@ export class InterviewService {
     });
 
     const notificationUserId = interview.interviewerId === userId ? interview.seekerId : interview.interviewerId;
-    await this.prisma.notification.create({
-      data: {
-        userId: notificationUserId,
-        type: 'INTERVIEW',
-        title: 'Interview Cancelled',
-        message: `Interview for ${interview.application.job.title} has been cancelled`,
-        link: `/interviews/${interview.id}`,
-      },
+    await this.notificationService.createNotification({
+      userId: notificationUserId,
+      type: 'INTERVIEW',
+      title: 'Interview Cancelled',
+      message: `Interview for ${interview.application.job.title} has been cancelled`,
+      link: interview.interviewerId === userId ? `/seeker/interviews/${interview.id}` : `/recruiter/interviews/${interview.id}`,
     });
 
     return { message: 'Interview cancelled successfully' };

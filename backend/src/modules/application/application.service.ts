@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationService } from '../notification/notification.service';
 import { UpdateApplicationStatusDto, ApplicationQueryDto } from './dto/application.dto';
 
 @Injectable()
 export class ApplicationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationService,
+  ) {}
 
   async getApplicationById(applicationId: string, userId: string) {
     const application = await this.prisma.application.findUnique({
@@ -213,31 +217,33 @@ export class ApplicationService {
     });
 
     let notificationMessage = '';
+    let notificationTitle = 'Application Status Update';
+    
     switch (dto.status) {
       case 'REVIEWED':
         notificationMessage = `Your application for ${application.job.title} has been reviewed`;
         break;
       case 'SHORTLISTED':
+        notificationTitle = 'Application Shortlisted';
         notificationMessage = `Congratulations! You have been shortlisted for ${application.job.title}`;
         break;
       case 'REJECTED':
         notificationMessage = `Your application for ${application.job.title} has been rejected`;
         break;
       case 'ACCEPTED':
+        notificationTitle = 'Application Accepted';
         notificationMessage = `Congratulations! Your application for ${application.job.title} has been accepted`;
         break;
       default:
         notificationMessage = `Your application status for ${application.job.title} has been updated to ${dto.status}`;
     }
 
-    await this.prisma.notification.create({
-      data: {
-        userId: application.seekerId,
-        type: 'APPLICATION',
-        title: 'Application Status Update',
-        message: notificationMessage,
-        link: `/seeker/applications/${application.id}`,
-      },
+    await this.notificationService.createNotification({
+      userId: application.seekerId,
+      type: 'APPLICATION',
+      title: notificationTitle,
+      message: notificationMessage,
+      link: `/seeker/applications/${application.id}`,
     });
 
     return updatedApplication;

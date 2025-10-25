@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationService } from '../notification/notification.service';
 import { CreateJobDto, UpdateJobDto, JobQueryDto } from './dto/job.dto';
 import { generateUniqueJobSlug } from '../../utils/slug.util';
 
 @Injectable()
 export class JobService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationService,
+  ) {}
 
   async createJob(recruiterId: string, dto: CreateJobDto) {
     let company = null as any
@@ -657,9 +661,29 @@ export class JobService {
                 industry: true,
               },
             },
+            recruiter: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        seeker: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },
+    });
+
+    await this.notificationService.createNotification({
+      userId: application.job.recruiterId,
+      type: 'APPLICATION',
+      title: 'New Application Received',
+      message: `${application.seeker.name} has applied for ${application.job.title}`,
+      link: `/recruiter/applications/${application.id}`,
     });
 
     return application;

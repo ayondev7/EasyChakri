@@ -7,6 +7,8 @@ import { CompanyModule } from './modules/company/company.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { InterviewModule } from './modules/interview/interview.module';
 import { ApplicationModule } from './modules/application/application.module';
+import { SocketModule } from './modules/socket/socket.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -15,12 +17,14 @@ import { ApplicationModule } from './modules/application/application.module';
       envFilePath: '.env',
     }),
     PrismaModule,
+    SocketModule,
     AuthModule,
     UserModule,
     JobModule,
     CompanyModule,
     InterviewModule,
     ApplicationModule,
+    NotificationModule,
   ],
   controllers: [],
   providers: [],

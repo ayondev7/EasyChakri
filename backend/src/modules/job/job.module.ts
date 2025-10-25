@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { JobController } from './job.controller';
 import { JobService } from './job.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { NotificationModule } from '../notification/notification.module';
 import { OptionalJwtAuthGuard } from '../../common/guards/optional-jwt-auth.guard';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, NotificationModule],
   controllers: [JobController],
   providers: [JobService, OptionalJwtAuthGuard],
   exports: [JobService],
