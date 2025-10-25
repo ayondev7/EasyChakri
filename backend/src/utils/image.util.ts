@@ -1,15 +1,6 @@
-/**
- * IMAGE UPLOAD UTILITY - ImageKit Integration
- *
- * EXPRESS EQUIVALENT: Similar utility function for image handling
- *
- * Validates image size, format, converts to WebP if needed, and uploads to ImageKit
- */
-
 const ImageKit = require('imagekit');
 import * as sharp from 'sharp';
 
-// Initialize ImageKit instance
 const imagekit = new ImageKit({
   publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
@@ -23,21 +14,15 @@ export interface ImageUploadResult {
 }
 
 export class ImageUtil {
-  private static readonly MAX_SIZE = 3 * 1024 * 1024; // 3MB in bytes
+  private static readonly MAX_SIZE = 3 * 1024 * 1024;
   private static readonly ALLOWED_FORMATS = ['png', 'jpg', 'jpeg', 'webp'];
 
-  /**
-   * Validate image size
-   */
   private static validateSize(buffer: Buffer): void {
     if (buffer.length > this.MAX_SIZE) {
       throw new Error('Your image is too large. Please choose an image smaller than 3MB.');
     }
   }
 
-  /**
-   * Validate and get image format
-   */
   private static async validateFormat(buffer: Buffer): Promise<string> {
     const metadata = await sharp(buffer).metadata();
     const format = metadata.format;
@@ -51,18 +36,12 @@ export class ImageUtil {
     return format;
   }
 
-  /**
-   * Convert image to WebP format (lossless)
-   */
   private static async convertToWebP(buffer: Buffer): Promise<Buffer> {
     return await sharp(buffer)
       .webp({ lossless: true, quality: 90 })
       .toBuffer();
   }
 
-  /**
-   * Upload image to ImageKit
-   */
   private static async uploadToImageKit(
     buffer: Buffer,
     fileName: string,
@@ -85,22 +64,15 @@ export class ImageUtil {
     }
   }
 
-  /**
-   * Main function to handle image upload
-   * Validates size, format, converts to WebP if needed, and uploads
-   */
   static async uploadImage(
     buffer: Buffer,
     originalName: string,
     folder?: string,
   ): Promise<ImageUploadResult> {
-    // Validate size
     this.validateSize(buffer);
 
-    // Validate format
     const format = await this.validateFormat(buffer);
 
-    // Convert to WebP if not already
     let processedBuffer = buffer;
     let fileName = originalName;
 
@@ -109,13 +81,9 @@ export class ImageUtil {
       fileName = originalName.replace(/\.(png|jpg|jpeg)$/i, '.webp');
     }
 
-    // Upload to ImageKit
     return await this.uploadToImageKit(processedBuffer, fileName, folder);
   }
 
-  /**
-   * Delete image from ImageKit
-   */
   static async deleteImage(fileId: string): Promise<void> {
     try {
       await imagekit.deleteFile(fileId);

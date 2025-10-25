@@ -10,7 +10,6 @@ import {
 } from 'class-validator';
 
 export class UpdateUserDto {
-  // Validate only if provided - fields are completely optional
   @IsOptional()
   @ValidateIf((o) => o.name !== undefined && o.name !== null)
   @IsString({ message: 'Name must be a text value' })

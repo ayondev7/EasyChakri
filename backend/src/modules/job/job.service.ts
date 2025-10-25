@@ -48,7 +48,6 @@ export class JobService {
 
     const searchTerm = query.trim();
 
-    // Search for jobs by title, description, or company name
     const jobs = await this.prisma.job.findMany({
       where: {
         OR: [
@@ -111,7 +110,6 @@ export class JobService {
     if (category) where.category = { contains: category, mode: 'insensitive' };
     if (isRemote !== undefined) where.isRemote = isRemote;
 
-    // Handle experience filter
     if (experience) {
       const experiencePatterns: Record<string, string[]> = {
         'fresher': ['0-1', '0-2', 'fresher', 'entry'],
@@ -135,12 +133,9 @@ export class JobService {
       }
     }
 
-    // Handle salary range filter
     if (salaryRange) {
       const [minSalary, maxSalary] = salaryRange.split('-').map(Number);
       if (!isNaN(minSalary) && !isNaN(maxSalary)) {
-        // This is a simplified approach - you might need to adjust based on how salary is stored
-        // For now, we'll use text matching since salary is stored as a string like "$50k-$80k"
         where.salary = {
           contains: '',
           mode: 'insensitive',
@@ -218,15 +213,12 @@ export class JobService {
       throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
-    // Increment view count only if user is a seeker
-    // Don't increment for recruiters or unauthenticated users
     if (userId) {
       const user = await this.prisma.user.findUnique({
         where: { id: userId },
         select: { role: true },
       });
 
-      // Only increment views for seekers
       if (user && user.role === 'SEEKER') {
         await this.prisma.job.update({
           where: { id },
@@ -589,7 +581,6 @@ export class JobService {
       throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
     }
 
-    // Check if profile is complete before allowing application
     const user = await this.prisma.user.findUnique({
       where: { id: seekerId },
       select: {

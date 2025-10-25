@@ -1,15 +1,3 @@
-/**
- * HTTP EXCEPTION FILTER - Standardizes Error Responses
- * 
- * EXPRESS EQUIVALENT: Error handling middleware at the end of your app
- * app.use((err, req, res, next) => { res.status(err.status).json({...}) })
- * 
- * KEY DIFFERENCES:
- * - NestJS: Uses Exception Filters for error handling
- * - Catches all HttpException errors and formats them consistently
- * - Applied globally via app.useGlobalFilters()
- */
-
 import {
   ExceptionFilter,
   Catch,
@@ -41,7 +29,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
 
-    // Parse error message and details
     let message = 'An error occurred';
     let details: string | object = '';
 
@@ -52,7 +39,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
       details = (exceptionResponse as any).error || (exceptionResponse as any).message || '';
     }
 
-    // Build standardized error response
     const errorResponse: ErrorResponse = {
       success: false,
       message,
@@ -69,9 +55,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response.status(status).json(errorResponse);
   }
 
-  /**
-   * Map HTTP status to error code
-   */
   private getErrorCode(status: number): string {
     const codes = {
       [HttpStatus.BAD_REQUEST]: 'BAD_REQUEST',

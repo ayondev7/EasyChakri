@@ -1,17 +1,11 @@
 #!/usr/bin/env node
 
-/**
- * Development Setup Script
- * Runs necessary setup steps for development
- */
-
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
 console.log('🚀 Setting up EasyChakri Backend...\n');
 
-// Check if .env exists
 const envPath = path.join(__dirname, '../.env');
 if (!fs.existsSync(envPath)) {
   console.error('❌ .env file not found!');
@@ -21,7 +15,6 @@ if (!fs.existsSync(envPath)) {
 
 console.log('✅ .env file found\n');
 
-// Install dependencies
 console.log('📦 Installing dependencies...');
 try {
   execSync('npm install', { stdio: 'inherit' });
@@ -31,7 +24,6 @@ try {
   process.exit(1);
 }
 
-// Generate Prisma Client
 console.log('🔧 Generating Prisma Client...');
 try {
   execSync('npx prisma generate', { stdio: 'inherit' });
@@ -41,7 +33,6 @@ try {
   process.exit(1);
 }
 
-// Run migrations
 console.log('🗄️  Running database migrations...');
 try {
   execSync('npx prisma migrate dev', { stdio: 'inherit' });

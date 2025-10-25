@@ -1,16 +1,3 @@
-/**
- * AUTH DTOs - Data Transfer Objects for Validation
- * 
- * EXPRESS EQUIVALENT: Manual validation with express-validator or joi
- * const { body } = require('express-validator');
- * body('email').isEmail()
- * 
- * KEY DIFFERENCES:
- * - NestJS: Uses class-validator decorators on DTO classes
- * - Automatic validation with ValidationPipe
- * - Type-safe and cleaner than manual validation
- */
-
 import { IsEmail, IsString, MinLength, IsOptional, IsEnum, IsDateString } from 'class-validator';
 import { UserRole } from '@prisma/client';
 

@@ -6,9 +6,6 @@ import { UpdateUserDto } from './dto/user.dto';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Get user profile by ID
-   */
   async getUserProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -40,12 +37,7 @@ export class UserService {
     };
   }
 
-  /**
-   * Update user profile
-   * Only updates fields that are actually provided in the DTO
-   */
   async updateUserProfile(userId: string, dto: UpdateUserDto) {
-    // Filter out undefined values to only update provided fields
     const updateData: any = {};
     
     if (dto.name !== undefined) updateData.name = dto.name;
@@ -58,9 +50,7 @@ export class UserService {
     if (dto.image !== undefined) updateData.image = dto.image;
     if (dto.resume !== undefined) updateData.resume = dto.resume;
 
-    // Only perform update if there are fields to update
     if (Object.keys(updateData).length === 0) {
-      // No fields to update, just return current user data
       return this.getUserProfile(userId);
     }
 
@@ -146,9 +136,6 @@ export class UserService {
     };
   }
 
-  /**
-   * Delete user account
-   */
   async deleteUser(userId: string) {
     await this.prisma.user.delete({
       where: { id: userId },

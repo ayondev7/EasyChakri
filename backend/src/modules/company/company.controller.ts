@@ -1,7 +1,3 @@
-/**
- * COMPANY CONTROLLER
- */
-
 import {
   Controller,
   Get,
@@ -51,10 +47,6 @@ export class CompanyController {
     return await this.companyService.getCompanyById(id);
   }
 
-  /**
-   * POST /api/companies/create-company
-   * Create company profile (Protected - Recruiter only)
-   */
   @Post('create-company')
   @UseGuards(JwtAuthGuard)
   async createCompany(
@@ -68,10 +60,6 @@ export class CompanyController {
     };
   }
 
-  /**
-   * PUT /api/companies/update-company/:id
-   * Update company (Protected - Recruiter only, must own the company)
-   */
   @Put('update-company/:id')
   @UseGuards(JwtAuthGuard)
   async updateCompany(
@@ -86,10 +74,6 @@ export class CompanyController {
     };
   }
 
-  /**
-   * PUT /api/companies/upload-logo/:id
-   * Upload company logo (Protected)
-   */
   @UseInterceptors(FileInterceptor('logo'))
   @Put('upload-logo/:id')
   @UseGuards(JwtAuthGuard)
@@ -102,14 +86,12 @@ export class CompanyController {
       throw new BadRequestException('Please select a logo to upload.');
     }
 
-    // Upload logo using ImageUtil
     const uploadResult = await ImageUtil.uploadImage(
       file.buffer,
       file.originalname,
       'company-logos',
     );
 
-    // Update company with new logo URL
     const company = await this.companyService.updateCompany(id, user.id, {
       logo: uploadResult.url,
     });
@@ -122,10 +104,6 @@ export class CompanyController {
     };
   }
 
-  /**
-   * DELETE /api/companies/delete-company/:id
-   * Delete company (Protected - Recruiter only, must own the company)
-   */
   @Delete('delete-company/:id')
   @UseGuards(JwtAuthGuard)
   async deleteCompany(

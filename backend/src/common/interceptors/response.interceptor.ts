@@ -1,14 +1,3 @@
-/**
- * RESPONSE INTERCEPTOR - Standardizes Success Responses
- * 
- * EXPRESS EQUIVALENT: Custom middleware that wraps responses
- * app.use((req, res, next) => { res.success = (data) => res.json({...}) })
- * 
- * KEY DIFFERENCES:
- * - NestJS: Uses Interceptors that can transform responses
- * - Automatically applied to all routes via app.useGlobalInterceptors()
- */
-
 import {
   Injectable,
   NestInterceptor,
@@ -35,12 +24,10 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, ApiResponse<T>
   intercept(context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T>> {
     return next.handle().pipe(
       map((data) => {
-        // If data already has our structure, return as is
         if (data && typeof data === 'object' && 'success' in data) {
           return data as ApiResponse<T>;
         }
 
-        // Otherwise, wrap it in our standard structure
         return {
           success: true,
           message: data?.message || 'Operation successful',

@@ -1,10 +1,3 @@
-/**
- * USER CONTROLLER
- * 
- * EXPRESS EQUIVALENT: User profile routes
- * All routes here require authentication (protected with JwtAuthGuard)
- */
-
 import {
   Controller,
   Get,
@@ -25,23 +18,15 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ImageUtil } from '../../utils/image.util';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard) // All routes in this controller require authentication
+@UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 
-  /**
-   * GET /api/users/me
-   * Get current user profile
-   */
   @Get('me')
   async getCurrentUser(@CurrentUser() user: any) {
     return await this.userService.getUserProfile(user.id);
   }
 
-  /**
-   * GET /api/users/profile-details
-   * Get current user full profile details (for profile page)
-   */
   @Get('profile-details')
   async getProfileDetails(@CurrentUser() user: any) {
     if (!user || !user.id) {
@@ -50,10 +35,6 @@ export class UserController {
     return await this.userService.getUserProfile(user.id);
   }
 
-  /**
-   * GET /api/users/get-profile-information
-   * Get current user full profile information (formal route name)
-   */
   @Get('get-profile-information')
   async getProfileInformation(@CurrentUser() user: any) {
     if (!user || !user.id) {
@@ -71,19 +52,11 @@ export class UserController {
     return await this.userService.checkProfileComplete(user.id);
   }
 
-  /**
-   * GET /api/users/get-user/:id
-   * Get user profile by ID (public)
-   */
   @Get('get-user/:id')
   async getUserById(@Param('id') id: string) {
     return await this.userService.getUserProfile(id);
   }
 
-  /**
-   * PUT /api/users/me
-   * Update current user profile
-   */
   @Put('me')
   async updateProfile(
     @CurrentUser() user: any,
@@ -96,10 +69,6 @@ export class UserController {
     };
   }
 
-  /**
-   * POST /api/users/me/upload-image
-   * Upload profile image
-   */
   @UseInterceptors(FileInterceptor('image'))
   @Put('me/upload-image')
   async uploadProfileImage(
@@ -110,14 +79,12 @@ export class UserController {
       throw new BadRequestException('Please select an image to upload.');
     }
 
-    // Upload image using ImageUtil
     const uploadResult = await ImageUtil.uploadImage(
       file.buffer,
       file.originalname,
       'profile-images',
     );
 
-    // Update user with new image URL
     const updatedUser = await this.userService.updateUserProfile(user.id, {
       image: uploadResult.url,
     });
@@ -130,10 +97,6 @@ export class UserController {
     };
   }
 
-  /**
-   * DELETE /api/users/me
-   * Delete current user account
-   */
   @Delete('me')
   async deleteAccount(@CurrentUser() user: any) {
     return await this.userService.deleteUser(user.id);

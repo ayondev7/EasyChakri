@@ -1,16 +1,3 @@
-/**
- * AUTH CONTROLLER - HTTP Request Handlers for Authentication
- * 
- * EXPRESS EQUIVALENT: Your route handlers
- * router.post('/signup', async (req, res) => { ... })
- * 
- * KEY DIFFERENCES:
- * - NestJS: Controllers use decorators (@Controller, @Post, @Body)
- * - Routes are defined with decorators instead of router.post()
- * - Automatic dependency injection of services
- * - DTOs automatically validated before reaching the handler
- */
-
 import {
   Controller,
   Post,
@@ -30,14 +17,10 @@ import {
   GoogleSigninDto,
 } from './dto/auth.dto';
 
-@Controller('auth') // Base route: /api/auth
+@Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {} // Dependency injection
+  constructor(private authService: AuthService) {}
 
-  /**
-   * POST /api/auth/signup
-   * Register new user with email/password
-   */
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(
@@ -61,10 +44,6 @@ export class AuthController {
     };
   }
 
-  /**
-   * POST /api/auth/signin
-   * Login with email/password
-   */
   @Post('signin')
   @HttpCode(HttpStatus.OK)
   async signin(@Body() dto: CredentialSigninDto) {
@@ -75,10 +54,6 @@ export class AuthController {
     };
   }
 
-  /**
-   * POST /api/auth/google
-   * Login/Register with Google OAuth
-   */
   @Post('google')
   @HttpCode(HttpStatus.OK)
   async googleAuth(@Body() dto: GoogleSigninDto) {
@@ -89,10 +64,6 @@ export class AuthController {
     };
   }
 
-  /**
-   * POST /api/auth/refresh
-   * Get new access token using refresh token
-   */
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Body('refreshToken') refreshToken: string) {

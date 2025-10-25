@@ -1,12 +1,5 @@
-/**
- * Common Types for the Application
- * 
- * These types are used across multiple modules
- */
-
 import { User as PrismaUser, Job as PrismaJob, Company as PrismaCompany } from '@prisma/client';
 
-// User Types
 export type UserWithoutPassword = Omit<PrismaUser, 'password'>;
 
 export interface AuthUser {
@@ -16,7 +9,6 @@ export interface AuthUser {
   role: string;
 }
 
-// Pagination Types
 export interface PaginationParams {
   page?: number;
   limit?: number;
@@ -34,7 +26,6 @@ export interface PaginatedResponse<T> {
   meta: PaginationMeta;
 }
 
-// API Response Types
 export interface ApiSuccessResponse<T = any> {
   success: true;
   message: string;
@@ -55,7 +46,6 @@ export interface ApiErrorResponse {
   };
 }
 
-// Job with Relations
 export type JobWithCompany = PrismaJob & {
   company: Pick<PrismaCompany, 'id' | 'name' | 'logo' | 'location' | 'industry'>;
   _count?: {
@@ -63,7 +53,6 @@ export type JobWithCompany = PrismaJob & {
   };
 };
 
-// Company with Relations
 export type CompanyWithJobs = PrismaCompany & {
   jobs?: Array<Pick<PrismaJob, 'id' | 'title' | 'type' | 'location' | 'salary' | 'createdAt'>>;
   _count?: {

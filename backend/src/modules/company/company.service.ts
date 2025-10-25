@@ -11,12 +11,7 @@ import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
 export class CompanyService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Create company profile (Recruiter only)
-   * A recruiter can only have one company
-   */
   async createCompany(recruiterId: string, dto: CreateCompanyDto) {
-    // Check if recruiter already has a company
     const existingCompany = await this.prisma.company.findUnique({
       where: { recruiterId },
     });
@@ -35,9 +30,6 @@ export class CompanyService {
     return company;
   }
 
-  /**
-   * Get all companies with pagination
-   */
   async getAllCompanies(page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
@@ -67,9 +59,6 @@ export class CompanyService {
     };
   }
 
-  /**
-   * Get company by ID
-   */
   async getCompanyById(id: string) {
     const company = await this.prisma.company.findUnique({
       where: { id },
@@ -108,9 +97,6 @@ export class CompanyService {
     return company;
   }
 
-  /**
-   * Get recruiter's company
-   */
   async getRecruiterCompany(recruiterId: string) {
     const company = await this.prisma.company.findUnique({
       where: { recruiterId },
@@ -130,11 +116,7 @@ export class CompanyService {
     return company;
   }
 
-  /**
-   * Update company (Recruiter only - must own the company)
-   */
   async updateCompany(companyId: string, recruiterId: string, dto: UpdateCompanyDto) {
-    // Verify company belongs to recruiter
     const company = await this.prisma.company.findUnique({
       where: { id: companyId },
     });
