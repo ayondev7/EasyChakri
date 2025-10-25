@@ -1,12 +1,9 @@
-// Tab configurations for different pages
-
 export interface TabOption {
   label: string
   value: string
   count?: number
 }
 
-// Interview tabs (used by both seeker and recruiter)
 export const INTERVIEW_TABS = [
   { label: "All", value: "all" },
   { label: "Scheduled", value: "scheduled" },
@@ -15,7 +12,6 @@ export const INTERVIEW_TABS = [
   { label: "Cancelled", value: "cancelled" },
 ]
 
-// Application tabs (for seeker applications page)
 export const APPLICATION_TABS = [
   { label: "All", value: "all" },
   { label: "Pending", value: "PENDING" },
@@ -25,7 +21,6 @@ export const APPLICATION_TABS = [
   { label: "Accepted", value: "ACCEPTED" },
 ]
 
-// Applicant tabs (for recruiter job applicants page)
 export const APPLICANT_TABS = [
   { label: "All", value: "all" },
   { label: "Pending", value: "pending" },
@@ -35,7 +30,6 @@ export const APPLICANT_TABS = [
   { label: "Accepted", value: "accepted" },
 ]
 
-// Notification tabs
 export const NOTIFICATION_TABS = [
   { label: "All", value: "all" },
   { label: "Applications", value: "application" },

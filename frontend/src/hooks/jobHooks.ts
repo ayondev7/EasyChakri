@@ -78,13 +78,12 @@ export function useSearchSuggestions(query: string, limit: number = 5) {
     `${JOB_ROUTES.searchSuggestions}?q=${encodeURIComponent(query)}&limit=${limit}`,
     {
       enabled: query.trim().length >= 2,
-      staleTime: 1000 * 60, // 1 minute
+      staleTime: 1000 * 60,
     }
   )
 }
 
 export function useJobs(params?: JobQueryParams) {
-  // Build query string properly handling boolean and number types
   let queryString = ''
   if (params) {
     const searchParams = new URLSearchParams()

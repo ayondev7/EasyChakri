@@ -21,7 +21,6 @@ export function SearchBar() {
     8
   )
 
-  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -33,7 +32,6 @@ export function SearchBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  // Show suggestions when there's a query and results
   useEffect(() => {
     if (shouldSearch && searchQuery.trim().length >= 2 && suggestions?.data && suggestions.data.length > 0) {
       setShowSuggestions(true)
@@ -45,7 +43,6 @@ export function SearchBar() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Trigger the search hook
     if (searchQuery.trim().length >= 2) {
       setShouldSearch(true)
       setShowSuggestions(true)
@@ -86,7 +83,6 @@ export function SearchBar() {
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value)
-                // Reset search trigger when user types
                 if (shouldSearch) {
                   setShouldSearch(false)
                   setShowSuggestions(false)
@@ -140,7 +136,6 @@ export function SearchBar() {
         </div>
       </form>
 
-      {/* Floating Suggestions Dropdown */}
       {showSuggestions && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
           <div className="p-2">

@@ -147,7 +147,6 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
         formData.append("image", seekerImageFile)
       }
 
-      // Call custom signup API
       const response = await fetch("/api/signup", {
         method: "POST",
         body: formData,
@@ -160,7 +159,6 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
         return
       }
 
-      // After successful signup, sign in with credentials
       const signInResult = await signIn("credentials-signin", {
         email: data.email,
         password: data.password,
@@ -203,7 +201,6 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
         formData.append("companyLogo", logoFile)
       }
 
-      // Also support the new companyLogoFile state if used by the FileInput
       if (companyLogoFile) {
         formData.append("companyLogo", companyLogoFile)
       }
@@ -212,7 +209,6 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
         formData.append("image", recruiterImageFile)
       }
 
-      // Call custom signup API
       const response = await fetch("/api/signup", {
         method: "POST",
         body: formData,
@@ -225,7 +221,6 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
         return
       }
 
-      // After successful signup, sign in with credentials
       const signInResult = await signIn("credentials-signin", {
         email: data.email,
         password: data.password,

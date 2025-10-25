@@ -4,7 +4,6 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated to light mode with emerald green as primary accent */
   --background: oklch(0.99 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -119,12 +118,10 @@
   }
 }
 
-/* React Hot Toast Custom Styles - Dynamic width based on content */
 [data-sonner-toaster] {
   --toast-width: fit-content;
 }
 
-/* Dynamic toast width for better UX */
 div[role="status"] {
   min-width: 200px;
   max-width: 500px;

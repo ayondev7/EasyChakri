@@ -112,13 +112,11 @@ export function useMyCompany() {
     { 
       refetchOnWindowFocus: false,
       retry: (failureCount, error) => {
-        // Don't retry if it's a 404 (company doesn't exist yet)
         if (error?.response?.status === 404) {
           return false
         }
         return failureCount < 2
       },
-      // Don't throw error on 404 - it's expected for new recruiters
       throwOnError: (error) => {
         return error?.response?.status !== 404
       }

@@ -1,8 +1,6 @@
-// File upload validation constants
-
 export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
 
-export const MAX_FILE_SIZE_BYTES = 3 * 1024 * 1024 // 3MB
+export const MAX_FILE_SIZE_BYTES = 3 * 1024 * 1024
 
 export const MAX_FILE_SIZE_MB = 3
 

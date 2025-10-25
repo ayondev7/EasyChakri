@@ -1,4 +1,3 @@
-// Navbar navigation for unauthenticated users
 export const publicNavLinks = [
   {
     label: "Find Jobs",
@@ -10,7 +9,6 @@ export const publicNavLinks = [
   },
 ]
 
-// Authentication links for unauthenticated users
 export const authLinks = [
   {
     label: "Sign In",
@@ -24,7 +22,6 @@ export const authLinks = [
   },
 ]
 
-// Seeker navigation items (without logout - added dynamically in component)
 export const seekerMenuItems = [
   {
     label: "Dashboard",
@@ -48,7 +45,6 @@ export const seekerMenuItems = [
   },
 ]
 
-// Recruiter navigation items (without logout - added dynamically in component)
 export const recruiterMenuItems = [
   {
     label: "Dashboard",

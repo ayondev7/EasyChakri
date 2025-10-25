@@ -40,7 +40,6 @@ export default function ProfilePage() {
     resume: "",
   })
 
-  // Initialize form data only once when user data is first available
   useEffect(() => {
     if (profileUser && !isFormInitialized) {
       setFormData({
@@ -57,7 +56,6 @@ export default function ProfilePage() {
     }
   }, [profileUser, isFormInitialized])
 
-  // Reset form initialization when entering edit mode to get latest user data
   const handleEditClick = () => {
     if (profileUser) {
       setFormData({
@@ -101,7 +99,6 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      // Only send fields that have actually changed
       const changedFields: any = {};
       
   if (formData.name !== profileUser.name) changedFields.name = formData.name;
@@ -112,11 +109,9 @@ export default function ProfilePage() {
   if (formData.education !== profileUser.education) changedFields.education = formData.education;
   if (formData.resume !== profileUser.resume) changedFields.resume = formData.resume;
       
-      // Compare skills arrays
   const skillsChanged = JSON.stringify(formData.skills?.sort()) !== JSON.stringify((profileUser.skills || [])?.sort());
       if (skillsChanged) changedFields.skills = formData.skills;
 
-      // If no fields changed, show info message
       if (Object.keys(changedFields).length === 0) {
         toast.success("No changes to save");
         setIsEditing(false);
@@ -129,7 +124,6 @@ export default function ProfilePage() {
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message;
       if (Array.isArray(errorMessage)) {
-        // Handle validation errors array
         toast.error(errorMessage.join(', '));
       } else {
         toast.error(errorMessage || "Failed to update profile");

@@ -19,7 +19,6 @@ export const useUserProfile = () => {
   })
 }
 
-// New hook to fetch user profile information via the formal endpoint
 export const useUserProfileInformation = () => {
   return useQuery<UserResponse>({
     queryKey: ["user", "profile-information"],
@@ -40,16 +39,13 @@ export const useUpdateUserProfile = () => {
       return response.data
     },
     onSuccess: (data) => {
-      // Update the cache with the new data immediately
       queryClient.setQueryData(["user", "profile"], data)
       queryClient.setQueryData(["auth", "me"], data)
       
-      // Also invalidate to trigger refetch if the component is using these queries
       queryClient.invalidateQueries({ queryKey: ["user", "profile"] })
       queryClient.invalidateQueries({ queryKey: ["auth", "me"] })
       queryClient.invalidateQueries({ queryKey: ["user", "profile-information"] })
       
-      // Invalidate profile completion check as well
       queryClient.invalidateQueries({ queryKey: ["user", "profile-complete"] })
     },
   })

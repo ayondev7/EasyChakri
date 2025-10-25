@@ -61,10 +61,8 @@ export default function ApplicantsPage({
     useState<Application | null>(null);
 
   useEffect(() => {
-    // Don't redirect while session is still loading
     if (isLoading) return;
 
-    // Redirect if not authenticated or wrong role
     if (!isAuthenticated || !user) {
       router.push("/auth/signin");
       return;
@@ -76,35 +74,26 @@ export default function ApplicantsPage({
   }, [isAuthenticated, user, router, isLoading]);
 
   useEffect(() => {
-    // Fetch job details (for job metadata). Applications endpoint for recruiter -> job applicants
-    // is not implemented on backend yet; keep applications empty and show TODO.
     async function fetchJob() {
       try {
         const res = await fetch(JOB_ROUTES.getById(id))
         if (!res.ok) return
         const json = await res.json()
-        // job data used below via mockUsers/getApplicantDetails fallback
       } catch (err) {
         console.error(err)
       }
     }
     fetchJob()
-      // TODO: replace with real API call to fetch applications for a job when backend exposes it
       setApplications([])
   }, [id]);
 
-  // Show loading state while session is being checked
   if (isLoading) {
     return null;
   }
 
-  // Don't render page until authenticated
   if (!isAuthenticated || !user || user.role !== "recruiter") {
     return null;
   }
-
-  // Job data is not available here without calling backend; attempt to fetch synchronously is not possible
-  // We'll show a minimal header using available data if fetched above in the future.
 
   const filteredApplications =
     filterStatus === "all"

@@ -1,7 +1,6 @@
 import { use } from "react"
 import { notFound } from "next/navigation"
 import Image from "next/image"
-// Header and Footer provided by root layout
 import { JobCard } from "@/components/JobCard"
 import type { Job } from "@/types"
 import COMPANY_ROUTES from "@/routes/companyRoutes"
@@ -12,7 +11,6 @@ import { MapPin, Users, Globe, Calendar, Briefcase } from "lucide-react"
 export default async function CompanyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
 
-  // Fetch company from backend
   const res = await fetch(COMPANY_ROUTES.getById(id), { cache: 'no-store' })
   if (!res.ok) {
     notFound()
@@ -23,7 +21,6 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
     notFound()
   }
 
-  // Fetch jobs for the company
   const jobsRes = await fetch(`${JOB_ROUTES.getAll}?companyId=${id}`, { cache: 'no-store' })
   const jobsJson = await jobsRes.json()
   const companyJobs = jobsJson?.data ?? []
@@ -31,7 +28,6 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
   return (
       <main className="py-8">
         <div className="container mx-auto px-4">
-          {/* Company Header */}
           <Card className="mb-8">
             <CardContent className="p-8">
               <div className="flex flex-col md:flex-row items-start gap-6">
@@ -85,7 +81,6 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
             </CardContent>
           </Card>
 
-          {/* Company Jobs */}
           <div>
             <div className="flex items-center gap-3 mb-6">
               <Briefcase className="h-6 w-6 text-cyan-500" />

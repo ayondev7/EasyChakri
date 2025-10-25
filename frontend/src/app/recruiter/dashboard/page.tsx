@@ -52,7 +52,6 @@ export default function RecruiterDashboardPage() {
     },
     {
       title: "Interviews",
-      // TODO: backend interviews endpoints are not implemented; show 0 for now
       value: 0,
       icon: Calendar,
       color: "text-purple-500",

@@ -26,7 +26,6 @@ export default function JobsPage() {
   if (searchQuery) queryParams.search = searchQuery
   if (locationQuery) queryParams.location = locationQuery
 
-  // Add filters to query params
   if (filters.jobType) {
     queryParams.type = filters.jobType
   }

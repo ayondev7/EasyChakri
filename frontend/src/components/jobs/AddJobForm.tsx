@@ -86,8 +86,6 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
   }
 
   const onSubmit = (values: FormValues) => {
-    // Allow backend to resolve company for recruiter accounts.
-    // If companyId exists we include it, otherwise send payload without blocking submission.
     const payload: any = {
       ...values,
       skills,
@@ -101,7 +99,6 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
         router.push('/recruiter/dashboard')
       },
       onError: (error) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         toast.error((error as any)?.response?.data?.message || 'Failed to create job')
       },
     })

@@ -18,15 +18,12 @@ export default function CompanyProfilePage() {
   const updateCompany = useUpdateCompany()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // If there's a 404 error, it means the company doesn't exist yet, which is fine
   const company = companyData?.data
   const hasProfile = !!company && !companyError
 
   useEffect(() => {
-    // Don't redirect while session is still loading
     if (authLoading) return
 
-    // Redirect if not authenticated or wrong role
     if (!isAuthenticated || !user) {
       router.push("/auth/signin")
       return
@@ -38,8 +35,6 @@ export default function CompanyProfilePage() {
     }
   }, [isAuthenticated, user, router, authLoading])
 
-  // Show loading state while session and company data are being fetched
-  // Don't show loading if there's an error (likely 404 meaning no company yet)
   if (authLoading || (companyLoading && !companyError)) {
     return (
       <div className="container mx-auto max-w-2xl py-8">
@@ -48,7 +43,6 @@ export default function CompanyProfilePage() {
     )
   }
 
-  // Don't render page until authenticated
   if (!isAuthenticated || !user || user.role !== "recruiter") {
     return null
   }
@@ -67,14 +61,12 @@ export default function CompanyProfilePage() {
       }
 
       if (hasProfile && company?.id) {
-        // Update existing company
         await updateCompany.mutateAsync({
           id: company.id,
           ...companyData,
         })
         toast.success("Company profile updated successfully!")
       } else {
-        // Create new company
         await createCompany.mutateAsync(companyData)
         toast.success("Company profile created successfully!")
       }

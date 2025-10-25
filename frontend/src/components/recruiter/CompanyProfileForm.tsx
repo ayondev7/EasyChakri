@@ -41,7 +41,6 @@ export default function CompanyProfileForm({ hasProfile, isLoading, onSubmit, on
     description: "",
   })
 
-  // Update form when defaultValues change
   useEffect(() => {
     if (defaultValues) {
       setFormData({

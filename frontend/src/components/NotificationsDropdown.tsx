@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { Bell, Briefcase, FileText, CheckCircle } from "lucide-react"
-// TODO: wire to backend notifications endpoint when available
 import type { Notification } from "@/types"
 import { formatDate } from "@/utils/utils"
 import { useAuth } from "@/contexts/AuthContext"

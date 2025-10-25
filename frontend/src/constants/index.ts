@@ -1,4 +1,3 @@
-// Export all constants from a centralized location
 export * from "./categoriesConstants"
 export * from "./companyConstants"
 export * from "./fileConstants"

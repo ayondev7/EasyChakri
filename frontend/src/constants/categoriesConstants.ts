@@ -20,7 +20,6 @@ export interface CategoryWithIcon {
   jobCount: number
 }
 
-// Icon mapping for categories
 export const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
   Home,
   Building2,
@@ -35,7 +34,6 @@ export const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
   IndianRupee,
 }
 
-// Popular categories displayed on landing page
 export const POPULAR_CATEGORIES: CategoryWithIcon[] = [
   { id: 1, name: "Remote", icon: "Home", jobCount: 1250 },
   { id: 2, name: "MNC", icon: "Building2", jobCount: 3420 },

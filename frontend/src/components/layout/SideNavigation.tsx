@@ -46,7 +46,6 @@ export function SideNavigation() {
   const router = useRouter()
   const { user, logout } = useAuth()
 
-  // Add logout option to menu items
   const seekerNavItems: NavItem[] = [
     ...seekerMenuItems.map(item => ({
       ...item,
@@ -136,7 +135,6 @@ export function SideNavigation() {
             })}
           </nav>
 
-          {/* Quick Actions Section */}
           <div className="mt-6 pt-6 border-t border-border/50">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-4">
               Quick Access
@@ -166,7 +164,6 @@ export function SideNavigation() {
             </div>
           </div>
 
-          {/* User Info Card */}
           {user && (
             <div className="mt-6 pt-6 border-t border-border/50">
               <div className="px-4 py-3 rounded-lg bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20">

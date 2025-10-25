@@ -16,17 +16,14 @@ export default function ApplicationsPage() {
   const { user, isAuthenticated, isLoading } = useAuth()
   const [filter, setFilter] = useState("all")
 
-  // Always call data hooks at the top; gate execution via `enabled` to avoid changing hook order
   const { data: applicationsData } = useMyApplications({
     page: 1,
     limit: 50,
   })
 
   useEffect(() => {
-    // Don't redirect while session is still loading
     if (isLoading) return
 
-    // Redirect if not authenticated or wrong role
     if (!isAuthenticated || !user) {
       router.push("/auth/signin")
       return
@@ -37,12 +34,10 @@ export default function ApplicationsPage() {
     }
   }, [isAuthenticated, user, router, isLoading])
 
-  // Show loading state while session is being checked
   if (isLoading) {
     return null
   }
 
-  // Don't render page until authenticated
   if (!isAuthenticated || !user || user.role !== "seeker") {
     return null
   }

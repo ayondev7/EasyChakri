@@ -1,7 +1,6 @@
 import { Calendar, Clock, MapPin, Video, ExternalLink, User, CheckCircle, XCircle, AlertCircle, Eye } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-// Application Status Mappings
 export const APPLICATION_STATUS_CONFIG: Record<string, { icon: LucideIcon; color: string }> = {
   PENDING: {
     icon: Clock,
@@ -33,7 +32,6 @@ export const APPLICATION_STATUS_CONFIG: Record<string, { icon: LucideIcon; color
   },
 }
 
-// Interview Status Mappings
 export const INTERVIEW_STATUS_CONFIG: Record<string, { icon: LucideIcon; color: string }> = {
   SCHEDULED: {
     icon: Calendar,
@@ -57,7 +55,6 @@ export const INTERVIEW_STATUS_CONFIG: Record<string, { icon: LucideIcon; color: 
   },
 }
 
-// Helper functions
 export const getApplicationStatusIcon = (status: string): LucideIcon => {
   return APPLICATION_STATUS_CONFIG[status.toUpperCase()]?.icon || AlertCircle
 }

@@ -53,7 +53,6 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message || "Failed to submit application. Please try again."
       
-      // Check if it's a profile completion error
       if (errorMessage.includes("complete your profile") || errorMessage.includes("Missing information")) {
         toast.error("Please complete your profile before applying.  Visit your profile page to complete these details.", { 
           duration: 8000,
@@ -62,7 +61,6 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
           }
         })
         
-        // Navigate to profile page after a short delay
         setTimeout(() => {
           router.push("/seeker/profile")
         }, 2000)

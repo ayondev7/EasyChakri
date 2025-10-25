@@ -55,11 +55,9 @@ export function InterviewSchedulingModal({ application, trigger, onSchedule }: I
         setMeetingLink("")
         setLocation("")
         setNotes("")
-        // Call optional callback so parent can react to scheduling
         try {
           if (onSchedule) onSchedule(interviewData)
         } catch (err) {
-          // ignore callback errors
         }
       },
       onError: (error: any) => {

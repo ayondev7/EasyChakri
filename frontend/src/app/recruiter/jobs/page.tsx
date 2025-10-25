@@ -4,7 +4,6 @@ import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-// Header and Footer provided by root layout
 import { useAuth } from "@/contexts/AuthContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -20,10 +19,8 @@ export default function RecruiterJobsPage() {
   const { user, isAuthenticated, isLoading } = useAuth()
 
   useEffect(() => {
-    // Don't redirect while session is still loading
     if (isLoading) return
 
-    // Redirect if not authenticated or wrong role
     if (!isAuthenticated || !user) {
       router.push("/auth/signin")
       return
@@ -34,12 +31,10 @@ export default function RecruiterJobsPage() {
     }
   }, [isAuthenticated, user, router, isLoading])
 
-  // Show loading state while session is being checked
   if (isLoading) {
     return null
   }
 
-  // Don't render page until authenticated
   if (!isAuthenticated || !user || user.role !== "recruiter") {
     return null
   }

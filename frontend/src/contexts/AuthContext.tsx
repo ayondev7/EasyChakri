@@ -23,7 +23,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Wait for session to finish loading
     if (status === "loading") {
       setIsLoading(true)
       return
@@ -41,28 +40,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         createdAt: new Date(), 
       })
       setIsAuthenticated(true)
-      // Refresh token cache when user logs in
       refreshAuthToken()
     } else {
       setUser(null)
       setIsAuthenticated(false)
-      // Clear token cache when user logs out
       clearAuthToken()
     }
   }, [session, status])
 
   const login = async (email: string, password: string, role: "seeker" | "recruiter") => {
-    // This is now handled by NextAuth signIn
     throw new Error("Use NextAuth signIn directly")
   }
 
   const logout = async () => {
-    clearAuthToken() // Clear token cache before signing out
+    clearAuthToken()
     await signOut({ callbackUrl: "/" })
   }
 
   const signup = async (email: string, password: string, name: string, role: "seeker" | "recruiter") => {
-    // This is now handled by NextAuth signIn with credentials-signup
     throw new Error("Use NextAuth signIn directly")
   }
 

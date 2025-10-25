@@ -44,14 +44,12 @@ const authOptions: NextAuthOptions = {
 						role: credentials.role,
 					};
 
-					// Add seeker-specific fields
 					if (credentials.role === "SEEKER") {
 						if (credentials.phone) body.phone = credentials.phone;
 						if (credentials.dateOfBirth) body.dateOfBirth = credentials.dateOfBirth;
 						if (credentials.image) body.image = credentials.image;
 					}
 
-					// Add recruiter-specific fields
 					if (credentials.role === "RECRUITER") {
 						body.companyName = credentials.companyName;
 						body.companyDescription = credentials.companyDescription;

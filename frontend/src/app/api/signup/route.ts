@@ -5,7 +5,6 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
-    // Forward the FormData directly to the backend
     const response = await fetch(AUTH_ROUTES.credential.signup, {
       method: "POST",
       body: formData,

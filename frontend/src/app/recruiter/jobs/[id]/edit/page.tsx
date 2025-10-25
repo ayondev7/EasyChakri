@@ -57,7 +57,6 @@ export default function EditJobPage() {
 
   const job = jobData.data
 
-  // Check if the current user owns this job
   if (job.recruiterId !== user.id) {
     return (
       <main className="py-8">
