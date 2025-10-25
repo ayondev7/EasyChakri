@@ -1,4 +1,5 @@
 import type React from "react"
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import "./globals.css"
 import { Providers } from "@/components/Providers"
@@ -19,11 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${satoshi.variable} font-sans antialiased`}>
-        <Providers>
-          <Navbar />
-          <main className="container mx-auto px-[100px]">{children}</main>
-          <Footer />
-        </Providers>
+        <Suspense fallback={null}>
+          <Providers>
+            <Navbar />
+            <main className="container mx-auto px-[100px]">{children}</main>
+            <Footer />
+          </Providers>
+        </Suspense>
       </body>
     </html>
   )
