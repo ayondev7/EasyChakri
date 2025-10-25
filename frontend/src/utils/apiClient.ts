@@ -1,5 +1,6 @@
 import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
-import { getSession } from 'next-auth/react'
+import { getSession, signOut } from 'next-auth/react'
+import AUTH_ROUTES from '@/routes/authRoutes'
 
 class TokenCache {
   private token: string | null = null
@@ -48,6 +49,38 @@ class TokenCache {
     }
   }
   
+  async refreshWithRefreshToken(): Promise<string | null> {
+    try {
+      const session = await getSession()
+      
+      if (!session?.refreshToken) {
+        await this.handleSessionExpired()
+        return null
+      }
+
+      const response = await axios.post(AUTH_ROUTES.refresh, {
+        refreshToken: session.refreshToken,
+      })
+
+      if (response.data?.data?.accessToken) {
+        this.token = response.data.data.accessToken
+        this.tokenExpiry = Date.now() + this.CACHE_DURATION
+        return this.token
+      }
+
+      await this.handleSessionExpired()
+      return null
+    } catch (error) {
+      await this.handleSessionExpired()
+      return null
+    }
+  }
+
+  private async handleSessionExpired(): Promise<void> {
+    this.clearCache()
+    await signOut({ callbackUrl: '/auth/signin', redirect: true })
+  }
+  
   clearCache(): void {
     this.token = null
     this.tokenExpiry = 0
@@ -90,17 +123,12 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
       
-      const newToken = await tokenCache.forceRefresh()
+      const newToken = await tokenCache.refreshWithRefreshToken()
       
       if (newToken && originalRequest.headers) {
         originalRequest.headers.Authorization = `Bearer ${newToken}`
         return apiClient(originalRequest)
       }
-    }
-    
-    if (error.response?.status === 401) {
-      console.error('Unauthorized request - token may be expired')
-      tokenCache.clearCache()
     }
     
     return Promise.reject(error)

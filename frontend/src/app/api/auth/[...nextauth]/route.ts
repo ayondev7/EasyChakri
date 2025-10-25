@@ -142,7 +142,7 @@ const authOptions: NextAuthOptions = {
 		signIn: "/auth/signin",
 	},
 	callbacks: {
-		async jwt({ token, user, account }) {
+		async jwt({ token, user, account, trigger }) {
 			if (account?.provider === "google" && user) {
 				try {
 					const response = await fetch(AUTH_ROUTES.google.signin, {
@@ -176,6 +176,32 @@ const authOptions: NextAuthOptions = {
 					accessToken: user.accessToken!,
 					refreshToken: user.refreshToken!,
 				});
+			}
+
+			if (trigger === "update") {
+				const accessToken = token.accessToken as string;
+				const refreshToken = token.refreshToken as string;
+
+				if (accessToken && refreshToken) {
+					try {
+						const response = await fetch(AUTH_ROUTES.refresh, {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({
+								refreshToken: refreshToken,
+							}),
+						});
+
+						if (response.ok) {
+							const data: { data: { accessToken: string } } = await response.json();
+							token.accessToken = data.data.accessToken;
+						}
+					} catch (error) {
+						return { ...token, error: "RefreshAccessTokenError" };
+					}
+				}
 			}
 
 			return token;

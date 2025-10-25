@@ -14,6 +14,7 @@ export const AUTH_ROUTES = {
 		signin: `${BASE}/guest/signin`,
 	},
 	verify: `${BASE}/verify`,
+	refresh: `${BASE}/refresh`,
 	me: `${BASE}/get-my-info`,
 	updateMe: `${BASE}/update-my-info`,
 	protected: `${BASE}/protected`,
