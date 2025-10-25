@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import CustomAvatar from "@/components/CustomAvatar"
 import { seekerMenuItems, recruiterMenuItems } from "@/constants/navigation"
 import { getInitials } from "@/utils/utils"
 
@@ -168,11 +169,7 @@ export function SideNavigation() {
             <div className="mt-6 pt-6 border-t border-border/50">
               <div className="px-4 py-3 rounded-lg bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                      {getInitials(user.name)}
-                    </span>
-                  </div>
+                  <CustomAvatar src={user?.image || "/placeholder.svg"} name={user.name} alt={user.name} className="h-10 w-10 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground truncate">
                       {user.name}

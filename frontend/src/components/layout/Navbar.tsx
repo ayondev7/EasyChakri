@@ -4,8 +4,8 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
-import { LogOut, User, LayoutDashboard, Briefcase, Menu, X } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Menu, X } from "lucide-react"
+import CustomAvatar from "@/components/CustomAvatar"
 import { getInitials } from "@/utils/utils"
 import { NotificationsDropdown } from "@/components/NotificationsDropdown"
 import { useState } from "react"
@@ -13,6 +13,7 @@ import { useState } from "react"
 export function Navbar() {
   const pathname = usePathname()
   const { user, isAuthenticated, logout } = useAuth()
+  console.log("usr",user?.image);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const isActive = (path: string) => pathname === path
@@ -53,12 +54,7 @@ export function Navbar() {
           {isAuthenticated && user ? (
             <div className="flex items-center gap-4">
               <Link href={`/${user.role}/dashboard`} className="hidden md:flex items-center gap-3">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={user.image || "/placeholder.svg"} alt={user.name} />
-                  <AvatarFallback className="bg-emerald-500/10 text-emerald-500">
-                    {getInitials(user.name)}
-                  </AvatarFallback>
-                </Avatar>
+                <CustomAvatar src={user?.image || "/placeholder.svg"} name={user.name} alt={user.name} className="h-9 w-9" />
                 <div className="flex flex-col space-y-0.5">
                   <p className="text-sm font-medium leading-none">{user.name}</p>
                   <p className="text-xs leading-none text-muted-foreground capitalize">{user.role}</p>

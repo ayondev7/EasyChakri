@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
   
   if (!token) {
-    if (pathname.startsWith("/seeker") || pathname.startsWith("/recruiter") || pathname.startsWith("/jobs") || pathname.startsWith("/companies")) {
+    if (pathname.startsWith("/seeker") || pathname.startsWith("/recruiter")) {
       const signInUrl = new URL("/auth/signin", req.nextUrl.origin)
       signInUrl.searchParams.set("callbackUrl", pathname)
       return NextResponse.redirect(signInUrl)
@@ -30,18 +30,9 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (pathname.startsWith("/jobs") || pathname.startsWith("/companies")) {
-    if (userRole === "recruiter") {
-      return NextResponse.redirect(new URL("/recruiter/dashboard", req.nextUrl.origin))
-    }
-    if (userRole !== "seeker") {
-      return NextResponse.redirect(new URL("/auth/signin", req.nextUrl.origin))
-    }
-  }
-
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/seeker/:path*", "/recruiter/:path*", "/jobs/:path*", "/companies/:path*"]
+  matcher: ["/seeker/:path*", "/recruiter/:path*"]
 }

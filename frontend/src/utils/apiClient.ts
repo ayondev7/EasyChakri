@@ -54,7 +54,7 @@ class TokenCache {
       const session = await getSession()
       
       if (!session?.refreshToken) {
-        await this.handleSessionExpired()
+        this.clearCache()
         return null
       }
 
@@ -78,7 +78,15 @@ class TokenCache {
 
   private async handleSessionExpired(): Promise<void> {
     this.clearCache()
-    await signOut({ callbackUrl: '/auth/signin', redirect: true })
+    
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname
+      const isAuthPage = currentPath.startsWith('/auth/')
+      
+      if (!isAuthPage) {
+        await signOut({ callbackUrl: '/auth/signin', redirect: true })
+      }
+    }
   }
   
   clearCache(): void {
