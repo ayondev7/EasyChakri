@@ -3,8 +3,8 @@ export interface Notification {
   userId: string
   title: string
   message: string
-  type: "application" | "job" | "interview" | "system"
-  read: boolean
+  type: "APPLICATION" | "JOB" | "INTERVIEW" | "SYSTEM"
+  isRead: boolean
   createdAt: Date
   link?: string
 }

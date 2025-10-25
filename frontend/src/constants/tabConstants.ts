@@ -33,6 +33,7 @@ export const APPLICANT_TABS = [
 export const NOTIFICATION_TABS = [
   { label: "All", value: "all" },
   { label: "Applications", value: "application" },
+  { label: "Interviews", value: "interview" },
   { label: "Jobs", value: "job" },
   { label: "System", value: "system" },
 ]
