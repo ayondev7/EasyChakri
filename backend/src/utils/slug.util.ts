@@ -21,3 +21,16 @@ export async function generateUniqueJobSlug(prisma: PrismaClient, title: string)
     slug = `${base}-${counter}`
   }
 }
+
+export async function generateUniqueCompanySlug(prisma: PrismaClient, name: string) {
+  const base = slugify(name)
+  let slug = base
+  let counter = 1
+
+  while (true) {
+    const existing = await (prisma as any).company.findFirst({ where: { slug } })
+    if (!existing) return slug
+    counter += 1
+    slug = `${base}-${counter}`
+  }
+}

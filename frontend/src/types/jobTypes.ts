@@ -3,6 +3,7 @@ import type { Company } from "./companyTypes"
 export interface Job {
   id: string
   title: string
+  slug: string
   company: Company
   location: string
   type: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" | "REMOTE"
@@ -21,7 +22,6 @@ export interface Job {
   featured?: boolean
   recruiterId: string
   companyId: string
-  slug?: string
   category: string
   isRemote?: boolean
   _count?: {

@@ -30,7 +30,7 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
 
           <div className="flex-1 min-w-0">
             <Link
-              href={`/jobs/${application.job.id}`}
+              href={`/jobs/${application.job.slug}`}
               className="font-semibold text-lg hover:text-cyan-500 transition-colors line-clamp-1 inline-block"
             >
               {stripParenthesizedCompany(application.job.title)}
@@ -54,7 +54,7 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
               </span>
             </Badge>
             <Button variant="outline" size="sm" asChild>
-              <Link href={`/jobs/${application.job.id}`}>View Job</Link>
+              <Link href={`/jobs/${application.job.slug}`}>View Job</Link>
             </Button>
           </div>
         </div>

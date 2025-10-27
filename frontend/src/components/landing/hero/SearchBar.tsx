@@ -49,10 +49,10 @@ export function SearchBar() {
     }
   }
 
-  const handleSuggestionClick = (jobId: string) => {
+  const handleSuggestionClick = (jobSlug: string) => {
     setShowSuggestions(false)
     setSearchQuery("")
-    router.push(`/jobs/${jobId}`)
+    router.push(`/jobs/${jobSlug}`)
   }
 
   const clearSearch = () => {
@@ -149,7 +149,7 @@ export function SearchBar() {
                 {suggestions.data.map((job) => (
                   <button
                     key={job.id}
-                    onClick={() => handleSuggestionClick(job.id)}
+                    onClick={() => handleSuggestionClick(job.slug)}
                     className="w-full flex items-start gap-3 p-3 rounded-lg hover:bg-muted transition-colors text-left"
                   >
                     <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-muted flex-shrink-0">

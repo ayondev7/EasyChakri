@@ -56,7 +56,7 @@ export function LatestJobs() {
           {latestJobs.map((job) => (
             <Link
               key={job.id}
-              href={`/jobs/${job.id}`}
+              href={`/jobs/${job.slug}`}
               className="block p-6 rounded-lg border border-border/40 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-lg bg-card"
             >
               <div className="flex flex-col md:flex-row md:items-center gap-4">

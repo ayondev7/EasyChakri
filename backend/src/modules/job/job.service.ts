@@ -34,6 +34,7 @@ export class JobService {
           select: {
             id: true,
             name: true,
+            slug: true,
             logo: true,
             location: true,
             industry: true,
@@ -72,6 +73,7 @@ export class JobService {
           select: {
             id: true,
             name: true,
+            slug: true,
             logo: true,
           },
         },
@@ -169,6 +171,7 @@ export class JobService {
           select: {
             id: true,
             name: true,
+            slug: true,
             logo: true,
             location: true,
             industry: true,
@@ -195,12 +198,13 @@ export class JobService {
 
   async getJobById(id: string, userId?: string) {
     const job = await this.prisma.job.findUnique({
-      where: { id },
+      where: { slug: id },
       include: {
         company: {
           select: {
             id: true,
             name: true,
+            slug: true,
             logo: true,
             location: true,
             industry: true,
@@ -235,7 +239,7 @@ export class JobService {
 
       if (user && user.role === 'SEEKER') {
         await this.prisma.job.update({
-          where: { id },
+          where: { slug: id },
           data: { views: { increment: 1 } },
         });
       }
@@ -249,7 +253,7 @@ export class JobService {
         where: {
           seekerId_jobId: {
             seekerId: userId,
-            jobId: id,
+            jobId: job.id,
           },
         },
         select: { id: true },
@@ -261,7 +265,7 @@ export class JobService {
         where: {
           userId_jobId: {
             userId: userId,
-            jobId: id,
+            jobId: job.id,
           },
         },
         select: { id: true },
@@ -301,6 +305,7 @@ export class JobService {
           select: {
             id: true,
             name: true,
+            slug: true,
             logo: true,
             location: true,
             industry: true,
@@ -349,6 +354,7 @@ export class JobService {
           select: {
             id: true,
             name: true,
+            slug: true,
             logo: true,
           },
         },
@@ -570,6 +576,7 @@ export class JobService {
           select: {
             id: true,
             name: true,
+            slug: true,
             logo: true,
             location: true,
             industry: true,
@@ -667,6 +674,7 @@ export class JobService {
                 select: {
                   id: true,
                   name: true,
+                  slug: true,
                   logo: true,
                   location: true,
                   industry: true,
@@ -724,6 +732,7 @@ export class JobService {
               select: {
                 id: true,
                 name: true,
+                slug: true,
                 logo: true,
                 location: true,
                 industry: true,
@@ -804,6 +813,7 @@ export class JobService {
                 select: {
                   id: true,
                   name: true,
+                  slug: true,
                   logo: true,
                   location: true,
                   industry: true,
@@ -863,6 +873,7 @@ export class JobService {
               select: {
                 id: true,
                 name: true,
+                slug: true,
                 logo: true,
                 location: true,
                 industry: true,

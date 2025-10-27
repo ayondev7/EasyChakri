@@ -87,7 +87,7 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start gap-2 mb-1">
                       <Link
-                        href={`/jobs/${job.id}`}
+                        href={`/jobs/${job.slug}`}
                         className="font-semibold hover:text-emerald-500 transition-colors line-clamp-1"
                       >
                         {stripParenthesizedCompany(job.title)}

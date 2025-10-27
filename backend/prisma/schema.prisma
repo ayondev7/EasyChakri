@@ -94,7 +94,8 @@ model User {
 
 model Company {
   id String @id @default(uuid())
-  name String
+  name String @unique
+  slug String @unique
   logo String?
   description String
   industry String
@@ -113,6 +114,7 @@ model Company {
   @@index([recruiterId])
   @@index([industry])
   @@index([location])
+  @@index([slug])
   @@map("companies")
 }
 

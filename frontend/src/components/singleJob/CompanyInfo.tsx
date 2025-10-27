@@ -67,7 +67,7 @@ export function CompanyInfo({ job }: CompanyInfoProps) {
         </div>
 
         <Button asChild variant="outline" className="w-full bg-transparent">
-          <Link href={`/companies/${company.id}`}>View Company Profile</Link>
+          <Link href={`/companies/${company.slug}`}>View Company Profile</Link>
         </Button>
       </CardContent>
     </Card>

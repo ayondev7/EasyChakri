@@ -132,7 +132,7 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
           <div className="flex-1">
             <h1 className="text-3xl font-bold mb-2">{stripParenthesizedCompany(job.title)}</h1>
             <Link
-              href={`/companies/${job.company.id}`}
+              href={`/companies/${job.company.slug}`}
               className="text-lg text-emerald-500 hover:underline mb-3 inline-block"
             >
               {job.company.name}

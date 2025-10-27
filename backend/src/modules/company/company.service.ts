@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/company.dto';
+import { generateUniqueCompanySlug } from '../../utils/slug.util';
 
 @Injectable()
 export class CompanyService {
@@ -20,9 +21,20 @@ export class CompanyService {
       throw new ConflictException('You already have a company profile. You can update your existing profile instead.');
     }
 
+    const existingName = await this.prisma.company.findUnique({
+      where: { name: dto.name },
+    });
+
+    if (existingName) {
+      throw new ConflictException('A company with this name already exists. Please choose a different name.');
+    }
+
+    const slug = await generateUniqueCompanySlug(this.prisma as any, dto.name);
+
     const company = await this.prisma.company.create({
       data: {
         ...dto,
+        slug,
         recruiterId,
       },
     });
@@ -61,7 +73,7 @@ export class CompanyService {
 
   async getCompanyById(id: string) {
     const company = await this.prisma.company.findUnique({
-      where: { id },
+      where: { slug: id },
       include: {
         recruiter: {
           select: {
@@ -76,6 +88,7 @@ export class CompanyService {
           select: {
             id: true,
             title: true,
+            slug: true,
             type: true,
             location: true,
             salary: true,
@@ -127,6 +140,25 @@ export class CompanyService {
 
     if (company.recruiterId !== recruiterId) {
       throw new ForbiddenException('You don\'t have permission to update this company profile.');
+    }
+
+    if (dto.name && dto.name !== company.name) {
+      const existingName = await this.prisma.company.findUnique({
+        where: { name: dto.name },
+      });
+
+      if (existingName) {
+        throw new ConflictException('A company with this name already exists. Please choose a different name.');
+      }
+
+      const slug = await generateUniqueCompanySlug(this.prisma as any, dto.name);
+      
+      const updatedCompany = await this.prisma.company.update({
+        where: { id: companyId },
+        data: { ...dto, slug },
+      });
+
+      return updatedCompany;
     }
 
     const updatedCompany = await this.prisma.company.update({

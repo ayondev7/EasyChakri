@@ -49,7 +49,7 @@ export function JobCard({ job }: JobCardProps) {
               />
             </div>
             <div className="flex-1 min-w-0">
-              <Link href={`/jobs/${job.id}`} className="group-hover:text-emerald-500 transition-colors">
+              <Link href={`/jobs/${job.slug}`} className="group-hover:text-emerald-500 transition-colors">
                 <h3 className="font-semibold text-lg leading-tight mb-1 line-clamp-1">{stripParenthesizedCompany(job.title)}</h3>
               </Link>
               <p className="text-sm text-gray-600 line-clamp-1">{job.company?.name || "N/A"}</p>
@@ -108,12 +108,12 @@ export function JobCard({ job }: JobCardProps) {
         {user?.role === "seeker" ? (
           <div className="flex gap-2">
             <Button asChild className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white">
-              <Link href={`/jobs/${job.id}`}>View Details</Link>
+              <Link href={`/jobs/${job.slug}`}>View Details</Link>
             </Button>
           </div>
         ) : (
           <Button asChild className="w-full bg-emerald-500 hover:bg-emerald-600 text-white">
-            <Link href={`/jobs/${job.id}`}>View Details</Link>
+            <Link href={`/jobs/${job.slug}`}>View Details</Link>
           </Button>
         )}
       </div>

@@ -46,7 +46,7 @@ export function CompaniesList({ initialPage = 1, pageSize = 6 }: CompaniesListPr
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {companies.map((company) => (
-          <Link key={company.id} href={`/companies/${company.id}`}>
+          <Link key={company.id} href={`/companies/${company.slug}`}>
             <Card className="group hover:border-emerald-500/50 transition-all duration-300 hover:shadow-lg h-full">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4 mb-4">

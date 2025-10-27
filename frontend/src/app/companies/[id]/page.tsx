@@ -5,9 +5,9 @@ import JOB_ROUTES from "@/routes/jobRoutes"
 import CompanyHeader from "@/components/singleCompany/CompanyHeader"
 import CompanyJobs from "@/components/singleCompany/CompanyJobs"
 
-async function fetchCompanyData(id: string): Promise<Company | null> {
+async function fetchCompanyData(slug: string): Promise<Company | null> {
   try {
-    const res = await fetch(COMPANY_ROUTES.getById(id), { 
+    const res = await fetch(COMPANY_ROUTES.getById(slug), { 
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
@@ -28,9 +28,12 @@ async function fetchCompanyData(id: string): Promise<Company | null> {
   }
 }
 
-async function fetchCompanyJobs(id: string): Promise<Job[]> {
+async function fetchCompanyJobs(slug: string): Promise<Job[]> {
   try {
-    const jobsRes = await fetch(`${JOB_ROUTES.getAll}?companyId=${id}`, { 
+    const company = await fetchCompanyData(slug);
+    if (!company) return [];
+    
+    const jobsRes = await fetch(`${JOB_ROUTES.getAll}?companyId=${company.id}`, { 
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
@@ -55,16 +58,16 @@ export default async function CompanyDetailPage({
 }: { 
   params: { id: string } 
 }) {
-  const { id } = params
-  console.log("id", id);
+  const { id: slug } = params
+  console.log("slug", slug);
 
-  const company = await fetchCompanyData(id)
+  const company = await fetchCompanyData(slug)
   
   if (!company) {
     notFound()
   }
 
-  const companyJobs = await fetchCompanyJobs(id)
+  const companyJobs = await fetchCompanyJobs(slug)
 
   return (
     <main className="py-8">

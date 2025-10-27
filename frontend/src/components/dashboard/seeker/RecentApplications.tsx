@@ -51,7 +51,7 @@ export default function RecentApplications({
                     </div>
                     <div className="flex-1 min-w-0">
                       <Link
-                        href={`/jobs/${application.job.id}`}
+                        href={`/jobs/${application.job.slug}`}
                         className="font-semibold hover:text-cyan-500 transition-colors line-clamp-1"
                       >
                         {stripParenthesizedCompany(application.job.title)}
