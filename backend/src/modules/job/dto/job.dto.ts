@@ -152,6 +152,10 @@ export class JobQueryDto {
   sortBy?: string;
 
   @IsOptional()
+  @IsString()
+  companyId?: string;
+
+  @IsOptional()
   page?: number;
 
   @IsOptional()

@@ -94,6 +94,7 @@ export class JobService {
       salaryRange,
       isRemote,
       sortBy,
+      companyId,
       page = 1,
       limit = 10,
     } = query;
@@ -114,6 +115,7 @@ export class JobService {
     if (location) where.location = { contains: location, mode: 'insensitive' };
     if (category) where.category = { contains: category, mode: 'insensitive' };
     if (isRemote !== undefined) where.isRemote = isRemote;
+    if (companyId) where.companyId = companyId;
 
     if (experience) {
       const experiencePatterns: Record<string, string[]> = {
