@@ -3,7 +3,8 @@ import { notFound } from "next/navigation"
 import type { Company, Job } from "@/types"
 import COMPANY_ROUTES from "@/routes/companyRoutes"
 import JOB_ROUTES from "@/routes/jobRoutes"
-import { CompanyHeader, CompanyJobs } from "@/components/singleCompany"
+import CompanyHeader from "@/components/singleCompany/CompanyHeader"
+import CompanyJobs from "@/components/singleCompany/CompanyJobs"
 
 async function fetchCompanyData(id: string): Promise<Company | null> {
   try {

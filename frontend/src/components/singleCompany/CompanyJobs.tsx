@@ -8,7 +8,7 @@ interface CompanyJobsProps {
   companyName: string
 }
 
-export const CompanyJobs: React.FC<CompanyJobsProps> = ({ jobs, companyName }) => {
+const CompanyJobs: React.FC<CompanyJobsProps> = ({ jobs, companyName }) => {
   return (
     <div>
       <div className="flex items-center gap-3 mb-6">
@@ -32,3 +32,5 @@ export const CompanyJobs: React.FC<CompanyJobsProps> = ({ jobs, companyName }) =
     </div>
   )
 }
+
+export default CompanyJobs

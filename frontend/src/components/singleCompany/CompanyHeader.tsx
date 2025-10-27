@@ -7,7 +7,7 @@ interface CompanyHeaderProps {
   company: Company
 }
 
-export const CompanyHeader: React.FC<CompanyHeaderProps> = ({ company }) => {
+const CompanyHeader: React.FC<CompanyHeaderProps> = ({ company }) => {
   return (
     <Card className="mb-8">
       <CardContent className="p-8">
@@ -63,3 +63,5 @@ export const CompanyHeader: React.FC<CompanyHeaderProps> = ({ company }) => {
     </Card>
   )
 }
+
+export default CompanyHeader
