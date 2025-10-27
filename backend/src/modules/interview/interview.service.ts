@@ -34,59 +34,65 @@ export class InterviewService {
       throw new BadRequestException('Interview cannot be scheduled in the past');
     }
 
-    const interview = await this.prisma.interview.create({
-      data: {
-        applicationId: dto.applicationId,
-        seekerId: application.seekerId,
-        interviewerId: recruiterId,
-        type: dto.type,
-        scheduledAt: dto.scheduledAt,
-        duration: dto.duration,
-        location: dto.location,
-        meetingLink: dto.meetingLink,
-        platform: dto.platform,
-        notes: dto.notes,
-      },
-      include: {
-        application: {
-          include: {
-            job: {
-              include: {
-                company: true,
+    const interview = await this.prisma.$transaction(async (tx) => {
+      const createdInterview = await tx.interview.create({
+        data: {
+          applicationId: dto.applicationId,
+          seekerId: application.seekerId,
+          interviewerId: recruiterId,
+          type: dto.type,
+          scheduledAt: dto.scheduledAt,
+          duration: dto.duration,
+          location: dto.location,
+          meetingLink: dto.meetingLink,
+          platform: dto.platform,
+          notes: dto.notes,
+        },
+        include: {
+          application: {
+            include: {
+              job: {
+                include: {
+                  company: true,
+                },
               },
             },
           },
-        },
-        seeker: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
+          seeker: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+          interviewer: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
           },
         },
-        interviewer: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-          },
+      });
+
+      await tx.application.update({
+        where: { id: dto.applicationId },
+        data: { status: 'INTERVIEW_SCHEDULED' },
+      });
+
+      await tx.notification.create({
+        data: {
+          userId: application.seekerId,
+          type: 'INTERVIEW',
+          title: 'Interview Scheduled',
+          message: `Your interview for ${application.job.title} has been scheduled`,
+          link: `/seeker/interviews/${createdInterview.id}`,
         },
-      },
-    });
+      });
 
-    await this.prisma.application.update({
-      where: { id: dto.applicationId },
-      data: { status: 'INTERVIEW_SCHEDULED' },
-    });
-
-    await this.notificationService.createNotification({
-      userId: application.seekerId,
-      type: 'INTERVIEW',
-      title: 'Interview Scheduled',
-      message: `Your interview for ${application.job.title} has been scheduled`,
-      link: `/seeker/interviews/${interview.id}`,
+      return createdInterview;
     });
 
     return interview;
@@ -116,54 +122,60 @@ export class InterviewService {
       throw new BadRequestException('Interview cannot be scheduled in the past');
     }
 
-    const updatedInterview = await this.prisma.interview.update({
-      where: { id: interviewId },
-      data: dto,
-      include: {
-        application: {
-          include: {
-            job: {
-              include: {
-                company: true,
+    const notificationUserId = interview.interviewerId === userId ? interview.seekerId : interview.interviewerId;
+    const notificationTitle = dto.status === 'CONFIRMED' ? 'Interview Confirmed' : 'Interview Updated';
+
+    const updatedInterview = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.interview.update({
+        where: { id: interviewId },
+        data: dto,
+        include: {
+          application: {
+            include: {
+              job: {
+                include: {
+                  company: true,
+                },
               },
             },
           },
-        },
-        seeker: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
+          seeker: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+          interviewer: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
           },
         },
-        interviewer: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-          },
-        },
-      },
-    });
-
-    if (dto.status === 'COMPLETED') {
-      await this.prisma.application.update({
-        where: { id: interview.applicationId },
-        data: { status: 'INTERVIEW_COMPLETED' },
       });
-    }
 
-    const notificationUserId = interview.interviewerId === userId ? interview.seekerId : interview.interviewerId;
-    const notificationTitle = dto.status === 'CONFIRMED' ? 'Interview Confirmed' : 'Interview Updated';
-    
-    await this.notificationService.createNotification({
-      userId: notificationUserId,
-      type: 'INTERVIEW',
-      title: notificationTitle,
-      message: `Interview for ${interview.application.job.title} has been updated`,
-      link: interview.interviewerId === userId ? `/seeker/interviews/${interview.id}` : `/recruiter/interviews/${interview.id}`,
+      if (dto.status === 'COMPLETED') {
+        await tx.application.update({
+          where: { id: interview.applicationId },
+          data: { status: 'INTERVIEW_COMPLETED' },
+        });
+      }
+
+      await tx.notification.create({
+        data: {
+          userId: notificationUserId,
+          type: 'INTERVIEW',
+          title: notificationTitle,
+          message: `Interview for ${interview.application.job.title} has been updated`,
+          link: interview.interviewerId === userId ? `/seeker/interviews/${interview.id}` : `/recruiter/interviews/${interview.id}`,
+        },
+      });
+
+      return updated;
     });
 
     return updatedInterview;
@@ -348,18 +360,23 @@ export class InterviewService {
       throw new BadRequestException(`Interview is already ${interview.status.toLowerCase()}`);
     }
 
-    await this.prisma.interview.update({
-      where: { id: interviewId },
-      data: { status: 'CANCELLED' },
-    });
-
     const notificationUserId = interview.interviewerId === userId ? interview.seekerId : interview.interviewerId;
-    await this.notificationService.createNotification({
-      userId: notificationUserId,
-      type: 'INTERVIEW',
-      title: 'Interview Cancelled',
-      message: `Interview for ${interview.application.job.title} has been cancelled`,
-      link: interview.interviewerId === userId ? `/seeker/interviews/${interview.id}` : `/recruiter/interviews/${interview.id}`,
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.interview.update({
+        where: { id: interviewId },
+        data: { status: 'CANCELLED' },
+      });
+
+      await tx.notification.create({
+        data: {
+          userId: notificationUserId,
+          type: 'INTERVIEW',
+          title: 'Interview Cancelled',
+          message: `Interview for ${interview.application.job.title} has been cancelled`,
+          link: interview.interviewerId === userId ? `/seeker/interviews/${interview.id}` : `/recruiter/interviews/${interview.id}`,
+        },
+      });
     });
 
     return { message: 'Interview cancelled successfully' };

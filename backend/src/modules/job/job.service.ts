@@ -644,46 +644,52 @@ export class JobService {
       throw new BadRequestException('You\'ve already applied for this job.');
     }
 
-    const application = await this.prisma.application.create({
-      data: {
-        seekerId,
-        jobId,
-      },
-      include: {
-        job: {
-          include: {
-            company: {
-              select: {
-                id: true,
-                name: true,
-                logo: true,
-                location: true,
-                industry: true,
+    const application = await this.prisma.$transaction(async (tx) => {
+      const createdApplication = await tx.application.create({
+        data: {
+          seekerId,
+          jobId,
+        },
+        include: {
+          job: {
+            include: {
+              company: {
+                select: {
+                  id: true,
+                  name: true,
+                  logo: true,
+                  location: true,
+                  industry: true,
+                },
               },
-            },
-            recruiter: {
-              select: {
-                id: true,
-                name: true,
+              recruiter: {
+                select: {
+                  id: true,
+                  name: true,
+                },
               },
             },
           },
-        },
-        seeker: {
-          select: {
-            id: true,
-            name: true,
+          seeker: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    await this.notificationService.createNotification({
-      userId: application.job.recruiterId,
-      type: 'APPLICATION',
-      title: 'New Application Received',
-      message: `${application.seeker.name} has applied for ${application.job.title}`,
-      link: `/recruiter/applications/${application.id}`,
+      await tx.notification.create({
+        data: {
+          userId: createdApplication.job.recruiterId,
+          type: 'APPLICATION',
+          title: 'New Application Received',
+          message: `${createdApplication.seeker.name} has applied for ${createdApplication.job.title}`,
+          link: `/recruiter/applications/${createdApplication.id}`,
+        },
+      });
+
+      return createdApplication;
     });
 
     return application;
@@ -775,26 +781,28 @@ export class JobService {
       throw new BadRequestException('You\'ve already saved this job.');
     }
 
-    const savedJob = await this.prisma.savedJob.create({
-      data: {
-        userId,
-        jobId,
-      },
-      include: {
-        job: {
-          include: {
-            company: {
-              select: {
-                id: true,
-                name: true,
-                logo: true,
-                location: true,
-                industry: true,
+    const savedJob = await this.prisma.$transaction(async (tx) => {
+      return await tx.savedJob.create({
+        data: {
+          userId,
+          jobId,
+        },
+        include: {
+          job: {
+            include: {
+              company: {
+                select: {
+                  id: true,
+                  name: true,
+                  logo: true,
+                  location: true,
+                  industry: true,
+                },
               },
             },
           },
         },
-      },
+      });
     });
 
     return savedJob;

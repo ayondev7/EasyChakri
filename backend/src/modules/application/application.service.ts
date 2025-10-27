@@ -196,26 +196,6 @@ export class ApplicationService {
       throw new BadRequestException('Cannot update an already finalized application');
     }
 
-    const updatedApplication = await this.prisma.application.update({
-      where: { id: applicationId },
-      data: { status: dto.status },
-      include: {
-        job: {
-          include: {
-            company: true,
-          },
-        },
-        seeker: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-          },
-        },
-      },
-    });
-
     let notificationMessage = '';
     let notificationTitle = 'Application Status Update';
     
@@ -238,12 +218,38 @@ export class ApplicationService {
         notificationMessage = `Your application status for ${application.job.title} has been updated to ${dto.status}`;
     }
 
-    await this.notificationService.createNotification({
-      userId: application.seekerId,
-      type: 'APPLICATION',
-      title: notificationTitle,
-      message: notificationMessage,
-      link: `/seeker/applications/${application.id}`,
+    const updatedApplication = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.application.update({
+        where: { id: applicationId },
+        data: { status: dto.status },
+        include: {
+          job: {
+            include: {
+              company: true,
+            },
+          },
+          seeker: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+        },
+      });
+
+      await tx.notification.create({
+        data: {
+          userId: application.seekerId,
+          type: 'APPLICATION',
+          title: notificationTitle,
+          message: notificationMessage,
+          link: `/seeker/applications/${application.id}`,
+        },
+      });
+
+      return updated;
     });
 
     return updatedApplication;

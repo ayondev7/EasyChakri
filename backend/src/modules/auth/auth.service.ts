@@ -61,31 +61,33 @@ export class AuthService {
         logoUrl = uploadResult.url;
       }
 
-      const user = await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          password: hashedPassword,
-          name: dto.name,
-          role: dto.role,
-          phone: dto.phone,
-          dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
-          image: imageUrl,
-          location: dto.location,
-          companyProfile: {
-            create: {
-              name: dto.companyName,
-              description: dto.companyDescription,
-              website: dto.companyWebsite,
-              logo: logoUrl,
-              industry: dto.companyIndustry,
-              size: dto.companySize,
-              location: dto.companyLocation,
+      const user = await this.prisma.$transaction(async (tx) => {
+        return await tx.user.create({
+          data: {
+            email: dto.email,
+            password: hashedPassword,
+            name: dto.name,
+            role: dto.role,
+            phone: dto.phone,
+            dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
+            image: imageUrl,
+            location: dto.location,
+            companyProfile: {
+              create: {
+                name: dto.companyName,
+                description: dto.companyDescription,
+                website: dto.companyWebsite,
+                logo: logoUrl,
+                industry: dto.companyIndustry,
+                size: dto.companySize,
+                location: dto.companyLocation,
+              },
             },
           },
-        },
-        include: {
-          companyProfile: true,
-        },
+          include: {
+            companyProfile: true,
+          },
+        });
       });
 
       const tokens = TokenUtil.generateTokens({
