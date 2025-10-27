@@ -45,7 +45,7 @@ const CompanyHeader: React.FC<CompanyHeaderProps> = ({ company }) => {
                     href={company.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-cyan-500 hover:underline"
+                    className="text-emerald-500 hover:underline"
                   >
                     Visit Website
                   </a>

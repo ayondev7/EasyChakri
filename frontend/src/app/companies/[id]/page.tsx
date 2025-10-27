@@ -1,4 +1,3 @@
-import { use } from "react"
 import { notFound } from "next/navigation"
 import type { Company, Job } from "@/types"
 import COMPANY_ROUTES from "@/routes/companyRoutes"
@@ -21,6 +20,7 @@ async function fetchCompanyData(id: string): Promise<Company | null> {
     }
     
     const companyData = await res.json()
+    console.log("company data", companyData);
     return companyData?.data || companyData
   } catch (error) {
     console.error('Error fetching company:', error)
@@ -50,8 +50,12 @@ async function fetchCompanyJobs(id: string): Promise<Job[]> {
   }
 }
 
-export default async function CompanyDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default async function CompanyDetailPage({ 
+  params 
+}: { 
+  params: { id: string } 
+}) {
+  const { id } = params
   console.log("id", id);
 
   const company = await fetchCompanyData(id)

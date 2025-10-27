@@ -1,3 +1,4 @@
+"use client";
 import { JobCard } from "@/components/JobCard"
 import { Card, CardContent } from "@/components/ui/card"
 import { Briefcase } from "lucide-react"
@@ -12,7 +13,7 @@ const CompanyJobs: React.FC<CompanyJobsProps> = ({ jobs, companyName }) => {
   return (
     <div>
       <div className="flex items-center gap-3 mb-6">
-        <Briefcase className="h-6 w-6 text-cyan-500" />
+        <Briefcase className="h-6 w-6 text-emerald-500" />
         <h2 className="text-2xl font-bold">Open Positions ({jobs.length})</h2>
       </div>
 
