@@ -42,6 +42,10 @@ export default function JobsPage() {
     queryParams.salaryRange = filters.salaryRange
   }
 
+  if (sortBy && sortBy !== 'recent') {
+    queryParams.sortBy = sortBy
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 py-[100px]">

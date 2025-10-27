@@ -13,7 +13,6 @@ import { useState } from "react"
 export function Navbar() {
   const pathname = usePathname()
   const { user, isAuthenticated, logout } = useAuth()
-  console.log("usr",user?.image);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const isActive = (path: string) => pathname === path

@@ -25,7 +25,7 @@ const Pagination: React.FC<PaginationProps> = ({ total, page, limit, onPageChang
         disabled={page === 1}
         aria-label="First page"
       >
-        «
+        &laquo;
       </button>
 
       <button
@@ -34,7 +34,7 @@ const Pagination: React.FC<PaginationProps> = ({ total, page, limit, onPageChang
         disabled={page === 1}
         aria-label="Previous page"
       >
-        ‹
+        &lsaquo;
       </button>
 
       {pages[0] > 1 && (
@@ -66,7 +66,7 @@ const Pagination: React.FC<PaginationProps> = ({ total, page, limit, onPageChang
         disabled={page === pageCount}
         aria-label="Next page"
       >
-        ›
+        &rsaquo;
       </button>
 
       <button
@@ -75,7 +75,7 @@ const Pagination: React.FC<PaginationProps> = ({ total, page, limit, onPageChang
         disabled={page === pageCount}
         aria-label="Last page"
       >
-        »
+        &raquo;
       </button>
     </nav>
   )

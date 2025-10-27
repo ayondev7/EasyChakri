@@ -32,6 +32,7 @@ export interface JobQueryParams {
   location?: string
   category?: string
   isRemote?: boolean
+  sortBy?: string
   page?: number
   limit?: number
 }
