@@ -20,6 +20,7 @@ import toast from "react-hot-toast"
 type Job = {
   id: string
   title: string
+  slug: string
   recruiterId: string
   company: { name: string; logo?: string }
   featured?: boolean

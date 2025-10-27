@@ -5,10 +5,9 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import toast from "react-hot-toast"
-import InputField from "@/components/form/InputField"
-import TextareaField from "@/components/form/TextareaField"
-import FileInput from "@/components/form/FileInput"
 import SignUpCard from "@/components/auth/signup/SignUpCard"
+import SeekerForm from "@/components/auth/signup/SeekerForm"
+import RecruiterForm from "@/components/auth/signup/RecruiterForm"
 
 const seekerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -46,8 +45,6 @@ type RecruiterFormData = z.infer<typeof recruiterSchema>
 
 export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
   const [isLoading, setIsLoading] = useState(false)
-  const [logoFile, setLogoFile] = useState<File | null>(null)
-  const [logoPreview, setLogoPreview] = useState<string>("")
   const [seekerImageFile, setSeekerImageFile] = useState<File | null>(null)
   const [seekerImagePreview, setSeekerImagePreview] = useState<string>("")
   const [recruiterImageFile, setRecruiterImageFile] = useState<File | null>(null)
@@ -70,21 +67,6 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
   } = useForm<RecruiterFormData>({
     resolver: zodResolver(recruiterSchema),
   })
-
-  const handleLogoChange = (file: File | null) => {
-    if (!file) {
-      setLogoFile(null)
-      setLogoPreview("")
-      return
-    }
-
-    setLogoFile(file)
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setLogoPreview(reader.result as string)
-    }
-    reader.readAsDataURL(file)
-  }
 
   const handleSeekerImageChange = (file: File | null) => {
     if (!file) {
@@ -135,6 +117,11 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
     setIsLoading(true)
 
     try {
+      if (!seekerImageFile) {
+        toast.error("Profile image is required")
+        setIsLoading(false)
+        return
+      }
       const formData = new FormData()
       formData.append("email", data.email)
       formData.append("password", data.password)
@@ -182,6 +169,18 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
     setIsLoading(true)
 
     try {
+      if (!companyLogoFile) {
+        toast.error("Company logo is required")
+        setIsLoading(false)
+        return
+      }
+
+      if (!recruiterImageFile) {
+        toast.error("Profile image is required")
+        setIsLoading(false)
+        return
+      }
+
       const formData = new FormData()
       formData.append("email", data.email)
       formData.append("password", data.password)
@@ -195,10 +194,6 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
       
       if (data.companyWebsite) {
         formData.append("companyWebsite", data.companyWebsite)
-      }
-
-      if (logoFile) {
-        formData.append("companyLogo", logoFile)
       }
 
       if (companyLogoFile) {
@@ -251,99 +246,10 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
       checkboxError={errors.terms}
       footerExtra={<p className="text-sm text-center text-muted-foreground">Already have an account? <Link href="/auth/signin" className="text-emerald-500 hover:underline font-medium">Sign in</Link></p>}
     >
-      <div className="space-y-2">
-        <InputField id="name" label="Full Name" type="text" placeholder="John Doe" {...(role === "seeker" ? registerSeeker("name") : registerRecruiter("name"))} />
-        {errors.name && (
-          <p className="text-xs text-destructive">{errors.name.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <InputField id="email" label="Email" type="email" placeholder="you@example.com" {...(role === "seeker" ? registerSeeker("email") : registerRecruiter("email"))} />
-        {errors.email && (
-          <p className="text-xs text-destructive">{errors.email.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <InputField id="password" label="Password" type="password" placeholder="••••••••" {...(role === "seeker" ? registerSeeker("password") : registerRecruiter("password"))} />
-        {errors.password && (
-          <p className="text-xs text-destructive">{errors.password.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <InputField id="confirmPassword" label="Confirm Password" type="password" placeholder="••••••••" {...(role === "seeker" ? registerSeeker("confirmPassword") : registerRecruiter("confirmPassword"))} />
-        {errors.confirmPassword && (
-          <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>
-        )}
-      </div>
-
-      {role === "seeker" && (
-        <>
-          <div className="space-y-2">
-            <InputField id="dateOfBirth" label="Date of Birth" type="date" {...registerSeeker("dateOfBirth" as any)} />
-            {errorsSeeker.dateOfBirth && (
-              <p className="text-xs text-destructive">{errorsSeeker.dateOfBirth.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <InputField id="phone" label="Phone" type="tel" placeholder="(123) 456-7890" {...registerSeeker("phone" as any)} />
-            {errorsSeeker.phone && (
-              <p className="text-xs text-destructive">{errorsSeeker.phone.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <FileInput id="seekerImage" label="Profile Image (Optional)" accept=".jpg,.jpeg,.png,.webp" onFileChange={handleSeekerImageChange} preview={seekerImagePreview} />
-            <p className="text-xs text-muted-foreground">JPG, JPEG, PNG, or WEBP (Max 3MB)</p>
-          </div>
-        </>
-      )}
-
-      {role === "recruiter" && (
-        <>
-          <div className="space-y-2">
-            <InputField id="companyName" label="Company Name" type="text" placeholder="Acme Corp" {...registerRecruiter('companyName' as any)} />
-            {errorsRecruiter.companyName && <p className="text-xs text-destructive">{errorsRecruiter.companyName.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <TextareaField id="companyDescription" label="Company Description" placeholder="Describe your company" {...registerRecruiter('companyDescription' as any)} />
-            {errorsRecruiter.companyDescription && <p className="text-xs text-destructive">{errorsRecruiter.companyDescription.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <InputField id="companyWebsite" label="Company Website (Optional)" type="url" placeholder="https://example.com" {...registerRecruiter('companyWebsite' as any)} />
-            {errorsRecruiter.companyWebsite && <p className="text-xs text-destructive">{errorsRecruiter.companyWebsite.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <InputField id="companyIndustry" label="Industry" type="text" placeholder="Software, Finance, Healthcare" {...registerRecruiter('companyIndustry' as any)} />
-            {errorsRecruiter.companyIndustry && <p className="text-xs text-destructive">{errorsRecruiter.companyIndustry.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <InputField id="companySize" label="Company Size" type="text" placeholder="1-10, 11-50, 51-200" {...registerRecruiter('companySize' as any)} />
-            {errorsRecruiter.companySize && <p className="text-xs text-destructive">{errorsRecruiter.companySize.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <InputField id="companyLocation" label="Company Location" type="text" placeholder="City, Country" {...registerRecruiter('companyLocation' as any)} />
-            {errorsRecruiter.companyLocation && <p className="text-xs text-destructive">{errorsRecruiter.companyLocation.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <FileInput id="companyLogo" label="Company Logo (Optional)" accept=".jpg,.jpeg,.png,.webp" onFileChange={handleCompanyLogoChange} preview={companyLogoPreview} />
-            <p className="text-xs text-muted-foreground">JPG, JPEG, PNG, or WEBP (Max 3MB)</p>
-          </div>
-
-          <div className="space-y-2 mt-3">
-            <FileInput id="recruiterImage" label="Profile Image (Optional)" accept=".jpg,.jpeg,.png,.webp" onFileChange={handleRecruiterImageChange} preview={recruiterImagePreview} />
-            <p className="text-xs text-muted-foreground">JPG, JPEG, PNG, or WEBP (Max 3MB)</p>
-          </div>
-        </>
+      {role === "seeker" ? (
+        <SeekerForm registerSeeker={registerSeeker} errorsSeeker={errorsSeeker} seekerImagePreview={seekerImagePreview} handleSeekerImageChange={handleSeekerImageChange} />
+      ) : (
+        <RecruiterForm registerRecruiter={registerRecruiter} errorsRecruiter={errorsRecruiter} companyLogoPreview={companyLogoPreview} handleCompanyLogoChange={handleCompanyLogoChange} recruiterImagePreview={recruiterImagePreview} handleRecruiterImageChange={handleRecruiterImageChange} />
       )}
     </SignUpCard>
   )

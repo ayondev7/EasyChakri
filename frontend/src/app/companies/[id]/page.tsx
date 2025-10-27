@@ -20,7 +20,6 @@ async function fetchCompanyData(slug: string): Promise<Company | null> {
     }
     
     const companyData = await res.json()
-    console.log("company data", companyData);
     return companyData?.data || companyData
   } catch (error) {
     console.error('Error fetching company:', error)
@@ -56,9 +55,9 @@ async function fetchCompanyJobs(slug: string): Promise<Job[]> {
 export default async function CompanyDetailPage({ 
   params 
 }: { 
-  params: { id: string } 
+  params: Promise<{ id: string }> 
 }) {
-  const { id: slug } = params
+  const { id: slug } = await params
   console.log("slug", slug);
 
   const company = await fetchCompanyData(slug)

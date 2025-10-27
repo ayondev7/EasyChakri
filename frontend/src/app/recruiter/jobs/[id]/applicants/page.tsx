@@ -18,9 +18,11 @@ import { APPLICANT_TABS } from "@/constants/tabConstants"
 const placeholderJob: Job = {
   id: "",
   title: "",
+  slug: "",
   company: {
     id: "",
     name: "",
+    slug: "",
     logo: "",
     description: "",
     industry: "",
