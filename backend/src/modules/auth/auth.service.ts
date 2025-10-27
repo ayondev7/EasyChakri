@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { TokenUtil } from '../../utils/token.util';
 import { ImageUtil } from '../../utils/image.util';
+import { generateUniqueCompanySlug } from '../../utils/slug.util';
 import {
   CredentialSignupDto,
   CredentialSigninDto,
@@ -62,6 +63,8 @@ export class AuthService {
       }
 
       const user = await this.prisma.$transaction(async (tx) => {
+        const slug = await generateUniqueCompanySlug(tx, dto.companyName);
+
         return await tx.user.create({
           data: {
             email: dto.email,
@@ -75,6 +78,7 @@ export class AuthService {
             companyProfile: {
               create: {
                 name: dto.companyName,
+                slug: slug,
                 description: dto.companyDescription,
                 website: dto.companyWebsite,
                 logo: logoUrl,

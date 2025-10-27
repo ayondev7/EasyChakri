@@ -22,7 +22,7 @@ export async function generateUniqueJobSlug(prisma: PrismaClient, title: string)
   }
 }
 
-export async function generateUniqueCompanySlug(prisma: PrismaClient, name: string) {
+export async function generateUniqueCompanySlug(prisma: any, name: string) {
   const base = slugify(name)
   let slug = base
   let counter = 1
