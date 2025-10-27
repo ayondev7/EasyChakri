@@ -148,6 +148,10 @@ export class JobQueryDto {
   isRemote?: boolean;
 
   @IsOptional()
+  @IsString()
+  sortBy?: string;
+
+  @IsOptional()
   page?: number;
 
   @IsOptional()

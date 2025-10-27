@@ -93,6 +93,7 @@ export class JobService {
       experience,
       salaryRange,
       isRemote,
+      sortBy,
       page = 1,
       limit = 10,
     } = query;
@@ -147,13 +148,20 @@ export class JobService {
       }
     }
 
+    let orderBy: any = { createdAt: 'desc' };
+    if (sortBy === 'salary-high') {
+      orderBy = { salary: 'asc' };
+    } else if (sortBy === 'salary-low') {
+      orderBy = { salary: 'desc' };
+    }
+
     const total = await this.prisma.job.count({ where });
 
     const jobs = await this.prisma.job.findMany({
       where,
       skip,
       take: Number(limit),
-      orderBy: { createdAt: 'desc' },
+      orderBy,
       include: {
         company: {
           select: {
