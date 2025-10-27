@@ -1,4 +1,5 @@
 import React from 'react'
+import { IoIosArrowForward } from 'react-icons/io'
 
 interface PaginationProps {
   total: number
@@ -20,21 +21,12 @@ const Pagination: React.FC<PaginationProps> = ({ total, page, limit, onPageChang
   return (
     <nav className={`flex items-center justify-center space-x-2 ${className}`} aria-label="Pagination">
       <button
-        className="px-3 py-1 rounded-md border disabled:opacity-50"
-        onClick={() => onPageChange(1)}
-        disabled={page === 1}
-        aria-label="First page"
-      >
-        &laquo;
-      </button>
-
-      <button
-        className="px-3 py-1 rounded-md border disabled:opacity-50"
+        className="px-3 py-1 rounded-md border disabled:opacity-50 flex items-center justify-center"
         onClick={() => onPageChange(Math.max(1, page - 1))}
         disabled={page === 1}
         aria-label="Previous page"
       >
-        &lsaquo;
+        <IoIosArrowForward className="rotate-180" size={18} />
       </button>
 
       {pages[0] > 1 && (
@@ -61,21 +53,12 @@ const Pagination: React.FC<PaginationProps> = ({ total, page, limit, onPageChang
       )}
 
       <button
-        className="px-3 py-1 rounded-md border disabled:opacity-50"
+        className="px-3 py-1 rounded-md border disabled:opacity-50 flex items-center justify-center"
         onClick={() => onPageChange(Math.min(pageCount, page + 1))}
         disabled={page === pageCount}
         aria-label="Next page"
       >
-        &rsaquo;
-      </button>
-
-      <button
-        className="px-3 py-1 rounded-md border disabled:opacity-50"
-        onClick={() => onPageChange(pageCount)}
-        disabled={page === pageCount}
-        aria-label="Last page"
-      >
-        &raquo;
+        <IoIosArrowForward size={18} />
       </button>
     </nav>
   )
