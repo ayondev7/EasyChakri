@@ -39,6 +39,8 @@ export class ApplicationService {
             experience: true,
             education: true,
             bio: true,
+            location: true,
+            dateOfBirth: true,
           },
         },
         interviews: {
@@ -55,7 +57,22 @@ export class ApplicationService {
       throw new ForbiddenException('You do not have permission to view this application');
     }
 
-    return { data: application };
+    const jobWithDeadline = await this.prisma.job.findUnique({
+      where: { id: application.job.id },
+      select: {
+        deadline: true,
+      },
+    });
+
+    return { 
+      data: {
+        ...application,
+        job: {
+          ...application.job,
+          deadline: jobWithDeadline?.deadline,
+        },
+      },
+    };
   }
 
   async getJobApplications(jobId: string, recruiterId: string, query: ApplicationQueryDto) {
@@ -95,6 +112,9 @@ export class ApplicationService {
               skills: true,
               experience: true,
               education: true,
+              location: true,
+              dateOfBirth: true,
+              bio: true,
             },
           },
           interviews: {
@@ -146,6 +166,9 @@ export class ApplicationService {
               resume: true,
               skills: true,
               experience: true,
+              location: true,
+              dateOfBirth: true,
+              bio: true,
             },
           },
           interviews: {
