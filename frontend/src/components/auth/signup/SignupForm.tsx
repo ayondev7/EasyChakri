@@ -146,18 +146,13 @@ export default function SignupForm({ role }: { role: "SEEKER" | "RECRUITER" }) {
         return
       }
 
-      const signInResult = await signIn("credentials-signin", {
+      await signIn("credentials-signin", {
         email: data.email,
         password: data.password,
-        redirect: false,
+        redirect: true,
+        callbackUrl: "/seeker/dashboard",
       })
 
-      if (signInResult?.error) {
-        toast.error("Account created but failed to sign in. Please sign in manually.")
-      } else if (signInResult?.ok) {
-        toast.success("🎉 Welcome to EasyChakri!")
-        window.location.href = "/seeker/dashboard"
-      }
     } catch (err) {
       toast.error("An error occurred. Please try again.")
     } finally {
@@ -216,18 +211,13 @@ export default function SignupForm({ role }: { role: "SEEKER" | "RECRUITER" }) {
         return
       }
 
-      const signInResult = await signIn("credentials-signin", {
+      await signIn("credentials-signin", {
         email: data.email,
         password: data.password,
-        redirect: false,
+        redirect: true,
+        callbackUrl: "/recruiter/dashboard",
       })
 
-      if (signInResult?.error) {
-        toast.error("Account created but failed to sign in. Please sign in manually.")
-      } else if (signInResult?.ok) {
-        toast.success("🎉 Welcome to EasyChakri!")
-        window.location.href = "/recruiter/dashboard"
-      }
     } catch (err) {
       toast.error("An error occurred. Please try again.")
     } finally {

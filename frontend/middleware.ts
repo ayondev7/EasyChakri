@@ -16,16 +16,28 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
-  const userRole = (token.user as any)?.role as string | undefined
+
+  const userRole = token.user?.role as string | undefined
+  
+  if (!userRole) {
+    
+    if (pathname.startsWith("/seeker") || pathname.startsWith("/recruiter")) {
+      return NextResponse.redirect(new URL("/auth/signin", req.nextUrl.origin))
+    }
+    return NextResponse.next()
+  }
+
+
+  const normalizedRole = userRole.toUpperCase()
 
   if (pathname.startsWith("/seeker")) {
-    if (userRole !== "seeker") {
+    if (normalizedRole !== "SEEKER") {
       return NextResponse.redirect(new URL("/auth/signin", req.nextUrl.origin))
     }
   }
 
   if (pathname.startsWith("/recruiter")) {
-    if (userRole !== "recruiter") {
+    if (normalizedRole !== "RECRUITER") {
       return NextResponse.redirect(new URL("/auth/signin", req.nextUrl.origin))
     }
   }

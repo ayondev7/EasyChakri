@@ -52,7 +52,7 @@ export function Navbar() {
 
           {isAuthenticated && user ? (
             <div className="flex items-center gap-4">
-              <Link href={`/${user.role}/dashboard`} className="hidden md:flex items-center gap-3">
+              <Link href={`/${user.role.toLowerCase()}/dashboard`} className="hidden md:flex items-center gap-3">
                 <CustomAvatar src={user?.image || "/placeholder.svg"} name={user.name} alt={user.name} className="h-9 w-9" />
                 <div className="flex flex-col space-y-0.5">
                   <p className="text-sm font-medium leading-none">{user.name}</p>

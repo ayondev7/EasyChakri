@@ -12,7 +12,7 @@ export default function PostJobPage() {
 
   useEffect(() => {
     if (authLoading) return
-    if (!isAuthenticated || !user || user.role !== 'recruiter') {
+    if (!isAuthenticated || !user || user.role !== 'RECRUITER') {
       router.push('/auth/signin')
       return
     };
@@ -29,7 +29,7 @@ export default function PostJobPage() {
   }, [authLoading, isAuthenticated, user, router])
 
   if (authLoading) return null
-  if (!isAuthenticated || !user || user.role !== 'recruiter') return null
+  if (!isAuthenticated || !user || user.role !== 'RECRUITER') return null
 
   return (
     <div>

@@ -165,12 +165,14 @@ const authOptions: NextAuthOptions = {
 					console.error("Google auth error:", error);
 				}
 			} else if (user && (account?.provider === "credentials-signup" || account?.provider === "credentials-signin")) {
+				
+				const role = (user.role as string).toUpperCase() as "SEEKER" | "RECRUITER";
 				token = processTokens(token, {
 					user: {
 						id: user.id,
 						email: user.email!,
 						name: user.name!,
-						role: user.role!,
+						role: role,
 						image: user.image || undefined,
 					},
 					accessToken: user.accessToken!,
@@ -207,9 +209,12 @@ const authOptions: NextAuthOptions = {
 			return token;
 		},
 		async session({ session, token }) {
-			if (session.user) {
-				session.user.id = token.sub!;
-				session.user.role = token.user?.role!;
+			if (session.user && token.user) {
+				session.user.id = token.user.id;
+				session.user.email = token.user.email;
+				session.user.name = token.user.name;
+				session.user.role = token.user.role;
+				session.user.image = token.user.image;
 			}
 			session.accessToken = token.accessToken!;
 			session.refreshToken = token.refreshToken!;

@@ -16,7 +16,7 @@ export default function EditJobPage() {
 
   useEffect(() => {
     if (authLoading) return
-    if (!isAuthenticated || !user || user.role !== 'recruiter') {
+    if (!isAuthenticated || !user || user.role !== 'RECRUITER') {
       router.push('/auth/signin')
       return
     }
@@ -32,7 +32,7 @@ export default function EditJobPage() {
     )
   }
 
-  if (!isAuthenticated || !user || user.role !== 'recruiter') return null
+  if (!isAuthenticated || !user || user.role !== 'RECRUITER') return null
 
   if (error || !jobData?.data) {
     return (

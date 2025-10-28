@@ -18,13 +18,19 @@ export interface AuthResponse {
 }
 
 export function processTokens(token: JWT, authResponse: AuthResponse): JWT {
+
+	const role = (authResponse.user.role as string).toUpperCase() as "SEEKER" | "RECRUITER";
+	
 	return {
 		...token,
 		accessToken: authResponse.accessToken,
 		refreshToken: authResponse.refreshToken,
 		user: {
-			...authResponse.user,
-			role: authResponse.user.role as "SEEKER" | "RECRUITER",
+			id: authResponse.user.id,
+			email: authResponse.user.email,
+			name: authResponse.user.name,
+			role: role,
+			image: authResponse.user.image,
 		},
 	};
 }
