@@ -1,17 +1,20 @@
 "use client"
 import { useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Navbar } from "@/components/layout/Navbar"
 import { JobFilters } from "@/components/jobs/JobFilters"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import SelectField from "@/components/form/SelectField"
-import { SlidersHorizontal } from "lucide-react"
+import { SlidersHorizontal, Search } from "lucide-react"
 import JobsList from "@/components/jobs/JobsList"
 
 export default function JobsPage() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [showFilters, setShowFilters] = useState(false)
   const [sortBy, setSortBy] = useState("recent")
+  const [searchInput, setSearchInput] = useState("")
   const [filters, setFilters] = useState({
     jobType: "",
     experience: "",
@@ -46,6 +49,23 @@ export default function JobsPage() {
     queryParams.sortBy = sortBy
   }
 
+  const handleSearch = () => {
+    if (searchInput.trim()) {
+      const params = new URLSearchParams()
+      params.set("q", searchInput.trim())
+      if (locationQuery) {
+        params.set("location", locationQuery)
+      }
+      router.push(`/jobs?${params.toString()}`)
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 py-[100px]">
@@ -65,18 +85,36 @@ export default function JobsPage() {
 
             
             <div className="flex-1">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-4">
                 <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="lg:hidden">
                   <SlidersHorizontal className="h-4 w-4 mr-2" />
                   Filters
                 </Button>
 
-                <div className="flex items-center gap-2 ml-auto">
-                  <span className="text-sm text-muted-foreground hidden sm:inline">Sort by:</span>
+                <div className="flex items-center gap-3 flex-1 sm:max-w-2xl">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                    <Input
+                      type="text"
+                      placeholder="Search jobs by title, company, category..."
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className="pl-10 pr-4"
+                    />
+                  </div>
+                  <Button onClick={handleSearch} className="flex-shrink-0">
+                    <Search className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Search</span>
+                  </Button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground hidden md:inline">Sort by:</span>
                   <SelectField
                     value={sortBy}
                     onChange={setSortBy}
-                    className="w-[180px]"
+                    className="w-full sm:w-[180px]"
                     options={[
                       { label: 'Most Recent', value: 'recent' },
                       { label: 'Salary: High to Low', value: 'salary-high' },
