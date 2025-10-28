@@ -7,11 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useJob } from "@/hooks/jobHooks"
 import { useJobApplications } from "@/hooks/applicationHooks"
-import type { Application, Job, User } from "@/types"
+import type { Application } from "@/types"
 import { ArrowLeft } from "lucide-react"
 import TabsField from "@/components/form/TabsField"
 import ApplicantCard from "@/components/applicants/ApplicantCard"
-import ApplicantDetails from "@/components/applicants/ApplicantDetails"
 import EmptyState from "@/components/EmptyState"
 import { Briefcase } from "lucide-react"
 import { APPLICANT_TABS } from "@/constants/tabConstants"
@@ -26,8 +25,6 @@ export default function ApplicantsPage({
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [filterStatus, setFilterStatus] = useState("all");
-  const [selectedApplicant, setSelectedApplicant] =
-    useState<Application | null>(null);
 
   const { data: jobData, isLoading: jobLoading } = useJob(id);
   const { data: applicationsData, isLoading: applicationsLoading, refetch } = useJobApplications(id);
@@ -70,11 +67,6 @@ export default function ApplicantsPage({
     newStatus: Application["status"]
   ) => {
     refetch();
-    if (selectedApplicant?.id === applicationId) {
-      setSelectedApplicant((prev) =>
-        prev ? { ...prev, status: newStatus } : null
-      )
-    }
   }
 
   const getStatusColor = (status: string) => {
@@ -96,29 +88,17 @@ export default function ApplicantsPage({
 
   const statusCounts = {
     all: applications.length,
-    pending: applications.filter((app) => app.status === "PENDING").length,
-    reviewed: applications.filter((app) => app.status === "REVIEWED").length,
-    shortlisted: applications.filter((app) => app.status === "SHORTLISTED").length,
-    rejected: applications.filter((app) => app.status === "REJECTED").length,
-    accepted: applications.filter((app) => app.status === "ACCEPTED").length,
+    PENDING: applications.filter((app) => app.status === "PENDING").length,
+    REVIEWED: applications.filter((app) => app.status === "REVIEWED").length,
+    SHORTLISTED: applications.filter((app) => app.status === "SHORTLISTED").length,
+    REJECTED: applications.filter((app) => app.status === "REJECTED").length,
+    ACCEPTED: applications.filter((app) => app.status === "ACCEPTED").length,
   }
 
   const tabOptions = APPLICANT_TABS.map((tab) => ({
     ...tab,
     count: statusCounts[tab.value as keyof typeof statusCounts] || 0,
   }))
-
-  if (selectedApplicant) {
-    return (
-      <ApplicantDetails
-        application={selectedApplicant}
-        applicantUser={selectedApplicant.seeker}
-        onBack={() => setSelectedApplicant(null)}
-        onStatusChange={handleStatusChange}
-        getStatusColor={getStatusColor}
-      />
-    )
-  }
 
   return (
     <div>
@@ -150,7 +130,6 @@ export default function ApplicantsPage({
                   application={application}
                   applicantUser={application.seeker}
                   onStatusChange={handleStatusChange}
-                  onViewDetails={setSelectedApplicant}
                 />
               ))}
             </div>

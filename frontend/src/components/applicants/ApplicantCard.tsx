@@ -12,12 +12,13 @@ import {
 import { AtSign, MapPin, Briefcase, Eye } from "lucide-react"
 import type { Application, User } from "@/types"
 import { formatDate, getInitials } from "@/utils/utils"
+import { useRouter } from "next/navigation"
 
 interface ApplicantCardProps {
   application: Application
   applicantUser?: User
   onStatusChange: (applicationId: string, newStatus: Application["status"]) => void
-  onViewDetails: (application: Application) => void
+  onViewDetails?: (application: Application) => void
 }
 
 export default function ApplicantCard({
@@ -26,10 +27,17 @@ export default function ApplicantCard({
   onStatusChange,
   onViewDetails,
 }: ApplicantCardProps) {
+  const router = useRouter()
+
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/recruiter/applicants/${application.id}`)
+  }
+
   return (
     <div
       className="flex flex-col md:flex-row md:items-center gap-4 p-4 rounded-lg border border-border/40 hover:border-cyan-500/50 transition-all cursor-pointer"
-      onClick={() => onViewDetails(application)}
+      onClick={handleViewDetails}
     >
       <Avatar className="h-12 w-12">
         <AvatarImage src={applicantUser?.image || "/placeholder.svg"} alt={applicantUser?.name} />
@@ -82,10 +90,7 @@ export default function ApplicantCard({
         <Button
           variant="outline"
           size="sm"
-          onClick={(e) => {
-            e.stopPropagation()
-            onViewDetails(application)
-          }}
+          onClick={handleViewDetails}
         >
           <Eye className="h-3 w-3 mr-1" />
           View Details

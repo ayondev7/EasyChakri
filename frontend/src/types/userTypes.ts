@@ -15,5 +15,6 @@ export interface User {
   resume?: string
   companyName?: string
   companyLogo?: string
+  dateOfBirth?: Date | string
   createdAt: Date
 }

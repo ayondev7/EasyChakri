@@ -23,11 +23,11 @@ export const APPLICATION_TABS = [
 
 export const APPLICANT_TABS = [
   { label: "All", value: "all" },
-  { label: "Pending", value: "pending" },
-  { label: "Reviewed", value: "reviewed" },
-  { label: "Shortlisted", value: "shortlisted" },
-  { label: "Rejected", value: "rejected" },
-  { label: "Accepted", value: "accepted" },
+  { label: "Pending", value: "PENDING" },
+  { label: "Reviewed", value: "REVIEWED" },
+  { label: "Shortlisted", value: "SHORTLISTED" },
+  { label: "Rejected", value: "REJECTED" },
+  { label: "Accepted", value: "ACCEPTED" },
 ]
 
 export const NOTIFICATION_TABS = [
