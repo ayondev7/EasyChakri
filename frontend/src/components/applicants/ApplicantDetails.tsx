@@ -14,7 +14,7 @@ import {
 import { ArrowLeft, Phone, MapPin, Download, Eye, Briefcase, AtSign } from "lucide-react"
 import type { Application, User } from "@/types"
 import { formatDate, getInitials } from "@/utils/utils"
-import { InterviewSchedulingModal } from "@/components/InterviewSchedulingModal"
+import { InterviewSchedulingModal } from "@/components/interviews/InterviewSchedulingModal"
 
 interface ApplicantDetailsProps {
   application: Application

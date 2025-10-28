@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useEffect } from "react"
+import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { useAuth } from "@/contexts/AuthContext"
@@ -31,8 +31,9 @@ import {
   User as UserIcon,
 } from "lucide-react"
 import { formatDate, getInitials } from "@/utils/utils"
-import { InterviewSchedulingModal } from "@/components/InterviewSchedulingModal"
+import { InterviewSchedulingModal } from "@/components/interviews/InterviewSchedulingModal"
 import Loader from "@/components/Loader"
+import { toast } from "react-hot-toast"
 
 export default function ApplicantDetailPage({
   params,
@@ -44,6 +45,7 @@ export default function ApplicantDetailPage({
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: applicationData, isLoading: appLoading, refetch } = useApplication(id);
   const updateStatusMutation = useUpdateApplicationStatus();
+  const [selectedStatus, setSelectedStatus] = useState<Application["status"] | "">("");
 
   useEffect(() => {
     if (authLoading) return;
@@ -82,15 +84,24 @@ export default function ApplicantDetailPage({
   const applicant = application.seeker;
   const job = application.job;
 
-  const handleStatusChange = async (newStatus: Application["status"]) => {
+  useEffect(() => {
+    if (application) {
+      setSelectedStatus(application.status);
+    }
+  }, [application]);
+
+  const handleUpdateStatus = async () => {
+    if (!selectedStatus || selectedStatus === application.status) return;
+
     try {
       await updateStatusMutation.mutateAsync({
         id: application.id,
-        status: newStatus,
+        status: selectedStatus,
       });
+      toast.success("Status updated successfully");
       refetch();
-    } catch (error) {
-      console.error("Failed to update status:", error);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to update status");
     }
   };
 
@@ -295,26 +306,33 @@ export default function ApplicantDetailPage({
             <CardContent className="space-y-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Change Status</label>
-                <Select
-                  value={application.status}
-                  onValueChange={(value) =>
-                    handleStatusChange(value as Application["status"])
-                  }
-                  disabled={updateStatusMutation.isPending}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PENDING">Pending</SelectItem>
-                    <SelectItem value="REVIEWED">Reviewed</SelectItem>
-                    <SelectItem value="SHORTLISTED">Shortlisted</SelectItem>
-                    <SelectItem value="INTERVIEW_SCHEDULED">Interview Scheduled</SelectItem>
-                    <SelectItem value="INTERVIEW_COMPLETED">Interview Completed</SelectItem>
-                    <SelectItem value="REJECTED">Rejected</SelectItem>
-                    <SelectItem value="ACCEPTED">Accepted</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  <Select
+                    value={selectedStatus}
+                    onValueChange={(value) => setSelectedStatus(value as Application["status"])}
+                    disabled={updateStatusMutation.isPending}
+                  >
+                    <SelectTrigger className="flex-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PENDING">Pending</SelectItem>
+                      <SelectItem value="REVIEWED">Reviewed</SelectItem>
+                      <SelectItem value="SHORTLISTED">Shortlisted</SelectItem>
+                      <SelectItem value="INTERVIEW_SCHEDULED">Interview Scheduled</SelectItem>
+                      <SelectItem value="INTERVIEW_COMPLETED">Interview Completed</SelectItem>
+                      <SelectItem value="REJECTED">Rejected</SelectItem>
+                      <SelectItem value="ACCEPTED">Accepted</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={handleUpdateStatus}
+                    disabled={!selectedStatus || selectedStatus === application.status || updateStatusMutation.isPending}
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white"
+                  >
+                    {updateStatusMutation.isPending ? "Updating..." : "Update"}
+                  </Button>
+                </div>
               </div>
 
               <div className="pt-4 border-t space-y-3">
@@ -323,8 +341,8 @@ export default function ApplicantDetailPage({
                   <span className="font-medium">{formatDate(application.appliedAt)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Last Updated</span>
-                  <span className="font-medium">{formatDate(application.updatedAt)}</span>
+                  <span className="text-muted-foreground">Deadline</span>
+                  <span className="font-medium">{job?.deadline ? formatDate(job.deadline) : "Not specified"}</span>
                 </div>
               </div>
             </CardContent>
