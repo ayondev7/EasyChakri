@@ -80,7 +80,7 @@ export default function ProfilePage() {
       return
     }
     
-    if (user.role !== "seeker") {
+    if (user.role !== "SEEKER") {
       router.push("/auth/signin")
     }
   }, [isAuthenticated, user, router, isLoading])
@@ -89,7 +89,7 @@ export default function ProfilePage() {
     return null
   }
 
-  if (!isAuthenticated || !user || user.role !== "seeker" || !profileUser) {
+  if (!isAuthenticated || !user || user.role !== "SEEKER" || !profileUser) {
     return null
   }
 

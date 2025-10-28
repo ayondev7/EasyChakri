@@ -26,7 +26,7 @@ export default function RecruiterJobsPage() {
       return
     }
     
-    if (user.role !== "recruiter") {
+    if (user.role !== "RECRUITER") {
       router.push("/auth/signin")
     }
   }, [isAuthenticated, user, router, isLoading])
@@ -35,7 +35,7 @@ export default function RecruiterJobsPage() {
     return null
   }
 
-  if (!isAuthenticated || !user || user.role !== "recruiter") {
+  if (!isAuthenticated || !user || user.role !== "RECRUITER") {
     return null
   }
 

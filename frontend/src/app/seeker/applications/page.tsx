@@ -29,7 +29,7 @@ export default function ApplicationsPage() {
       return
     }
     
-    if (user.role !== "seeker") {
+    if (user.role !== "SEEKER") {
       router.push("/auth/signin")
     }
   }, [isAuthenticated, user, router, isLoading])
@@ -38,7 +38,7 @@ export default function ApplicationsPage() {
     return null
   }
 
-  if (!isAuthenticated || !user || user.role !== "seeker") {
+  if (!isAuthenticated || !user || user.role !== "SEEKER") {
     return null
   }
   const allApplications: Application[] = applicationsData?.data ?? []

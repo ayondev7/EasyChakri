@@ -81,7 +81,7 @@ const authOptions: NextAuthOptions = {
 						email: data.data.user.email,
 						name: data.data.user.name,
 						image: data.data.user.image,
-						role: data.data.user.role as "seeker" | "recruiter",
+						role: data.data.user.role as "SEEKER" | "RECRUITER",
 						accessToken: data.data.accessToken,
 						refreshToken: data.data.refreshToken,
 					};
@@ -127,7 +127,7 @@ const authOptions: NextAuthOptions = {
 						email: data.data.user.email,
 						name: data.data.user.name,
 						image: data.data.user.image,
-						role: data.data.user.role as "seeker" | "recruiter",
+						role: data.data.user.role as "SEEKER" | "RECRUITER",
 						accessToken: data.data.accessToken,
 						refreshToken: data.data.refreshToken,
 					};

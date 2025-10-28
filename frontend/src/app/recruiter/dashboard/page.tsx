@@ -20,13 +20,13 @@ export default function RecruiterDashboardPage() {
       router.push("/auth/signin")
       return
     }
-    if (user.role !== "recruiter") {
+    if (user.role !== "RECRUITER") {
       router.push("/auth/signin")
     }
   }, [isAuthenticated, user, router, isLoading])
 
   if (isLoading) return null
-  if (!isAuthenticated || !user || user.role !== "recruiter") return null
+  if (!isAuthenticated || !user || user.role !== "RECRUITER") return null
 
   const myJobs = data?.data ?? []
 

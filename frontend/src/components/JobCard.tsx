@@ -105,7 +105,7 @@ export function JobCard({ job }: JobCardProps) {
       </div>
 
       <div className="px-6 pb-6 pt-4 border-t border-gray-200">
-        {user?.role === "seeker" ? (
+        {user?.role === "SEEKER" ? (
           <div className="flex gap-2">
             <Button asChild className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white">
               <Link href={`/jobs/${job.slug}`}>View Details</Link>

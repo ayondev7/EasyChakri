@@ -13,7 +13,7 @@ export default function SeekerDashboardPage() {
   const { data: statsData } = useApplicationStats()
 
   return (
-    <AuthGuard role="seeker">
+    <AuthGuard role="SEEKER">
       <div>
         <SeekerHeader userName={user?.name} />
         

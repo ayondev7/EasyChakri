@@ -43,7 +43,7 @@ const recruiterSchema = z.object({
 type SeekerFormData = z.infer<typeof seekerSchema>
 type RecruiterFormData = z.infer<typeof recruiterSchema>
 
-export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
+export default function SignupForm({ role }: { role: "SEEKER" | "RECRUITER" }) {
   const [isLoading, setIsLoading] = useState(false)
   const [seekerImageFile, setSeekerImageFile] = useState<File | null>(null)
   const [seekerImagePreview, setSeekerImagePreview] = useState<string>("")
@@ -235,18 +235,18 @@ export default function SignupForm({ role }: { role: "seeker" | "recruiter" }) {
     }
   }
 
-  const errors = role === "seeker" ? errorsSeeker : errorsRecruiter
+  const errors = role === "SEEKER" ? errorsSeeker : errorsRecruiter
 
   return (
     <SignUpCard
       role={role}
       isLoading={isLoading}
-      onSubmit={role === "seeker" ? handleSubmitSeeker(onSubmitSeeker) : handleSubmitRecruiter(onSubmitRecruiter)}
-      checkboxRegister={role === "seeker" ? registerSeeker("terms") : registerRecruiter("terms")}
+      onSubmit={role === "SEEKER" ? handleSubmitSeeker(onSubmitSeeker) : handleSubmitRecruiter(onSubmitRecruiter)}
+      checkboxRegister={role === "SEEKER" ? registerSeeker("terms") : registerRecruiter("terms")}
       checkboxError={errors.terms}
       footerExtra={<p className="text-sm text-center text-muted-foreground">Already have an account? <Link href="/auth/signin" className="text-emerald-500 hover:underline font-medium">Sign in</Link></p>}
     >
-      {role === "seeker" ? (
+      {role === "SEEKER" ? (
         <SeekerForm registerSeeker={registerSeeker} errorsSeeker={errorsSeeker} seekerImagePreview={seekerImagePreview} handleSeekerImageChange={handleSeekerImageChange} />
       ) : (
         <RecruiterForm registerRecruiter={registerRecruiter} errorsRecruiter={errorsRecruiter} companyLogoPreview={companyLogoPreview} handleCompanyLogoChange={handleCompanyLogoChange} recruiterImagePreview={recruiterImagePreview} handleRecruiterImageChange={handleRecruiterImageChange} />

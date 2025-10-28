@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import Loader from "@/components/Loader"
 
-export default function AuthGuard({ children, role, fallback }: { children: React.ReactNode; role?: "seeker" | "recruiter"; fallback?: React.ReactNode }) {
+export default function AuthGuard({ children, role, fallback }: { children: React.ReactNode; role?: "SEEKER" | "RECRUITER"; fallback?: React.ReactNode }) {
   const { isAuthenticated, isLoading, user } = useAuth()
   const router = useRouter()
 

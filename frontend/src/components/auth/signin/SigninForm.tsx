@@ -16,7 +16,7 @@ const signinSchema = z.object({
 
 type SigninFormData = z.infer<typeof signinSchema>
 
-export default function SigninForm({ role }: { role: "seeker" | "recruiter" }) {
+export default function SigninForm({ role }: { role: "SEEKER" | "RECRUITER" }) {
   const [isLoading, setIsLoading] = useState(false)
 
   const {
@@ -31,7 +31,7 @@ export default function SigninForm({ role }: { role: "seeker" | "recruiter" }) {
     setIsLoading(true)
 
     try {
-      const callbackUrl = role === "seeker" ? "/seeker/dashboard" : "/recruiter/dashboard"
+      const callbackUrl = role === "SEEKER" ? "/seeker/dashboard" : "/recruiter/dashboard"
       const result = await signIn("credentials-signin", {
         email: data.email,
         password: data.password,
@@ -54,7 +54,7 @@ export default function SigninForm({ role }: { role: "seeker" | "recruiter" }) {
   }
 
   const handleGoogleSignIn = async () => {
-    if (role === "recruiter") {
+    if (role === "RECRUITER") {
       toast.error("Recruiters must sign up with company details")
       return
     }
@@ -90,7 +90,7 @@ export default function SigninForm({ role }: { role: "seeker" | "recruiter" }) {
         <Link href="/auth/forgot-password" className="text-emerald-500 hover:underline">Forgot password?</Link>
       </div>
 
-      {role === "seeker" && (
+      {role === "SEEKER" && (
         <>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

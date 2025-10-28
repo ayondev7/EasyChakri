@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import CheckboxField from "@/components/form/CheckboxField"
 
 type Props = {
-  role: "seeker" | "recruiter"
+  role: "SEEKER" | "RECRUITER"
   isLoading: boolean
   onSubmit: (e?: any) => void
   checkboxRegister: any
@@ -33,7 +33,7 @@ export default function SignUpCard({ role, isLoading, onSubmit, checkboxRegister
   )
 
   return (
-    <FormCard title="Sign Up" description={role === "seeker" ? "Create your job seeker account to start applying" : "Create your recruiter account and company profile to post jobs"} footer={footer}>
+    <FormCard title="Sign Up" description={role === "SEEKER" ? "Create your job seeker account to start applying" : "Create your recruiter account and company profile to post jobs"} footer={footer}>
       {children}
       <div className="flex items-start gap-2 text-sm">
         <CheckboxField id="terms" label={<>

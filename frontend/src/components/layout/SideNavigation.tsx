@@ -73,7 +73,7 @@ export function SideNavigation() {
     },
   ]
 
-  const navItems = user?.role === "recruiter" ? recruiterNavItems : seekerNavItems
+  const navItems = user?.role === "RECRUITER" ? recruiterNavItems : seekerNavItems
 
   const isActive = (href: string) => {
     if (href.startsWith("#")) return false

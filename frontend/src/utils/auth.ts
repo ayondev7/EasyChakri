@@ -24,7 +24,7 @@ export function processTokens(token: JWT, authResponse: AuthResponse): JWT {
 		refreshToken: authResponse.refreshToken,
 		user: {
 			...authResponse.user,
-			role: authResponse.user.role as "seeker" | "recruiter",
+			role: authResponse.user.role as "SEEKER" | "RECRUITER",
 		},
 	};
 }

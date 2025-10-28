@@ -29,7 +29,7 @@ export default function CompanyProfilePage() {
       return
     }
     
-    if (user.role !== "recruiter") {
+    if (user.role !== "RECRUITER") {
       router.push("/auth/signin")
       return
     }
@@ -43,7 +43,7 @@ export default function CompanyProfilePage() {
     )
   }
 
-  if (!isAuthenticated || !user || user.role !== "recruiter") {
+  if (!isAuthenticated || !user || user.role !== "RECRUITER") {
     return null
   }
 

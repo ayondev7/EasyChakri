@@ -6,7 +6,7 @@ import HeaderCard from "@/components/auth/signup/HeaderCard"
 import SignupForm from "@/components/auth/signup/SignupForm"
 
 export default function SignUpPage() {
-  const [role, setRole] = useState<"seeker" | "recruiter">("seeker")
+  const [role, setRole] = useState<"SEEKER" | "RECRUITER">("SEEKER")
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -14,10 +14,10 @@ export default function SignUpPage() {
         <div className="w-full max-w-2xl">
           <HeaderCard />
 
-          <Tabs value={role} onValueChange={(v) => setRole(v as "seeker" | "recruiter")} className="mb-6">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="seeker">Job Seeker</TabsTrigger>
-              <TabsTrigger value="recruiter">Recruiter</TabsTrigger>
+          <Tabs value={role} onValueChange={(v) => setRole(v as "SEEKER" | "RECRUITER")} className="mb-6">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="SEEKER">Job Seeker</TabsTrigger>
+              <TabsTrigger value="RECRUITER">Recruiter</TabsTrigger>
             </TabsList>
           </Tabs>
 

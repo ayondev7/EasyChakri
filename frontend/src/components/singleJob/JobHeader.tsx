@@ -38,7 +38,7 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
       return
     }
 
-    if (userRole !== "seeker") {
+    if (userRole !== "SEEKER") {
       toast.error("Only job seekers can apply for jobs")
       return
     }
@@ -163,7 +163,7 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          {userRole === "seeker" && (
+          {userRole === "SEEKER" && (
             <Button
               size="lg"
               className={`bg-emerald-500 hover:bg-emerald-600 text-white ${hasApplied ? 'opacity-80 cursor-not-allowed' : ''}`}

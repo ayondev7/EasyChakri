@@ -23,7 +23,7 @@ export default function InterviewsPage() {
       return
     }
     
-    if (user.role !== "seeker") {
+    if (user.role !== "SEEKER") {
       router.push("/auth/signin")
     }
   }, [isAuthenticated, user, router, isLoading])
@@ -32,7 +32,7 @@ export default function InterviewsPage() {
     return null
   }
 
-  if (!isAuthenticated || !user || user.role !== "seeker") {
+  if (!isAuthenticated || !user || user.role !== "SEEKER") {
     return null
   }
 
@@ -59,7 +59,7 @@ export default function InterviewsPage() {
       {filteredInterviews.length > 0 ? (
         <div className="space-y-4">
           {filteredInterviews.map((interview) => (
-            <InterviewCard key={interview.id} interview={interview} role="seeker" />
+            <InterviewCard key={interview.id} interview={interview} role="SEEKER" />
           ))}
         </div>
       ) : (

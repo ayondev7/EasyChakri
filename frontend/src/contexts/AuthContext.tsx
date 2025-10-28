@@ -7,9 +7,9 @@ import { refreshAuthToken, clearAuthToken } from "@/utils/apiClient"
 
 interface AuthContextType {
   user: User | null
-  login: (email: string, password: string, role: "seeker" | "recruiter") => Promise<void>
+  login: (email: string, password: string, role: "SEEKER" | "RECRUITER") => Promise<void>
   logout: () => void
-  signup: (email: string, password: string, name: string, role: "seeker" | "recruiter") => Promise<void>
+  signup: (email: string, password: string, name: string, role: "SEEKER" | "RECRUITER") => Promise<void>
   isAuthenticated: boolean
   isLoading: boolean
 }
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [session, status])
 
-  const login = async (email: string, password: string, role: "seeker" | "recruiter") => {
+  const login = async (email: string, password: string, role: "SEEKER" | "RECRUITER") => {
     throw new Error("Use NextAuth signIn directly")
   }
 
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signOut({ callbackUrl: "/" })
   }
 
-  const signup = async (email: string, password: string, name: string, role: "seeker" | "recruiter") => {
+  const signup = async (email: string, password: string, name: string, role: "SEEKER" | "RECRUITER") => {
     throw new Error("Use NextAuth signIn directly")
   }
 

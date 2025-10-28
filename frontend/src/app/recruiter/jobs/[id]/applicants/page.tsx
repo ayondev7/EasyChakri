@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import JOB_ROUTES from "@/routes/jobRoutes"
+import { useJob } from "@/hooks/jobHooks"
+import { useJobApplications } from "@/hooks/applicationHooks"
 import type { Application, Job, User } from "@/types"
 import { ArrowLeft } from "lucide-react"
 import TabsField from "@/components/form/TabsField"
@@ -14,40 +15,7 @@ import ApplicantDetails from "@/components/applicants/ApplicantDetails"
 import EmptyState from "@/components/EmptyState"
 import { Briefcase } from "lucide-react"
 import { APPLICANT_TABS } from "@/constants/tabConstants"
-
-const placeholderJob: Job = {
-  id: "",
-  title: "",
-  slug: "",
-  company: {
-    id: "",
-    name: "",
-    slug: "",
-    logo: "",
-    description: "",
-    industry: "",
-    size: "",
-    location: "",
-    jobCount: 0,
-  },
-  location: "",
-  type: "FULL_TIME",
-  experience: "",
-  salary: "",
-  description: "",
-  requirements: [],
-  responsibilities: [],
-  skills: [],
-  postedDate: new Date(),
-  createdAt: new Date(),
-  views: 0,
-  recruiterId: "",
-  companyId: "",
-  category: "",
-  _count: { applications: 0 },
-}
-
-const placeholderUsers: User[] = []
+import Loader from "@/components/Loader"
 
 export default function ApplicantsPage({
   params,
@@ -56,46 +24,41 @@ export default function ApplicantsPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
-  const { user, isAuthenticated, isLoading } = useAuth();
-  const [applications, setApplications] = useState<Application[]>([]);
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedApplicant, setSelectedApplicant] =
     useState<Application | null>(null);
 
+  const { data: jobData, isLoading: jobLoading } = useJob(id);
+  const { data: applicationsData, isLoading: applicationsLoading, refetch } = useJobApplications(id);
+
   useEffect(() => {
-    if (isLoading) return;
+    if (authLoading) return;
 
     if (!isAuthenticated || !user) {
       router.push("/auth/signin");
       return;
     }
 
-    if (user.role !== "recruiter") {
+    if (user.role !== "RECRUITER") {
       router.push("/auth/signin");
     }
-  }, [isAuthenticated, user, router, isLoading]);
+  }, [isAuthenticated, user, router, authLoading]);
 
-  useEffect(() => {
-    async function fetchJob() {
-      try {
-        const res = await fetch(JOB_ROUTES.getById(id))
-        if (!res.ok) return
-        const json = await res.json()
-      } catch (err) {
-        console.error(err)
-      }
-    }
-    fetchJob()
-      setApplications([])
-  }, [id]);
+  if (authLoading || jobLoading || applicationsLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <Loader />
+      </div>
+    );
+  }
 
-  if (isLoading) {
+  if (!isAuthenticated || !user || user.role !== "RECRUITER") {
     return null;
   }
 
-  if (!isAuthenticated || !user || user.role !== "recruiter") {
-    return null;
-  }
+  const job = jobData?.data;
+  const applications = applicationsData?.data || [];
 
   const filteredApplications =
     filterStatus === "all"
@@ -106,20 +69,12 @@ export default function ApplicantsPage({
     applicationId: string,
     newStatus: Application["status"]
   ) => {
-    setApplications((prev) =>
-      prev.map((app) =>
-        app.id === applicationId ? { ...app, status: newStatus } : app
-      )
-    )
+    refetch();
     if (selectedApplicant?.id === applicationId) {
       setSelectedApplicant((prev) =>
         prev ? { ...prev, status: newStatus } : null
       )
     }
-  }
-
-  const getApplicantDetails = (seekerId: string) => {
-    return placeholderUsers.find((u) => u.id === seekerId)
   }
 
   const getStatusColor = (status: string) => {
@@ -154,12 +109,10 @@ export default function ApplicantsPage({
   }))
 
   if (selectedApplicant) {
-    const applicantUser = getApplicantDetails(selectedApplicant.seekerId)
-
     return (
       <ApplicantDetails
         application={selectedApplicant}
-        applicantUser={applicantUser}
+        applicantUser={selectedApplicant.seeker}
         onBack={() => setSelectedApplicant(null)}
         onStatusChange={handleStatusChange}
         getStatusColor={getStatusColor}
@@ -175,7 +128,7 @@ export default function ApplicantsPage({
       </Button>
 
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">{placeholderJob.title}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">{job?.title || "Job Details"}</h1>
         <p className="text-muted-foreground">
           {applications.length} {applications.length === 1 ? "applicant" : "applicants"}
         </p>
@@ -191,18 +144,15 @@ export default function ApplicantsPage({
         <CardContent>
           {filteredApplications.length > 0 ? (
             <div className="space-y-3">
-              {filteredApplications.map((application) => {
-                const applicantUser = getApplicantDetails(application.seekerId)
-                return (
-                  <ApplicantCard
-                    key={application.id}
-                    application={application}
-                    applicantUser={applicantUser}
-                    onStatusChange={handleStatusChange}
-                    onViewDetails={setSelectedApplicant}
-                  />
-                )
-              })}
+              {filteredApplications.map((application) => (
+                <ApplicantCard
+                  key={application.id}
+                  application={application}
+                  applicantUser={application.seeker}
+                  onStatusChange={handleStatusChange}
+                  onViewDetails={setSelectedApplicant}
+                />
+              ))}
             </div>
           ) : (
             <EmptyState

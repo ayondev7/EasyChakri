@@ -10,7 +10,7 @@ import { getInterviewStatusIcon, getInterviewStatusColor } from "@/constants/sta
 
 interface InterviewCardProps {
   interview: Interview
-  role: "seeker" | "recruiter"
+  role: "SEEKER" | "RECRUITER"
 }
 
 const getInterviewTypeIcon = (type: string) => {
@@ -44,7 +44,7 @@ export default function InterviewCard({ interview, role }: InterviewCardProps) {
               </Badge>
             </div>
 
-            {role === "recruiter" && (
+            {role === "RECRUITER" && (
               <div className="flex items-center gap-2 mb-3">
                 <User className="h-4 w-4 text-muted-foreground" />
                 <span className="text-muted-foreground">
@@ -53,7 +53,7 @@ export default function InterviewCard({ interview, role }: InterviewCardProps) {
               </div>
             )}
 
-            {role === "seeker" && (
+            {role === "SEEKER" && (
               <p className="text-muted-foreground mb-3">{interview.application.job.company.name}</p>
             )}
 
@@ -105,7 +105,7 @@ export default function InterviewCard({ interview, role }: InterviewCardProps) {
           </div>
 
           <div className="flex flex-col gap-2 lg:min-w-[140px]">
-            {role === "seeker" && (
+            {role === "SEEKER" && (
               <>
                 {interview.status === "SCHEDULED" && (
                   <Button variant="outline" size="sm">
@@ -123,7 +123,7 @@ export default function InterviewCard({ interview, role }: InterviewCardProps) {
               </>
             )}
 
-            {role === "recruiter" && (
+            {role === "RECRUITER" && (
               <>
                 {interview.status === "SCHEDULED" && (
                   <Button variant="outline" size="sm">
