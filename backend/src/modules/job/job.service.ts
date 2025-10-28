@@ -197,8 +197,13 @@ export class JobService {
   }
 
   async getJobById(id: string, userId?: string) {
-    const job = await this.prisma.job.findUnique({
-      where: { slug: id },
+    const job = await this.prisma.job.findFirst({
+      where: {
+        OR: [
+          { id: id },
+          { slug: id },
+        ],
+      },
       include: {
         company: {
           select: {
@@ -239,7 +244,7 @@ export class JobService {
 
       if (user && user.role === 'SEEKER') {
         await this.prisma.job.update({
-          where: { slug: id },
+          where: { id: job.id },
           data: { views: { increment: 1 } },
         });
       }
