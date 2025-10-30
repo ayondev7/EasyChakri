@@ -97,6 +97,8 @@ export class JobService {
       isRemote,
       sortBy,
       companyId,
+      skill,
+      industry,
       page = 1,
       limit = 10,
     } = query;
@@ -104,13 +106,16 @@ export class JobService {
     const skip = (page - 1) * limit;
 
     const where: any = {};
+    const andConditions: any[] = [];
 
     if (search) {
-      where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { company: { name: { contains: search, mode: 'insensitive' } } },
-      ];
+      andConditions.push({
+        OR: [
+          { title: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+          { company: { name: { contains: search, mode: 'insensitive' } } },
+        ],
+      });
     }
 
     if (type) where.type = type;
@@ -119,27 +124,41 @@ export class JobService {
     if (isRemote !== undefined) where.isRemote = isRemote;
     if (companyId) where.companyId = companyId;
 
+    if (skill) {
+      where.skills = {
+        has: skill,
+      };
+    }
+
+    if (industry) {
+      where.company = {
+        industry: { contains: industry, mode: 'insensitive' },
+      };
+    }
+
     if (experience) {
       const experiencePatterns: Record<string, string[]> = {
         'fresher': ['0-1', '0-2', 'fresher', 'entry'],
-        'mid': ['2-3', '3-5', '2-5', 'mid'],
+        'mid-level': ['2-3', '3-5', '2-5', 'mid'],
         'senior': ['5+', '6+', '7+', 'senior', 'lead'],
       };
 
-      const patterns = experiencePatterns[experience];
+      const normalizedExp = experience.toLowerCase();
+      const patterns = experiencePatterns[normalizedExp];
       if (patterns) {
-        where.OR = where.OR ? [...where.OR, ...patterns.map(p => ({
-          experience: {
-            contains: p,
-            mode: 'insensitive',
-          },
-        }))] : patterns.map(p => ({
-          experience: {
-            contains: p,
-            mode: 'insensitive',
-          },
-        }));
+        andConditions.push({
+          OR: patterns.map(p => ({
+            experience: {
+              contains: p,
+              mode: 'insensitive',
+            },
+          })),
+        });
       }
+    }
+
+    if (andConditions.length > 0) {
+      where.AND = andConditions;
     }
 
     if (salaryRange) {

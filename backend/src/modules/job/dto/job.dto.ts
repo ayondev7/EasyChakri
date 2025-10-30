@@ -156,6 +156,14 @@ export class JobQueryDto {
   companyId?: string;
 
   @IsOptional()
+  @IsString()
+  skill?: string;
+
+  @IsOptional()
+  @IsString()
+  industry?: string;
+
+  @IsOptional()
   page?: number;
 
   @IsOptional()
