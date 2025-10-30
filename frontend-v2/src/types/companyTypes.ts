@@ -1,0 +1,20 @@
+import type { User } from "./userTypes"
+
+export interface Company {
+  id: string
+  name: string
+  slug: string
+  logo: string
+  description: string
+  industry: string
+  size: string
+  location: string
+  website?: string
+  founded?: string
+  jobCount: number
+  rating?: number
+  contact?: User
+  _count?: {
+    jobs: number
+  }
+}
