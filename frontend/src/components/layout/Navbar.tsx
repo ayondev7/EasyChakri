@@ -7,7 +7,8 @@ import { useAuth } from "@/contexts/AuthContext"
 import { Menu, X } from "lucide-react"
 import CustomAvatar from "@/components/CustomAvatar"
 import { getInitials } from "@/utils/utils"
-import { NotificationsDropdown } from "@/components/NotificationsDropdown"
+import { NotificationsDropdown } from "@/components/notifications/NotificationsDropdown"
+import { NotificationIcon } from "@/components/notifications/NotificationIcon"
 import { useState } from "react"
 
 export function Navbar() {

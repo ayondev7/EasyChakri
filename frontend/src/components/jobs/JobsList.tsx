@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import type { Job } from '@/types'
-import { JobCard } from '@/components/JobCard'
+import { JobCard } from '@/components/jobs/JobCard'
 import Pagination from '@/components/pagination/Pagination'
 import { useJobs } from '@/hooks/jobHooks'
 import Loader from '@/components/Loader'

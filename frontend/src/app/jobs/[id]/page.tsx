@@ -1,7 +1,7 @@
 "use client"
 import { use } from "react"
 import { notFound } from "next/navigation"
-import { JobCard } from "@/components/JobCard"
+import { JobCard } from "@/components/jobs/JobCard"
 import { useAuth } from "@/contexts/AuthContext"
 import { useJob, useSimilarJobs } from "@/hooks/jobHooks"
 import { JobHeader } from "@/components/singleJob/JobHeader"

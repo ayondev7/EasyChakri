@@ -1,5 +1,5 @@
 "use client";
-import { JobCard } from "@/components/JobCard"
+import { JobCard } from "@/components/jobs/JobCard"
 import { Card, CardContent } from "@/components/ui/card"
 import { Briefcase } from "lucide-react"
 import type { Job } from "@/types"

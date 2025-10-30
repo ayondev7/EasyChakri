@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils"
 import CustomAvatar from "@/components/CustomAvatar"
 import { seekerMenuItems, recruiterMenuItems } from "@/constants/navigation"
 import { getInitials } from "@/utils/utils"
+import { NotificationIcon } from "@/components/notifications/NotificationIcon"
 
 interface NavItem {
   label: string
@@ -159,7 +160,7 @@ export function SideNavigation() {
                 href="/notifications"
                 className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
               >
-                <Bell className="h-5 w-5 flex-shrink-0" />
+                <NotificationIcon iconClassName="flex-shrink-0" />
                 <span className="truncate">Notifications</span>
               </Link>
             </div>

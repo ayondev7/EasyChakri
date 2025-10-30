@@ -10,8 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { Bell, Briefcase, FileText, Calendar, CheckCircle } from "lucide-react"
+import { Briefcase, FileText, Calendar, CheckCircle } from "lucide-react"
 import type { Notification } from "@/types"
 import { formatDate } from "@/utils/utils"
 import { useAuth } from "@/contexts/AuthContext"
@@ -19,6 +18,7 @@ import { useSocket } from "@/contexts/SocketContext"
 import { useNotifications, useMarkAsRead, useUnreadCount } from "@/hooks/notificationHooks"
 import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-hot-toast"
+import { NotificationIcon } from "@/components/notifications/NotificationIcon"
 
 export function NotificationsDropdown() {
   const { user } = useAuth()
@@ -87,12 +87,7 @@ export function NotificationsDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
-          <Bell className={`h-5 w-5 ${unreadCount > 0 ? "text-emerald-600" : ""}`} />
-          {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-emerald-500 text-white text-xs animate-pulse">
-              {unreadCount > 99 ? "99+" : unreadCount}
-            </Badge>
-          )}
+          <NotificationIcon />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80">

@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { JobCard } from "@/components/JobCard"
+import { JobCard } from "@/components/jobs/JobCard"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { useJobs } from "@/hooks/jobHooks"
