@@ -1,0 +1,46 @@
+export const JOB_PATTERNS = {
+  CREATE_JOB: 'create_job',
+  GET_JOBS: 'get_jobs',
+  GET_JOB_BY_ID: 'get_job_by_id',
+  UPDATE_JOB: 'update_job',
+  DELETE_JOB: 'delete_job',
+  GET_RECRUITER_JOBS: 'get_recruiter_jobs',
+  GET_JOBS_BY_EXPERIENCE: 'get_jobs_by_experience',
+  GET_JOBS_BY_CATEGORY: 'get_jobs_by_category',
+  GET_JOBS_BY_LOCATION: 'get_jobs_by_location',
+  GET_JOBS_BY_SKILL: 'get_jobs_by_skill',
+  GET_TRENDING_SEARCHES: 'get_trending_searches',
+  GET_SIMILAR_JOBS: 'get_similar_jobs',
+  GET_SEARCH_SUGGESTIONS: 'get_search_suggestions',
+  APPLY_FOR_JOB: 'apply_for_job',
+  SAVE_JOB: 'save_job',
+  UNSAVE_JOB: 'unsave_job',
+  GET_SAVED_JOBS: 'get_saved_jobs',
+  IS_JOB_SAVED: 'is_job_saved',
+  GET_RECRUITER_DASHBOARD_STATS: 'get_recruiter_dashboard_stats',
+  GET_SEEKER_DASHBOARD_STATS: 'get_seeker_dashboard_stats',
+  GET_SEEKER_APPLICATIONS: 'get_seeker_applications',
+  GET_APPLICATION_STATS: 'get_application_stats',
+};
+
+export const APPLICATION_PATTERNS = {
+  GET_APPLICATION_BY_ID: 'get_application_by_id',
+  GET_JOB_APPLICATIONS: 'get_job_applications',
+  GET_ALL_RECRUITER_APPLICATIONS: 'get_all_recruiter_applications',
+  UPDATE_APPLICATION_STATUS: 'update_application_status',
+  GET_RECRUITER_APPLICATION_STATS: 'get_recruiter_application_stats',
+  GET_SEEKER_APPLICATIONS: 'get_seeker_applications',
+  GET_SEEKER_APPLICATION_STATS: 'get_seeker_application_stats',
+  DELETE_APPLICATION: 'delete_application',
+};
+
+export const INTERVIEW_PATTERNS = {
+  CREATE_INTERVIEW: 'create_interview',
+  UPDATE_INTERVIEW: 'update_interview',
+  GET_INTERVIEW_BY_ID: 'get_interview_by_id',
+  GET_RECRUITER_INTERVIEWS: 'get_recruiter_interviews',
+  GET_SEEKER_INTERVIEWS: 'get_seeker_interviews',
+  CANCEL_INTERVIEW: 'cancel_interview',
+  GET_INTERVIEW_STATS: 'get_interview_stats',
+  GET_UPCOMING_INTERVIEWS: 'get_upcoming_interviews',
+};
