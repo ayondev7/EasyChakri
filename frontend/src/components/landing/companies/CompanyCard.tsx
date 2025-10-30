@@ -5,7 +5,8 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 
 export interface CompanyCardProps {
-  id: string | number
+  id?: string | number
+  slug?: string
   name: string
   logo?: string
   employees?: string
@@ -13,7 +14,9 @@ export interface CompanyCardProps {
   description?: string
 }
 
-export function CompanyCard({ id, name, logo, employees, industry, description }: CompanyCardProps) {
+export function CompanyCard({ id, slug, name, logo, employees, industry, description }: CompanyCardProps) {
+  const companyLink = slug || id || ''
+  
   return (
     <div className="group p-6 rounded-xl border border-gray-200 bg-white hover:border-emerald-500 hover:shadow-lg transition-all duration-200 h-full flex flex-col">
       <div className="flex items-start gap-4 mb-4">
@@ -42,7 +45,7 @@ export function CompanyCard({ id, name, logo, employees, industry, description }
         className="w-full text-emerald-600 border-emerald-600 hover:bg-emerald-50 bg-transparent"
         asChild
       >
-        <Link href={`/companies/${id}`}>View jobs</Link>
+        <Link href={`/companies/${companyLink}`}>View jobs</Link>
       </Button>
     </div>
   )

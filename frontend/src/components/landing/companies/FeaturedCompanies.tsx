@@ -71,6 +71,7 @@ export function FeaturedCompanies() {
               <div key={company.id} className="flex-shrink-0 w-[320px] snap-start">
                 <CompanyCard
                   id={company.id}
+                  slug={company.slug}
                   name={company.name}
                   logo={company.logo}
                   employees={company.size || company.employees || `${company.jobCount || 0} employees`}

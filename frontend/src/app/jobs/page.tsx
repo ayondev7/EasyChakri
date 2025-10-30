@@ -22,12 +22,22 @@ export default function JobsPage() {
     salaryRange: "",
   })
 
-  const searchQuery = searchParams.get("q") || ""
+  const searchQuery = searchParams.get("q") || searchParams.get("search") || ""
   const locationQuery = searchParams.get("location") || ""
+  const categoryQuery = searchParams.get("category") || ""
+  const experienceQuery = searchParams.get("experience") || ""
+  const typeQuery = searchParams.get("type") || ""
+  const skillQuery = searchParams.get("skill") || ""
+  const industryQuery = searchParams.get("industry") || ""
 
   const queryParams: Record<string, any> = {}
   if (searchQuery) queryParams.search = searchQuery
   if (locationQuery) queryParams.location = locationQuery
+  if (categoryQuery) queryParams.category = categoryQuery
+  if (experienceQuery) queryParams.experience = experienceQuery
+  if (typeQuery) queryParams.type = typeQuery
+  if (skillQuery) queryParams.skill = skillQuery
+  if (industryQuery) queryParams.industry = industryQuery
 
   if (filters.jobType) {
     queryParams.type = filters.jobType
@@ -72,7 +82,21 @@ export default function JobsPage() {
   <div className="container mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">
-              {searchQuery ? `Search Results for "${searchQuery}"` : "Browse All Jobs"}
+              {searchQuery 
+                ? `Search Results for "${searchQuery}"` 
+                : skillQuery
+                ? `${skillQuery} Jobs`
+                : industryQuery
+                ? `${industryQuery} Industry Jobs`
+                : locationQuery 
+                ? `Jobs in ${locationQuery}` 
+                : categoryQuery 
+                ? `${categoryQuery} Jobs` 
+                : experienceQuery 
+                ? `${experienceQuery} Level Jobs`
+                : typeQuery 
+                ? `${typeQuery} Jobs`
+                : "Browse All Jobs"}
             </h1>
           </div>
 

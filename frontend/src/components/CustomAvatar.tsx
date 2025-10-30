@@ -39,7 +39,6 @@ export default function CustomAvatar({
           width={size}
           height={size}
           className="object-cover"
-          unoptimized
           onError={() => setHasError(true)}
         />
       ) : (
