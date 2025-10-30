@@ -1,0 +1,241 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SEEKER
+  RECRUITER
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  REMOTE
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  SHORTLISTED
+  INTERVIEW_SCHEDULED
+  INTERVIEW_COMPLETED
+  REJECTED
+  ACCEPTED
+}
+
+enum InterviewType {
+  ONLINE
+  PHYSICAL
+}
+
+enum InterviewStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum InterviewPlatform {
+  ZOOM
+  GOOGLE_MEET
+  TEAMS
+  SKYPE
+  OTHER
+}
+
+enum NotificationType {
+  APPLICATION
+  JOB
+  INTERVIEW
+  SYSTEM
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  name String
+  dateOfBirth DateTime?
+  role UserRole
+  image String?
+  phone String?
+  location String?
+  bio String?
+  skills String[]
+  experience String?
+  education String?
+  resume String?
+  providerId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  companyProfile Company?
+  applications Application[]
+  interviewsAsSeeker Interview[] @relation("SeekerInterviews")
+  interviewsAsInterviewer Interview[] @relation("InterviewerInterviews")
+  jobs Job[]
+  notifications Notification[]
+  savedJobs SavedJob[]
+
+  @@index([role])
+  @@index([email])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model Company {
+  id String @id @default(uuid())
+  name String @unique
+  slug String @unique
+  logo String?
+  description String
+  industry String
+  size String
+  location String
+  website String?
+  founded String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recruiter User @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  recruiterId String @unique
+  jobs Job[]
+
+  @@index([recruiterId])
+  @@index([industry])
+  @@index([location])
+  @@index([slug])
+  @@map("companies")
+}
+
+model Job {
+  id String @id @default(uuid())
+  title String
+  slug String @unique
+  description String
+  requirements String[]
+  responsibilities String[]
+  benefits String[]
+  skills String[]
+  type JobType
+  experience String
+  salary String
+  location String
+  isRemote Boolean @default(false)
+  views Int @default(0)
+  deadline DateTime?
+  category String 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recruiter User @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  recruiterId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  applications Application[]
+  savedBy SavedJob[]
+
+  @@index([recruiterId])
+  @@index([companyId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([deadline])
+  @@map("jobs")
+}
+
+model Application {
+  id String @id @default(uuid())
+  status ApplicationStatus @default(PENDING)
+  appliedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  seeker User @relation(fields: [seekerId], references: [id], onDelete: Cascade)
+  seekerId String
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobId String
+  interviews Interview[]
+
+  @@unique([seekerId, jobId])
+  @@index([seekerId])
+  @@index([jobId])
+  @@index([status])
+  @@index([appliedAt])
+  @@map("applications")
+}
+
+model Interview {
+  id String @id @default(uuid())
+  type InterviewType
+  status InterviewStatus @default(SCHEDULED)
+  scheduledAt DateTime
+  duration Int
+  location String?
+  meetingLink String?
+  platform InterviewPlatform?
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  applicationId String
+  seeker User @relation("SeekerInterviews", fields: [seekerId], references: [id], onDelete: Cascade)
+  seekerId String
+  interviewer User @relation("InterviewerInterviews", fields: [interviewerId], references: [id], onDelete: Cascade)
+  interviewerId String
+
+  @@unique([applicationId, scheduledAt])
+  @@index([applicationId])
+  @@index([seekerId])
+  @@index([interviewerId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@map("interviews")
+}
+
+model Notification {
+  id String @id @default(uuid())
+  title String
+  message String
+  type NotificationType
+  isRead Boolean @default(false)
+  link String?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@index([userId])
+  @@index([type])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model SavedJob {
+  id String @id @default(uuid())
+  savedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobId String
+
+  @@unique([userId, jobId])
+  @@index([userId])
+  @@index([jobId])
+  @@index([savedAt])
+  @@map("saved_jobs")
+}
