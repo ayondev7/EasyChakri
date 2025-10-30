@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, Clock, MapPin, Video, ExternalLink, User } from "lucide-react"
 import type { Interview } from "@/types"
-import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
+import { formatDate, formatDeadline, stripParenthesizedCompany } from "@/utils/utils"
 import { getInterviewStatusIcon, getInterviewStatusColor } from "@/constants/statusConstants"
 
 interface InterviewCardProps {
@@ -15,7 +15,7 @@ interface InterviewCardProps {
 
 const getInterviewTypeIcon = (type: string) => {
   return type === "ONLINE" ? (
-    <Video className="h-4 w-4 text-cyan-500" />
+    <Video className="h-4 w-4 text-emerald-500" />
   ) : (
     <MapPin className="h-4 w-4 text-orange-500" />
   )
@@ -60,7 +60,7 @@ export default function InterviewCard({ interview, role }: InterviewCardProps) {
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-3">
               <span className="flex items-center gap-1.5">
                 <Calendar className="h-3 w-3" />
-                {formatDate(interview.scheduledAt)}
+                {formatDeadline(interview.scheduledAt)}
               </span>
               <span className="flex items-center gap-1.5">
                 <Clock className="h-3 w-3" />
@@ -105,36 +105,8 @@ export default function InterviewCard({ interview, role }: InterviewCardProps) {
           </div>
 
           <div className="flex flex-col gap-2 lg:min-w-[140px]">
-            {role === "SEEKER" && (
-              <>
-                {interview.status === "SCHEDULED" && (
-                  <Button variant="outline" size="sm">
-                    Confirm Attendance
-                  </Button>
-                )}
-                {interview.status === "CONFIRMED" && (
-                  <Button variant="outline" size="sm">
-                    Reschedule
-                  </Button>
-                )}
-                <Button variant="outline" size="sm">
-                  Contact Recruiter
-                </Button>
-              </>
-            )}
-
             {role === "RECRUITER" && (
               <>
-                {interview.status === "SCHEDULED" && (
-                  <Button variant="outline" size="sm">
-                    Confirm Interview
-                  </Button>
-                )}
-                {interview.status === "CONFIRMED" && (
-                  <Button variant="outline" size="sm">
-                    Mark Completed
-                  </Button>
-                )}
                 {interview.status !== "COMPLETED" && interview.status !== "CANCELLED" && (
                   <Button variant="outline" size="sm">
                     Reschedule

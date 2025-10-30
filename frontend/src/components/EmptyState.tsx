@@ -19,7 +19,7 @@ export default function EmptyState({ icon: Icon, title, description, actionLabel
         <p className="text-muted-foreground mb-4">{title}</p>
         {description && <p className="text-sm text-muted-foreground mb-4">{description}</p>}
         {actionLabel && actionHref && (
-          <Button asChild className="bg-cyan-500 hover:bg-cyan-600 text-white">
+          <Button asChild className="bg-emerald-500 hover:bg-emerald-600 text-white">
             <Link href={actionHref}>{actionLabel}</Link>
           </Button>
         )}
