@@ -41,17 +41,27 @@ export default function NotificationCard({ notification }: NotificationCardProps
 
   return (
     <Card
-      className={`hover:border-emerald-500/50 transition-all ${!notification.isRead ? "bg-emerald-500/5" : ""}`}
+      className={`transition-all border-2 ${
+        !notification.isRead 
+          ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 hover:border-emerald-400 dark:hover:border-emerald-600" 
+          : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700"
+      }`}
     >
       <CardContent className="p-4">
         <Link href={notification.link || "#"} className="flex items-start gap-4" onClick={handleClick}>
           <div className="mt-1">{getIcon(notification.type)}</div>
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2 mb-1">
-              <h3 className="font-semibold line-clamp-1">{notification.title}</h3>
-              {!notification.isRead && <div className="h-2 w-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0" />}
+              <h3 className={`line-clamp-1 ${!notification.isRead ? "font-bold text-emerald-900 dark:text-emerald-100" : "font-semibold"}`}>
+                {notification.title}
+              </h3>
+              {!notification.isRead && (
+                <div className="h-3 w-3 rounded-full bg-emerald-500 mt-1 flex-shrink-0 ring-2 ring-emerald-200 dark:ring-emerald-800 animate-pulse" />
+              )}
             </div>
-            <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{notification.message}</p>
+            <p className={`text-sm mb-2 line-clamp-2 ${!notification.isRead ? "text-gray-800 dark:text-gray-200" : "text-muted-foreground"}`}>
+              {notification.message}
+            </p>
             <p className="text-xs text-muted-foreground">{formatDate(notification.createdAt)}</p>
           </div>
         </Link>

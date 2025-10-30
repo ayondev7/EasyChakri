@@ -30,7 +30,7 @@ import {
   Eye,
   User as UserIcon,
 } from "lucide-react"
-import { formatDate, getInitials } from "@/utils/utils"
+import { formatDate, formatDeadline, getInitials } from "@/utils/utils"
 import { InterviewSchedulingModal } from "@/components/interviews/InterviewSchedulingModal"
 import Loader from "@/components/Loader"
 import { toast } from "react-hot-toast"
@@ -342,7 +342,7 @@ export default function ApplicantDetailPage({
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Deadline</span>
-                  <span className="font-medium">{job?.deadline ? formatDate(job.deadline) : "Not specified"}</span>
+                  <span className="font-medium">{job?.deadline ? formatDeadline(job.deadline) : "Not specified"}</span>
                 </div>
               </div>
             </CardContent>

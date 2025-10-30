@@ -1,5 +1,4 @@
 "use client"
-
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
@@ -9,11 +8,19 @@ import TabsField from "@/components/form/TabsField"
 import InterviewCard from "@/components/interviews/InterviewCard"
 import EmptyState from "@/components/EmptyState"
 import { INTERVIEW_TABS } from "@/constants/tabConstants"
+import { useSeekerInterviews } from "@/hooks/interviewHooks"
+import Loader from "@/components/Loader"
 
 export default function InterviewsPage() {
   const router = useRouter()
   const { user, isAuthenticated, isLoading } = useAuth()
   const [filter, setFilter] = useState("all")
+
+  const status = filter === "all" ? undefined : filter.toUpperCase()
+  const { data: interviewsData, isLoading: interviewsLoading } = useSeekerInterviews({ 
+    status: status as "SCHEDULED" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | undefined,
+    limit: 100
+  })
 
   useEffect(() => {
     if (isLoading) return
@@ -28,18 +35,17 @@ export default function InterviewsPage() {
     }
   }, [isAuthenticated, user, router, isLoading])
 
-  if (isLoading) {
-    return null
+  if (isLoading || interviewsLoading) {
+    return <Loader />
   }
 
   if (!isAuthenticated || !user || user.role !== "SEEKER") {
     return null
   }
 
-  const userInterviews: Interview[] = []
+  const userInterviews: Interview[] = interviewsData?.data || []
 
-  const filteredInterviews: Interview[] =
-    filter === "all" ? userInterviews : userInterviews.filter((interview) => interview.status === filter.toUpperCase())
+  const filteredInterviews: Interview[] = userInterviews
 
   const tabOptions = INTERVIEW_TABS.map((tab) =>
     tab.value === "all"
