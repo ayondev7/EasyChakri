@@ -21,7 +21,7 @@ export class JobService {
       throw new NotFoundException('Please create your company profile before posting jobs.');
     }
 
-    const slug = await generateUniqueJobSlug(this.prisma as any, dto.title)
+    const slug = await generateUniqueJobSlug(this.prisma as any, company.name, dto.title)
 
     const job = await this.prisma.job.create({
       data: {

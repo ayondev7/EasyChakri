@@ -9,16 +9,20 @@ export function slugify(title: string) {
     .replace(/-+/g, '-')
 }
 
-export async function generateUniqueJobSlug(prisma: PrismaClient, title: string) {
-  const base = slugify(title)
-  let slug = base
+export async function generateUniqueJobSlug(prisma: PrismaClient, companyName: string, title: string) {
+  const companySlug = slugify(companyName)
+  const titleSlug = slugify(title)
+  const base = `${companySlug}-${titleSlug}`
+  
+  const existing = await (prisma as any).job.findFirst({ where: { slug: base } })
+  if (!existing) return base
+  
   let counter = 1
-
   while (true) {
-    const existing = await (prisma as any).job.findFirst({ where: { slug } })
-    if (!existing) return slug
+    const slug = `${base}-${counter}`
+    const exists = await (prisma as any).job.findFirst({ where: { slug } })
+    if (!exists) return slug
     counter += 1
-    slug = `${base}-${counter}`
   }
 }
 
