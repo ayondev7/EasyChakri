@@ -1,26 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { Code, Database, Cloud, Smartphone, Shield, Brain } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { useJobsBySkill } from "@/hooks/jobHooks"
 import Loader from "@/components/Loader"
-
-const skillIcons: Record<string, any> = {
-  "React": Code,
-  "Python": Code,
-  "AWS": Cloud,
-  "SQL": Database,
-  "React Native": Smartphone,
-  "Cybersecurity": Shield,
-  "Machine Learning": Brain,
-  "Node.js": Code,
-  "JavaScript": Code,
-  "TypeScript": Code,
-  "Java": Code,
-  "Docker": Cloud,
-  "Kubernetes": Cloud,
-}
+import { SKILL_ICON_MAP, DEFAULT_SKILL_ICON } from "@/constants/skillIconsConstants"
 
 export function TopSkills() {
   const { data, isLoading } = useJobsBySkill(6)
@@ -29,7 +13,7 @@ export function TopSkills() {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-gray-50">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">In-Demand Skills</h2>
@@ -43,7 +27,7 @@ export function TopSkills() {
 
   if (topSkills.length === 0) {
     return (
-      <section className="py-16 bg-gray-50">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">In-Demand Skills</h2>
@@ -58,7 +42,7 @@ export function TopSkills() {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16">
       <div className="container mx-auto px-4">
         <div className="mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-2">In-Demand Skills</h2>
@@ -67,7 +51,7 @@ export function TopSkills() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {topSkills.map((skill) => {
-            const Icon = skillIcons[skill.skill] || Code
+            const Icon = SKILL_ICON_MAP[skill.skill] || DEFAULT_SKILL_ICON
             return (
               <Link key={skill.skill} href={`/jobs?skill=${skill.skill}`}>
                 <Card className="p-6 hover:shadow-lg transition-all cursor-pointer border-2 hover:border-emerald-500">

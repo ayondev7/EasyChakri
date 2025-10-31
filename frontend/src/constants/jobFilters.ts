@@ -10,7 +10,7 @@ export const jobTypes = [
 export const experienceLevels = [
   { value: "", label: "All Levels" },
   { value: "fresher", label: "Fresher (0-2 years)" },
-  { value: "mid", label: "Mid-Level (2-5 years)" },
+  { value: "mid-level", label: "Mid-Level (2-5 years)" },
   { value: "senior", label: "Senior (5+ years)" },
 ]
 

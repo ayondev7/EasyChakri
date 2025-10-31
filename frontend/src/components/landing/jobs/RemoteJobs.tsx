@@ -39,7 +39,7 @@ export function RemoteJobs() {
           </div>
 
           <Button size="lg" asChild className="bg-emerald-600 hover:bg-emerald-700 text-white">
-            <Link href="/jobs?type=Remote">Browse Remote Jobs</Link>
+            <Link href="/jobs?type=REMOTE">Browse Remote Jobs</Link>
           </Button>
         </div>
       </div>
