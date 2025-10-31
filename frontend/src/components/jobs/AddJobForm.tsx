@@ -108,53 +108,53 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
           <CardTitle>Basic Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Job Title *</Label>
-            <Input id="title" {...register('title')} placeholder="e.g., Senior Frontend Developer" />
-            {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
-          </div>
+          <InputField 
+            id="title" 
+            label="Job Title *"
+            placeholder="e.g., Senior Frontend Developer"
+            {...register('title')}
+          />
+          {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="type">Job Type *</Label>
               <Controller
                 control={control}
                 name="type"
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger id="type">
-                      <SelectValue placeholder="Select job type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="FULL_TIME">Full Time</SelectItem>
-                      <SelectItem value="PART_TIME">Part Time</SelectItem>
-                      <SelectItem value="CONTRACT">Contract</SelectItem>
-                      <SelectItem value="INTERNSHIP">Internship</SelectItem>
-                      <SelectItem value="REMOTE">Remote</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <SelectField
+                    options={[
+                      { value: "FULL_TIME", label: "Full Time" },
+                      { value: "PART_TIME", label: "Part Time" },
+                      { value: "CONTRACT", label: "Contract" },
+                      { value: "INTERNSHIP", label: "Internship" },
+                      { value: "REMOTE", label: "Remote" },
+                    ]}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select job type"
+                  />
                 )}
               />
               {errors.type && <p className="text-xs text-destructive">Type is required</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="experience">Experience Level *</Label>
               <Controller
                 control={control}
                 name="experience"
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger id="experience">
-                      <SelectValue placeholder="Select experience" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="0-2">0-2 years</SelectItem>
-                      <SelectItem value="2-4">2-4 years</SelectItem>
-                      <SelectItem value="4-6">4-6 years</SelectItem>
-                      <SelectItem value="6+">6+ years</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <SelectField
+                    options={[
+                      { value: "0-2", label: "0-2 years" },
+                      { value: "2-4", label: "2-4 years" },
+                      { value: "4-6", label: "4-6 years" },
+                      { value: "6+", label: "6+ years" },
+                    ]}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select experience"
+                  />
                 )}
               />
               {errors.experience && <p className="text-xs text-destructive">Experience is required</p>}
@@ -162,31 +162,39 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="location">Location *</Label>
-              <Input id="location" {...register('location')} placeholder="e.g., Dhaka, Bangladesh" />
-              {errors.location && <p className="text-xs text-destructive">{errors.location.message}</p>}
-            </div>
+            <InputField
+              id="location"
+              label="Location *"
+              placeholder="e.g., Dhaka, Bangladesh"
+              {...register('location')}
+            />
+            {errors.location && <p className="text-xs text-destructive">{errors.location.message}</p>}
 
-            <div className="space-y-2">
-              <Label htmlFor="salary">Salary Range *</Label>
-              <Input id="salary" {...register('salary')} placeholder="e.g., 50,000 - 80,000 BDT" />
-              {errors.salary && <p className="text-xs text-destructive">{errors.salary.message}</p>}
-            </div>
+            <InputField
+              id="salary"
+              label="Salary Range *"
+              placeholder="e.g., 50,000 - 80,000 BDT"
+              {...register('salary')}
+            />
+            {errors.salary && <p className="text-xs text-destructive">{errors.salary.message}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">Category *</Label>
-              <Input id="category" {...register('category')} placeholder="e.g., Software Development" />
-              {errors.category && <p className="text-xs text-destructive">{errors.category.message}</p>}
-            </div>
+            <InputField
+              id="category"
+              label="Category *"
+              placeholder="e.g., Software Development"
+              {...register('category')}
+            />
+            {errors.category && <p className="text-xs text-destructive">{errors.category.message}</p>}
 
-            <div className="space-y-2">
-              <Label htmlFor="deadline">Application Deadline</Label>
-              <Input id="deadline" type="date" {...register('deadline')} />
-              {errors.deadline && <p className="text-xs text-destructive">{errors.deadline.message}</p>}
-            </div>
+            <InputField
+              id="deadline"
+              label="Application Deadline"
+              type="date"
+              {...register('deadline')}
+            />
+            {errors.deadline && <p className="text-xs text-destructive">{errors.deadline.message}</p>}
           </div>
         </CardContent>
       </Card>
@@ -196,36 +204,38 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
           <CardTitle>Job Description</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="description">Description *</Label>
-            <Textarea id="description" {...register('description')} placeholder="Provide a detailed description of the role..." rows={6} />
-            {errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
-          </div>
+          <TextareaField
+            id="description"
+            label="Description *"
+            placeholder="Provide a detailed description of the role..."
+            rows={6}
+            {...register('description')}
+          />
+          {errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
 
           <div className="space-y-2">
-            <Label>Key Responsibilities *</Label>
-            <div className="flex gap-2">
-              <Textarea
-                value={responsibilitiesText}
-                onChange={(e) => setResponsibilitiesText(e.target.value)}
-                placeholder="Type responsibilities. Press Enter to add (Shift+Enter for newline)"
-                rows={4}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    const items = responsibilitiesText
-                      .split('\n')
-                      .map((s) => s.trim())
-                      .filter(Boolean)
-                    if (!items.length) return
-                    const existing = responsibilities
-                    const next = [...existing, ...items]
-                    setValue('responsibilities', next)
-                    setResponsibilitiesText('')
-                  }
-                }}
-              />
-            </div>
+            <TextareaField
+              id="responsibilities"
+              label="Key Responsibilities *"
+              value={responsibilitiesText}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setResponsibilitiesText(e.target.value)}
+              placeholder="Type responsibilities. Press Enter to add (Shift+Enter for newline)"
+              rows={4}
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  const items = responsibilitiesText
+                    .split('\n')
+                    .map((s) => s.trim())
+                    .filter(Boolean)
+                  if (!items.length) return
+                  const existing = responsibilities
+                  const next = [...existing, ...items]
+                  setValue('responsibilities', next)
+                  setResponsibilitiesText('')
+                }
+              }}
+            />
             <div className="flex flex-wrap gap-2">
               {responsibilities.filter(r => r.trim() !== '').map((r: string, i: number) => (
                 <div key={i} className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-2">
@@ -251,29 +261,28 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
           </div>
 
           <div className="space-y-2">
-            <Label>Requirements *</Label>
-            <div className="flex gap-2">
-              <Textarea
-                value={requirementsText}
-                onChange={(e) => setRequirementsText(e.target.value)}
-                placeholder="Type requirements. Press Enter to add (Shift+Enter for newline)"
-                rows={4}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    const items = requirementsText
-                      .split('\n')
-                      .map((s) => s.trim())
-                      .filter(Boolean)
-                    if (!items.length) return
-                    const existing = requirements
-                    const next = [...existing, ...items]
-                    setValue('requirements', next)
-                    setRequirementsText('')
-                  }
-                }}
-              />
-            </div>
+            <TextareaField
+              id="requirements"
+              label="Requirements *"
+              value={requirementsText}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRequirementsText(e.target.value)}
+              placeholder="Type requirements. Press Enter to add (Shift+Enter for newline)"
+              rows={4}
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  const items = requirementsText
+                    .split('\n')
+                    .map((s) => s.trim())
+                    .filter(Boolean)
+                  if (!items.length) return
+                  const existing = requirements
+                  const next = [...existing, ...items]
+                  setValue('requirements', next)
+                  setRequirementsText('')
+                }
+              }}
+            />
             <div className="flex flex-wrap gap-2">
               {requirements.filter(r => r.trim() !== '').map((r: string, i: number) => (
                 <div key={i} className="px-3 py-1 rounded-full bg-sky-100 text-sky-700 flex items-center gap-2">
@@ -299,29 +308,28 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
           </div>
 
           <div className="space-y-2">
-            <Label>Benefits</Label>
-            <div className="flex gap-2">
-              <Textarea
-                value={benefitsText}
-                onChange={(e) => setBenefitsText(e.target.value)}
-                placeholder="Type benefits. Press Enter to add (Shift+Enter for newline)"
-                rows={3}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    const items = benefitsText
-                      .split('\n')
-                      .map((s) => s.trim())
-                      .filter(Boolean)
-                    if (!items.length) return
-                    const existing = benefits
-                    const next = [...existing, ...items]
-                    setValue('benefits', next)
-                    setBenefitsText('')
-                  }
-                }}
-              />
-            </div>
+            <TextareaField
+              id="benefits"
+              label="Benefits"
+              value={benefitsText}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setBenefitsText(e.target.value)}
+              placeholder="Type benefits. Press Enter to add (Shift+Enter for newline)"
+              rows={3}
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  const items = benefitsText
+                    .split('\n')
+                    .map((s) => s.trim())
+                    .filter(Boolean)
+                  if (!items.length) return
+                  const existing = benefits
+                  const next = [...existing, ...items]
+                  setValue('benefits', next)
+                  setBenefitsText('')
+                }
+              }}
+            />
             <div className="flex flex-wrap gap-2">
               {benefits.filter(b => b.trim() !== '').map((b: string, i: number) => (
                 <div key={i} className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 flex items-center gap-2">
@@ -353,19 +361,18 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
           <CardTitle>Required Skills</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-2">
-            <Input
-              value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
-              placeholder="Add a required skill. Press Enter to add"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  handleAddSkill()
-                }
-              }}
-            />
-          </div>
+          <InputField
+            id="skill-input"
+            value={newSkill}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewSkill(e.target.value)}
+            placeholder="Add a required skill. Press Enter to add"
+            onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleAddSkill()
+              }
+            }}
+          />
           <div className="flex flex-wrap gap-2 mb-3">
             {skills.map((skill) => (
               <Badge key={skill} variant="secondary" className="bg-emerald-500/10 text-emerald-500">
