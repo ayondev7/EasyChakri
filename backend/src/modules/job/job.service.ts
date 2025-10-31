@@ -92,12 +92,12 @@ export class JobService {
     const hash = this.redis.generateQueryHash(query as any);
     const cacheKey = `jobs:search:${hash}`;
 
-    const cached = await this.redis.get<any>(cacheKey);
-    if (cached) return cached;
-
-    const result = await this.getJobs(query);
-    await this.redis.set(cacheKey, result, 300);
-    return result;
+    return await this.redis.getWithRefresh(
+      cacheKey,
+      async () => await this.getJobs(query),
+      300,
+      180,
+    );
   }
 
   async getJobs(query: JobQueryDto) {
@@ -230,104 +230,102 @@ export class JobService {
   }
 
   async getJobById(id: string, userId?: string) {
-    const cacheKey = `job:detail:${id}`;
+    const cacheKey = userId ? `job:detail:${id}:${userId}` : `job:detail:${id}`;
 
-    const cached = await this.redis.get<any>(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    const job = await this.prisma.job.findFirst({
-      where: {
-        OR: [
-          { id: id },
-          { slug: id },
-        ],
-      },
-      include: {
-        company: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            logo: true,
-            location: true,
-            industry: true,
-            description: true,
-            website: true,
+    return await this.redis.getWithRefresh(
+      cacheKey,
+      async () => {
+        const job = await this.prisma.job.findFirst({
+          where: {
+            OR: [
+              { id: id },
+              { slug: id },
+            ],
           },
-        },
-        recruiter: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+          include: {
+            company: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                logo: true,
+                location: true,
+                industry: true,
+                description: true,
+                website: true,
+              },
+            },
+            recruiter: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            _count: {
+              select: {
+                applications: true,
+              },
+            },
           },
-        },
-        _count: {
-          select: {
-            applications: true,
-          },
-        },
-      },
-    });
-
-    if (!job) {
-      throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
-    }
-
-    if (userId) {
-      const user = await this.prisma.user.findUnique({
-        where: { id: userId },
-        select: { role: true },
-      });
-
-      if (user && user.role === 'SEEKER') {
-        await this.prisma.job.update({
-          where: { id: job.id },
-          data: { views: { increment: 1 } },
         });
-      }
-    }
 
-    let hasApplied = false
-    let isSaved = false
+        if (!job) {
+          throw new NotFoundException('We couldn\'t find this job listing. It may have been removed.');
+        }
 
-    if (userId) {
-      const application = await this.prisma.application.findUnique({
-        where: {
-          seekerId_jobId: {
-            seekerId: userId,
-            jobId: job.id,
-          },
-        },
-        select: { id: true },
-      })
+        if (userId) {
+          const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { role: true },
+          });
 
-      hasApplied = !!application
+          if (user && user.role === 'SEEKER') {
+            await this.prisma.job.update({
+              where: { id: job.id },
+              data: { views: { increment: 1 } },
+            });
+          }
+        }
 
-      const saved = await this.prisma.savedJob.findUnique({
-        where: {
-          userId_jobId: {
-            userId: userId,
-            jobId: job.id,
-          },
-        },
-        select: { id: true },
-      })
+        let hasApplied = false;
+        let isSaved = false;
 
-      isSaved = !!saved
-    }
+        if (userId) {
+          const application = await this.prisma.application.findUnique({
+            where: {
+              seekerId_jobId: {
+                seekerId: userId,
+                jobId: job.id,
+              },
+            },
+            select: { id: true },
+          });
 
-    const payload = {
-      ...job,
-      hasApplied,
-      isSaved,
-    };
+          hasApplied = !!application;
 
-    await this.redis.set(cacheKey, payload, 600);
+          const saved = await this.prisma.savedJob.findUnique({
+            where: {
+              userId_jobId: {
+                userId: userId,
+                jobId: job.id,
+              },
+            },
+            select: { id: true },
+          });
 
-    return payload;
+          isSaved = !!saved;
+        }
+
+        return {
+          ...job,
+          hasApplied,
+          isSaved,
+        };
+      },
+      600,
+      300,
+    );
   }
 
   async updateJob(jobId: string, recruiterId: string, dto: UpdateJobDto) {
@@ -364,7 +362,7 @@ export class JobService {
     });
 
     await this.redis.delPattern(`jobs:search:*`);
-    await this.redis.del(`job:detail:${jobId}`);
+    await this.redis.delPattern(`job:detail:${jobId}*`);
 
     return updatedJob;
   }
@@ -387,7 +385,7 @@ export class JobService {
     });
 
     await this.redis.delPattern(`jobs:search:*`);
-    await this.redis.del(`job:detail:${jobId}`);
+    await this.redis.delPattern(`job:detail:${jobId}*`);
 
     return { message: 'Job deleted successfully' };
   }
@@ -890,6 +888,9 @@ export class JobService {
       });
     });
 
+    await this.redis.del(`seeker:dashboard:${userId}`);
+    await this.redis.delPattern(`job:detail:${jobId}*`);
+
     return savedJob;
   }
 
@@ -915,6 +916,9 @@ export class JobService {
         },
       },
     });
+
+    await this.redis.del(`seeker:dashboard:${userId}`);
+    await this.redis.delPattern(`job:detail:${jobId}*`);
 
     return true;
   }
@@ -980,111 +984,115 @@ export class JobService {
 
   async getRecruiterDashboardStats(recruiterId: string) {
     const cacheKey = `recruiter:dashboard:${recruiterId}`;
-    const cached = await this.redis.get<any>(cacheKey);
-    if (cached) return cached;
-    const [totalJobs, totalApplications, activeJobs, totalViews] = await Promise.all([
-      this.prisma.job.count({
-        where: { recruiterId },
-      }),
-      this.prisma.application.count({
-        where: { job: { recruiterId } },
-      }),
-      this.prisma.job.count({
-        where: {
-          recruiterId,
-          deadline: { gte: new Date() },
-        },
-      }),
-      this.prisma.job.aggregate({
-        where: { recruiterId },
-        _sum: { views: true },
-      }),
-    ]);
+    
+    return await this.redis.getWithRefresh(
+      cacheKey,
+      async () => {
+        const [totalJobs, totalApplications, activeJobs, totalViews] = await Promise.all([
+          this.prisma.job.count({
+            where: { recruiterId },
+          }),
+          this.prisma.application.count({
+            where: { job: { recruiterId } },
+          }),
+          this.prisma.job.count({
+            where: {
+              recruiterId,
+              deadline: { gte: new Date() },
+            },
+          }),
+          this.prisma.job.aggregate({
+            where: { recruiterId },
+            _sum: { views: true },
+          }),
+        ]);
 
-    const applications = await this.prisma.application.findMany({
-      where: { job: { recruiterId } },
-      select: { status: true },
-    });
+        const applications = await this.prisma.application.findMany({
+          where: { job: { recruiterId } },
+          select: { status: true },
+        });
 
-    const applicationsByStatus = applications.reduce((acc, app) => {
-      acc[app.status] = (acc[app.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+        const applicationsByStatus = applications.reduce((acc, app) => {
+          acc[app.status] = (acc[app.status] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
 
-    const recentApplications = await this.prisma.application.count({
-      where: {
-        job: { recruiterId },
-        appliedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+        const recentApplications = await this.prisma.application.count({
+          where: {
+            job: { recruiterId },
+            appliedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+          },
+        });
+
+        return {
+          totalJobs,
+          totalApplications,
+          activeJobs,
+          totalViews: totalViews._sum.views || 0,
+          applicationsByStatus,
+          recentApplications,
+        };
       },
-    });
-
-    const result = {
-      totalJobs,
-      totalApplications,
-      activeJobs,
-      totalViews: totalViews._sum.views || 0,
-      applicationsByStatus,
-      recentApplications,
-    };
-
-    await this.redis.set(cacheKey, result, 300);
-
-    return result;
+      300,
+      150,
+    );
   }
 
   async getSeekerDashboardStats(seekerId: string) {
     const cacheKey = `seeker:dashboard:${seekerId}`;
-    const cached = await this.redis.get<any>(cacheKey);
-    if (cached) return cached;
-    const [totalApplications, savedJobsCount, interviewsCount] = await Promise.all([
-      this.prisma.application.count({
-        where: { seekerId },
-      }),
-      this.prisma.savedJob.count({
-        where: { userId: seekerId },
-      }),
-      this.prisma.interview.count({
-        where: { seekerId },
-      }),
-    ]);
+    
+    return await this.redis.getWithRefresh(
+      cacheKey,
+      async () => {
+        const [totalApplications, savedJobsCount, interviewsCount] = await Promise.all([
+          this.prisma.application.count({
+            where: { seekerId },
+          }),
+          this.prisma.savedJob.count({
+            where: { userId: seekerId },
+          }),
+          this.prisma.interview.count({
+            where: { seekerId },
+          }),
+        ]);
 
-    const applications = await this.prisma.application.findMany({
-      where: { seekerId },
-      select: { status: true },
-    });
+        const applications = await this.prisma.application.findMany({
+          where: { seekerId },
+          select: { status: true },
+        });
 
-    const applicationsByStatus = applications.reduce((acc, app) => {
-      acc[app.status] = (acc[app.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+        const applicationsByStatus = applications.reduce((acc, app) => {
+          acc[app.status] = (acc[app.status] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
 
-    const upcomingInterviews = await this.prisma.interview.count({
-      where: {
-        seekerId,
-        scheduledAt: { gte: new Date() },
-        status: { in: ['SCHEDULED', 'CONFIRMED'] },
+        const upcomingInterviews = await this.prisma.interview.count({
+          where: {
+            seekerId,
+            scheduledAt: { gte: new Date() },
+            status: { in: ['SCHEDULED', 'CONFIRMED'] },
+          },
+        });
+
+        const recentApplications = await this.prisma.application.count({
+          where: {
+            seekerId,
+            appliedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+          },
+        });
+
+        return {
+          totalApplications,
+          savedJobsCount,
+          interviewsCount,
+          upcomingInterviews,
+          applicationsByStatus,
+          recentApplications,
+        };
       },
-    });
-
-    const recentApplications = await this.prisma.application.count({
-      where: {
-        seekerId,
-        appliedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
-      },
-    });
-
-    const result = {
-      totalApplications,
-      savedJobsCount,
-      interviewsCount,
-      upcomingInterviews,
-      applicationsByStatus,
-      recentApplications,
-    };
-
-    await this.redis.set(cacheKey, result, 300);
-
-    return result;
+      300,
+      150,
+    );
   }
 }
 

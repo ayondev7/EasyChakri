@@ -114,3 +114,6 @@ node_modules/.prisma
 *.sqlite
 
 seed.js
+
+# Ignore markdown/readme files for backend-v2
+*.md

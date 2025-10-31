@@ -9,41 +9,42 @@ export class UserService {
 
   async getUserProfile(userId: string) {
     const cacheKey = `user:profile:${userId}`;
-    const cached = await this.redis.get<any>(cacheKey);
-    if (cached) return cached;
+    
+    return await this.redis.getWithRefresh(
+      cacheKey,
+      async () => {
+        const user = await this.prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            role: true,
+            image: true,
+            phone: true,
+            location: true,
+            bio: true,
+            skills: true,
+            experience: true,
+            education: true,
+            resume: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        });
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        image: true,
-        phone: true,
-        location: true,
-        bio: true,
-        skills: true,
-        experience: true,
-        education: true,
-        resume: true,
-        createdAt: true,
-        updatedAt: true,
+        if (!user) {
+          throw new NotFoundException('We couldn\'t find your account. Please sign in again.');
+        }
+
+        return {
+          ...user,
+          role: user.role.toLowerCase() as 'seeker' | 'recruiter',
+        };
       },
-    });
-
-    if (!user) {
-      throw new NotFoundException('We couldn\'t find your account. Please sign in again.');
-    }
-
-    const payload = {
-      ...user,
-      role: user.role.toLowerCase() as 'seeker' | 'recruiter',
-    };
-
-    await this.redis.set(cacheKey, payload, 300);
-
-    return payload;
+      300,
+      180,
+    );
   }
 
   async updateUserProfile(userId: string, dto: UpdateUserDto) {
@@ -82,6 +83,8 @@ export class UserService {
         updatedAt: true,
       },
     });
+
+    await this.redis.del(`user:profile:${userId}`);
 
     return {
       ...user,

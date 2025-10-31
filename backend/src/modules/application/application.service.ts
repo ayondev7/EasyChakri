@@ -277,6 +277,9 @@ export class ApplicationService {
       return updated;
     });
 
+    await this.redis.del(`seeker:dashboard:${application.seekerId}`);
+    await this.redis.del(`recruiter:dashboard:${application.job.recruiterId}`);
+
     return updatedApplication;
   }
 
@@ -376,6 +379,9 @@ export class ApplicationService {
     await this.prisma.application.delete({
       where: { id: applicationId },
     });
+
+    await this.redis.del(`seeker:dashboard:${seekerId}`);
+    await this.redis.del(`recruiter:dashboard:${application.job.recruiterId}`);
 
     return { message: 'Application withdrawn successfully' };
   }
