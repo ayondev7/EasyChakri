@@ -30,17 +30,17 @@ export const categories = [
 
 export const salaryRanges = [
   { value: "", label: "All Ranges" },
-  { value: "0-50000", label: "$0 - $50k" },
-  { value: "50000-100000", label: "$50k - $100k" },
-  { value: "100000-150000", label: "$100k - $150k" },
-  { value: "150000-999999", label: "$150k+" },
+  { value: "0-50000", label: "0 - 50k BDT" },
+  { value: "50000-100000", label: "50k - 100k BDT" },
+  { value: "100000-150000", label: "100k - 150k BDT" },
+  { value: "150000-999999", label: "150k+ BDT" },
 ]
 
 export const salaryMarks = [
-  { value: 0, label: "$0" },
-  { value: 1, label: "$50k" },
-  { value: 2, label: "$100k" },
-  { value: 3, label: "$150k+" },
+  { value: 0, label: "0 BDT" },
+  { value: 1, label: "50k BDT" },
+  { value: 2, label: "100k BDT" },
+  { value: 3, label: "150k+ BDT" },
 ]
 
 const ranges = ["", "0-50000", "50000-100000", "100000-150000", "150000-999999"]

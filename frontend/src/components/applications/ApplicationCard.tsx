@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Application } from "@/types"
-import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany, formatJobType } from "@/utils/utils"
 import { getApplicationStatusIcon, getApplicationStatusColor } from "@/constants/statusConstants"
 import Link from "next/link"
 import Image from "next/image"
@@ -39,7 +39,7 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               <span>{application.job.location}</span>
               <span>•</span>
-              <span>{application.job.type}</span>
+              <span>{formatJobType(application.job.type)}</span>
               <span>•</span>
               <span>Applied {formatDate(application.appliedAt)}</span>
             </div>

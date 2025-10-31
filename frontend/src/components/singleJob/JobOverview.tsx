@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { DollarSign, Briefcase, Users, MapPin, Calendar } from "lucide-react"
-import { formatDate, formatDeadline, formatSalary } from "@/utils/utils"
+import { formatDate, formatDeadline, formatSalary, formatJobType } from "@/utils/utils"
 import type { Job } from "@/types"
 
 interface JobOverviewProps {
@@ -29,7 +29,7 @@ export function JobOverview({ job }: JobOverviewProps) {
           <Briefcase className="h-5 w-5 text-emerald-500 mt-0.5" />
           <div>
             <p className="text-sm text-muted-foreground">Job Type</p>
-            <p className="font-semibold">{job.type.replace('_', ' ')}</p>
+            <p className="font-semibold">{formatJobType(job.type)}</p>
           </div>
         </div>
         <Separator />

@@ -7,13 +7,10 @@ import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Plus, X, Loader2 } from 'lucide-react'
 import { useCreateJob } from '@/hooks/jobHooks'
+import { InputField, TextareaField, SelectField } from '@/components/form'
 
 const jobSchema = z.object({
   title: z.string().min(3),
@@ -129,8 +126,8 @@ export default function AddJobForm({ companyId }: { companyId: string | null }) 
                       <SelectValue placeholder="Select job type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="FULL_TIME">Full-time</SelectItem>
-                      <SelectItem value="PART_TIME">Part-time</SelectItem>
+                      <SelectItem value="FULL_TIME">Full Time</SelectItem>
+                      <SelectItem value="PART_TIME">Part Time</SelectItem>
                       <SelectItem value="CONTRACT">Contract</SelectItem>
                       <SelectItem value="INTERNSHIP">Internship</SelectItem>
                       <SelectItem value="REMOTE">Remote</SelectItem>

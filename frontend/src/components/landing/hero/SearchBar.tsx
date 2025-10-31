@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useSearchSuggestions } from "@/hooks/jobHooks"
 import Image from "next/image"
+import { formatJobType } from "@/utils/utils"
 
 export function SearchBar() {
   const router = useRouter()
@@ -180,7 +181,7 @@ export function SearchBar() {
                         </span>
                         <span className="flex items-center gap-1">
                           <Briefcase className="h-3 w-3" />
-                          {job.type}
+                          {formatJobType(job.type)}
                         </span>
                       </div>
                     </div>

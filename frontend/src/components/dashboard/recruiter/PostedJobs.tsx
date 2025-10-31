@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Users, Eye, Briefcase, Plus, MoreVertical, Edit, Trash2 } from "lucide-react"
-import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany, formatJobType } from "@/utils/utils"
 import { useDeleteJob } from "@/hooks/jobHooks"
 import toast from "react-hot-toast"
 
@@ -98,7 +98,7 @@ export default function PostedJobs({ jobs, getApplicantCount }: { jobs: Job[]; g
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground mb-2">
-                      {job.location} • {job.type}
+                      {job.location} • {job.type ? formatJobType(job.type) : 'N/A'}
                     </p>
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       <button

@@ -130,8 +130,8 @@ export default function EditJobForm({ job }: { job: Job }) {
                       <SelectValue placeholder="Select job type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="FULL_TIME">Full-time</SelectItem>
-                      <SelectItem value="PART_TIME">Part-time</SelectItem>
+                      <SelectItem value="FULL_TIME">Full Time</SelectItem>
+                      <SelectItem value="PART_TIME">Part Time</SelectItem>
                       <SelectItem value="CONTRACT">Contract</SelectItem>
                       <SelectItem value="INTERNSHIP">Internship</SelectItem>
                       <SelectItem value="REMOTE">Remote</SelectItem>

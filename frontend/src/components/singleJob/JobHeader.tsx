@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Briefcase, Clock, Eye, Users, Bookmark, Share2 } from "lucide-react"
-import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany, formatJobType } from "@/utils/utils"
 import type { Job } from "@/types"
 import { useApplyForJob, useSaveJob, useUnsaveJob, jobKeys } from "@/hooks/jobHooks"
 import toast from "react-hot-toast"
@@ -144,7 +144,7 @@ export function JobHeader({ job, isAuthenticated, userRole }: JobHeaderProps) {
               </div>
               <div className="flex items-center gap-1.5">
                 <Briefcase className="h-4 w-4" />
-                <span>{job.type.replace('_', ' ')}</span>
+                <span>{formatJobType(job.type)}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Clock className="h-4 w-4" />

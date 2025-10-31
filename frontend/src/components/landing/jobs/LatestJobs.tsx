@@ -5,7 +5,7 @@ import { useJobs } from "@/hooks/jobHooks"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Briefcase, Clock, ArrowRight } from "lucide-react"
-import { formatDate, stripParenthesizedCompany, formatSalary } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany, formatSalary, formatJobType } from "@/utils/utils"
 import Image from "next/image"
 import Loader from "@/components/Loader"
 
@@ -82,7 +82,7 @@ export function LatestJobs() {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Briefcase className="h-4 w-4" />
-                      <span>{job.type}</span>
+                      <span>{formatJobType(job.type)}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Clock className="h-4 w-4" />

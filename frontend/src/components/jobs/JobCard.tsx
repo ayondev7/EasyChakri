@@ -4,7 +4,7 @@ import type { Job } from "@/types"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Briefcase, Clock, Bookmark } from "lucide-react"
-import { formatDate, stripParenthesizedCompany, formatSalary } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany, formatSalary, formatJobType } from "@/utils/utils"
 import { useAuth } from "@/contexts/AuthContext"
 import { useSaveJob } from "@/hooks/jobHooks"
 import toast from "react-hot-toast"
@@ -70,7 +70,7 @@ export function JobCard({ job }: JobCardProps) {
       <div className="px-6 pb-6 space-y-3">
         <div className="flex flex-wrap gap-2">
           <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20">
-            {job.type.replace('_', ' ')}
+            {formatJobType(job.type)}
           </Badge>
           <Badge variant="outline">{job.experience} years</Badge>
         </div>

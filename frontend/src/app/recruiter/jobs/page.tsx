@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { useMyJobs } from '@/hooks/jobHooks'
 import type { Job } from '@/types'
 import { Users, Eye, Plus, MoreVertical, Edit, Trash2 } from "lucide-react"
-import { formatDate, stripParenthesizedCompany } from "@/utils/utils"
+import { formatDate, stripParenthesizedCompany, formatJobType } from "@/utils/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function RecruiterJobsPage() {
@@ -97,7 +97,7 @@ export default function RecruiterJobsPage() {
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">
-                        {job.location} • {job.type}
+                        {job.location} • {formatJobType(job.type)}
                       </p>
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                         <button

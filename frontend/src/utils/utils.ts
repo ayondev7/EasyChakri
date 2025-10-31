@@ -40,16 +40,16 @@ export function formatSalary(salary?: string | number | null): string {
   if (salary === null || salary === undefined) return ""
 
   if (typeof salary === "number") {
-    return salary.toLocaleString("en-US")
+    return `${salary.toLocaleString("en-US")} BDT`
   }
 
   const raw = String(salary).trim()
   if (!raw) return ""
 
-  const currencyMatch = raw.match(/([A-Za-z]+)$/)
-  const currency = currencyMatch ? ` ${currencyMatch[1]}` : ""
+  const cleanedRaw = raw.replace(/\$/g, "").replace(/USD/gi, "").replace(/BDT/gi, "").trim()
 
-  const core = currencyMatch ? raw.slice(0, raw.lastIndexOf(currencyMatch[1])).trim() : raw
+  const currencyMatch = cleanedRaw.match(/([A-Za-z]+)$/)
+  const core = currencyMatch ? cleanedRaw.slice(0, cleanedRaw.lastIndexOf(currencyMatch[1])).trim() : cleanedRaw
 
   if (core.includes("-")) {
     const parts = core.split("-").map((p) => p.trim())
@@ -58,12 +58,17 @@ export function formatSalary(salary?: string | number | null): string {
       if (!digits) return p
       return Number(digits).toLocaleString("en-US")
     })
-    return `${formattedParts.join("-")}${currency}`
+    return `${formattedParts.join(" - ")} BDT`
   }
 
   const digits = core.replace(/[^0-9]/g, "")
   if (!digits) return raw
-  return `${Number(digits).toLocaleString("en-US")}${currency}`
+  return `${Number(digits).toLocaleString("en-US")} BDT`
+}
+
+export function formatJobType(type: string): string {
+  if (!type) return ""
+  return type.replace(/_/g, " ")
 }
 
 export function getInitials(name: string): string {
