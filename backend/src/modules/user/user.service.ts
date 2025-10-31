@@ -1,12 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RedisService } from '../redis/redis.service';
 import { UpdateUserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private redis: RedisService) {}
 
   async getUserProfile(userId: string) {
+    const cacheKey = `user:profile:${userId}`;
+    const cached = await this.redis.get<any>(cacheKey);
+    if (cached) return cached;
+
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -31,10 +36,14 @@ export class UserService {
       throw new NotFoundException('We couldn\'t find your account. Please sign in again.');
     }
 
-    return {
+    const payload = {
       ...user,
       role: user.role.toLowerCase() as 'seeker' | 'recruiter',
     };
+
+    await this.redis.set(cacheKey, payload, 300);
+
+    return payload;
   }
 
   async updateUserProfile(userId: string, dto: UpdateUserDto) {

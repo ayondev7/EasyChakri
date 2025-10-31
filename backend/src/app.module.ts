@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './modules/prisma/prisma.module';
+import { RedisModule } from './modules/redis/redis.module';
 import { UserModule } from './modules/user/user.module';
 import { JobModule } from './modules/job/job.module';
 import { CompanyModule } from './modules/company/company.module';
@@ -17,6 +18,7 @@ import { NotificationModule } from './modules/notification/notification.module';
       envFilePath: '.env',
     }),
     PrismaModule,
+    RedisModule,
     SocketModule,
     AuthModule,
     UserModule,

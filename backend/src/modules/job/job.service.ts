@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RedisService } from '../redis/redis.service';
 import { NotificationService } from '../notification/notification.service';
 import { CreateJobDto, UpdateJobDto, JobQueryDto } from './dto/job.dto';
 import { generateUniqueJobSlug } from '../../utils/slug.util';
@@ -8,6 +9,7 @@ import { generateUniqueJobSlug } from '../../utils/slug.util';
 export class JobService {
   constructor(
     private prisma: PrismaService,
+    private redis: RedisService,
     private notificationService: NotificationService,
   ) {}
 
@@ -53,7 +55,7 @@ export class JobService {
 
     const searchTerm = query.trim();
 
-    const jobs = await this.prisma.job.findMany({
+  const jobs = await this.prisma.job.findMany({
       where: {
         OR: [
           { title: { contains: searchTerm, mode: 'insensitive' } },
@@ -84,6 +86,18 @@ export class JobService {
     });
 
     return { data: jobs };
+  }
+
+  async getCachedJobs(query: JobQueryDto) {
+    const hash = this.redis.generateQueryHash(query as any);
+    const cacheKey = `jobs:search:${hash}`;
+
+    const cached = await this.redis.get<any>(cacheKey);
+    if (cached) return cached;
+
+    const result = await this.getJobs(query);
+    await this.redis.set(cacheKey, result, 300);
+    return result;
   }
 
   async getJobs(query: JobQueryDto) {
@@ -216,6 +230,13 @@ export class JobService {
   }
 
   async getJobById(id: string, userId?: string) {
+    const cacheKey = `job:detail:${id}`;
+
+    const cached = await this.redis.get<any>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const job = await this.prisma.job.findFirst({
       where: {
         OR: [
@@ -298,11 +319,15 @@ export class JobService {
       isSaved = !!saved
     }
 
-    return {
+    const payload = {
       ...job,
       hasApplied,
       isSaved,
-    }
+    };
+
+    await this.redis.set(cacheKey, payload, 600);
+
+    return payload;
   }
 
   async updateJob(jobId: string, recruiterId: string, dto: UpdateJobDto) {
@@ -338,6 +363,9 @@ export class JobService {
       },
     });
 
+    await this.redis.delPattern(`jobs:search:*`);
+    await this.redis.del(`job:detail:${jobId}`);
+
     return updatedJob;
   }
 
@@ -357,6 +385,9 @@ export class JobService {
     await this.prisma.job.delete({
       where: { id: jobId },
     });
+
+    await this.redis.delPattern(`jobs:search:*`);
+    await this.redis.del(`job:detail:${jobId}`);
 
     return { message: 'Job deleted successfully' };
   }
@@ -685,6 +716,13 @@ export class JobService {
       throw new BadRequestException('You\'ve already applied for this job.');
     }
 
+    const rlKey = `ratelimit:apply:${seekerId}:${jobId}`;
+    const allowed = await this.redis.checkRateLimit(rlKey, 1, 24 * 60 * 60);
+    if (!allowed) {
+      const info = await this.redis.getRateLimitInfo(rlKey);
+      throw new BadRequestException(`You're applying too frequently. Try again in ${info.ttl} seconds.`);
+    }
+
     const application = await this.prisma.$transaction(async (tx) => {
       const createdApplication = await tx.application.create({
         data: {
@@ -733,6 +771,9 @@ export class JobService {
 
       return createdApplication;
     });
+
+    await this.redis.del(`seeker:dashboard:${seekerId}`);
+    await this.redis.del(`recruiter:dashboard:${application.job.recruiterId}`);
 
     return application;
   }
@@ -938,6 +979,9 @@ export class JobService {
   }
 
   async getRecruiterDashboardStats(recruiterId: string) {
+    const cacheKey = `recruiter:dashboard:${recruiterId}`;
+    const cached = await this.redis.get<any>(cacheKey);
+    if (cached) return cached;
     const [totalJobs, totalApplications, activeJobs, totalViews] = await Promise.all([
       this.prisma.job.count({
         where: { recruiterId },
@@ -974,7 +1018,7 @@ export class JobService {
       },
     });
 
-    return {
+    const result = {
       totalJobs,
       totalApplications,
       activeJobs,
@@ -982,9 +1026,16 @@ export class JobService {
       applicationsByStatus,
       recentApplications,
     };
+
+    await this.redis.set(cacheKey, result, 300);
+
+    return result;
   }
 
   async getSeekerDashboardStats(seekerId: string) {
+    const cacheKey = `seeker:dashboard:${seekerId}`;
+    const cached = await this.redis.get<any>(cacheKey);
+    if (cached) return cached;
     const [totalApplications, savedJobsCount, interviewsCount] = await Promise.all([
       this.prisma.application.count({
         where: { seekerId },
@@ -1022,7 +1073,7 @@ export class JobService {
       },
     });
 
-    return {
+    const result = {
       totalApplications,
       savedJobsCount,
       interviewsCount,
@@ -1030,6 +1081,10 @@ export class JobService {
       applicationsByStatus,
       recentApplications,
     };
+
+    await this.redis.set(cacheKey, result, 300);
+
+    return result;
   }
 }
 

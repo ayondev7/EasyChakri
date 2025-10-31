@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RedisService } from '../redis/redis.service';
 import { NotificationService } from '../notification/notification.service';
 import { UpdateApplicationStatusDto, ApplicationQueryDto } from './dto/application.dto';
 
@@ -7,6 +8,7 @@ import { UpdateApplicationStatusDto, ApplicationQueryDto } from './dto/applicati
 export class ApplicationService {
   constructor(
     private prisma: PrismaService,
+    private redis: RedisService,
     private notificationService: NotificationService,
   ) {}
 
