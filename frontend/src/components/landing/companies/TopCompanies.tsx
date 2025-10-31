@@ -15,7 +15,7 @@ export function TopCompanies() {
 
   if (isLoading) {
     return (
-      <section className="py-16 md:py-24 bg-muted/30">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <Loader />
         </div>
@@ -25,7 +25,7 @@ export function TopCompanies() {
 
   if (companies.length === 0) {
     return (
-      <section className="py-16 md:py-24 bg-muted/30">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center">
             <div className="text-muted-foreground">No companies available at the moment.</div>
@@ -36,7 +36,7 @@ export function TopCompanies() {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-muted/30">
+    <section className="py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-12">
           <div>

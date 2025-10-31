@@ -73,7 +73,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-[100px] bg-gray-50 overflow-hidden">
+    <section className="py-[100px] overflow-hidden">
   <div className="container mx-auto mb-12">
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-2">Success Stories</h2>

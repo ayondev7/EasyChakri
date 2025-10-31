@@ -18,7 +18,7 @@ import { FeaturedCompanies } from "@/components/landing/companies/FeaturedCompan
 
 export default function HomePage() {
   return (
-      <main className="flex-1">
+      <main className="flex-1 ">
         <HeroSection />
         <StatsSection />
         <FeaturedJobs />
