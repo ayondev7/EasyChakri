@@ -14,8 +14,8 @@ declare module "next-auth" {
       image?: string
       role: import('./userTypes').UserRole
     }
-    accessToken: string
-    refreshToken: string
+    accessToken?: string
+    refreshToken?: string
   }
 
   interface User {

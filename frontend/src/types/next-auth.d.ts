@@ -10,8 +10,8 @@ declare module "next-auth" {
       role: "SEEKER" | "RECRUITER"
       image?: string | null
     }
-    accessToken: string
-    refreshToken: string
+    accessToken?: string
+    refreshToken?: string
   }
 
   interface User {
@@ -20,8 +20,8 @@ declare module "next-auth" {
     name: string
     role: "SEEKER" | "RECRUITER"
     image?: string
-    accessToken: string
-    refreshToken: string
+    accessToken?: string
+    refreshToken?: string
   }
 }
 
